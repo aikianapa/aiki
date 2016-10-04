@@ -1,0 +1,27 @@
+DirectoryIndex index.php
+AddDefaultCharset UTF-8
+
+RewriteBase /
+RewriteEngine On
+
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin *
+</IfModule>
+
+RewriteRule ^json/ - [L]
+
+RewriteRule ^contents\/(.*) /404.htm [L]
+RewriteRule ^login\.htm$ /engine/index.php?form=login&mode=show [L]
+RewriteRule ^admin\.htm$ /engine/index.php [L]
+
+RewriteRule ^thumb\/(.*)x(.*)\/src\/(.*)$ /engine/phpThumb/phpThumb.php?src=$3&w=$1&h=$2&zc=1 [L]
+RewriteRule ^thumbc\/(.*)x(.*)\/src\/(.*)$ /engine/phpThumb/phpThumb.php?src=$3&w=$1&h=$2 [L]
+RewriteRule ^thumb\/(.*)x(.*)\/(.*)\/(.*)\/(.*)$ /engine/phpThumb/phpThumb.php?src=/uploads/$3/$4/$5&w=$1&h=$2&zc=1 [L]
+RewriteRule ^thumbc\/(.*)x(.*)\/(.*)\/(.*)\/(.*)$ /engine/phpThumb/phpThumb.php?src=/uploads/$3/$4/$5&w=$1&h=$2 [L]
+
+RewriteRule ^(.*)\/(.*)\/(.*)\/(.*)\.htm$ /index.php?form=$1&mode=$2&tpl=3&id=$4 [L]
+RewriteRule ^(.*)\/(.*)\/(.*)\.htm$ /index.php?form=$1&mode=$2&id=$3 [L]
+RewriteRule ^(.*)\/(.*)\.htm$ /index.php?form=$1&mode=show&id=$2 [L]
+RewriteRule ^(.*)\.htm$ /index.php?form=page&mode=show&id=$1 [L]
+
+

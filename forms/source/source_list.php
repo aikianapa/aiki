@@ -70,7 +70,7 @@
 				<label>Имя каталога:</label>
 				<input type="text" class="form-control iName" style="width:100%;">
 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Отмена</button>
-				<button class="btn btn-info btnDir"><i class="fa fa-check"></i> Создать</button>
+				<button class="btn btn-success btnDir"><i class="fa fa-check"></i> Создать</button>
 			</form>
 		</div>
 		
@@ -101,7 +101,23 @@
 				<label>Новое имя:</label>
 				<input type="text" class="form-control iName" style="width:100%;">
 				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Отмена</button>
-				<button class="btn btn-warning btnRen"><i class="fa fa-check"></i> Переименовать</button>
+				<button class="btn btn-success btnRen"><i class="fa fa-check"></i> Переименовать</button>
+			</form>
+		</div>
+		
+		<div class="btnCopy" title="Копирование">
+			<form id="sourceActionCopy" class="form-horizontal" role="form">
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Исходик:</label>
+					<div class="col-sm-10"><input type="text" class="form-control iPath" readonly></div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">Копия:</label>
+					<div class="col-sm-10"><input type="text" class="form-control iName"></div>
+				</div>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Отмена</button>
+				<button class="btn btn-success btnCopy"><i class="fa fa-check"></i> Копировать</button>
+				<button class="btn btn-warning btnMove"><i class="fa fa-check"></i> Переместить</button>
 			</form>
 		</div>
 		
@@ -118,7 +134,8 @@
 	#sourceList .sourcePanels {padding:0;}
     #sourceList .sourcePanels .panel {overflow:auto;}
     #sourceList .sourcePanels > div {padding:5px;} 
-    #sourceList .sourcePanels .panel:not(.active) .easytree-active {border:1px transparent solid;}
+	#sourceList .sourcePanels .panel.active		  li.active > .easytree-node {border:1px #26A0DA solid; background-color:#CBE8F6;}
+    #sourceList .sourcePanels .panel:not(.active) li.active > .easytree-node {border:1px transparent solid; background-color:#CBE8F6;}
     #sourceList .sourcePanels .panel.active {box-shadow: 1px 1px 2px #999; border-color:#999;}
     #sourcePanelAction .alert-danger .modal-header, #sourcePanelAction .alert-danger .modal-footer {background:transparent;}
     #sourcePanelAction .alert-danger .modal-body {padding-top:5px; padding-bottom:5px;}
@@ -218,7 +235,8 @@ $(function(){
 sourceNodeClick();
 sourceListButtons();
 
-$("#sourceList .sourcePanels .panel.active .sourceTree .easytree-node:first").trigger("click");
+$("#sourceList .sourcePanels #rightTree .easytree-node:first").trigger("click");
+$("#sourceList .sourcePanels #leftTree .easytree-node:first").trigger("click");
 	
 function sourceDrop(event, nodes, isSourceNode, source, isTargetNode, target) {
 	
@@ -245,7 +263,9 @@ function sourceNodeClick() {
 	
 	$("#sourceList .sourceTree li span").on("click",function(e){
 		$("#sourceList .sourcePanels .panel").removeClass("active");
+		$(this).parents(".panel").find("li").removeClass("active");
 		$(this).parents(".panel").addClass("active");
+		$(this).parent("li").addClass("active");
 		sourceListButtons();
 		e.preventDefault();
 	});	
@@ -318,14 +338,26 @@ function sourceListButtons() {
 	$(buttons).undelegate("a:not(.disabled)","click");
 	$(buttons).delegate("a:not(.disabled)","click",function(){
 		var tree=$("#sourceList .sourcePanels .panel.active .sourceTree");
+		var _tree=$("#sourceList .sourcePanels .panel:not(.active) .sourceTree");
 		var path=$(tree).data("path");
 		var name=$(tree).data("name");
 		var node=$(tree).data("node");
 
+		var _path=$(_tree).data("path");
+		var _name=$(_tree).data("name");
+		var _node=$(_tree).data("node");
+
+
 		if ($(tree).parent(".panel").hasClass("l")) {
-				easytree=leftTree; nodes=leftNodes;
-		} else {easytree=rightTree;nodes=rightNodes;}
-		var obj=easytree.getNode(node);
+				var easytree=leftTree; 			var _easytree=rightTree; 
+				var nodes=leftNodes;			var _nodes=rightNodes;
+				var obj=leftTree.getNode(node); var _obj=rightTree.getNode(node);
+		} else {
+				var easytree=rightTree;			 var _easytree=leftTree;
+				var nodes=rightNodes;			 var _nodes=leftNodes;
+				var obj=rightTree.getNode(node); var _obj=leftTree.getNode(node);
+		}
+
 		
 		if ($(this).hasClass("btnEdit")) {$("#"+node).trigger("dblclick");}
 		if ($(this).hasClass("btnDir")) {
@@ -363,6 +395,22 @@ function sourceListButtons() {
 				$("#sourcePanelAction .modal-body button").appendTo($("#sourcePanelAction .modal-footer"));
 				$("#sourcePanelAction .modal-body .iPath").val(path);
 				$("#sourcePanelAction .modal-body .iName").val(name);
+				$("#sourcePanelAction .modal-body .iOld").val(name);
+				$("#sourcePanelAction").modal("show");
+			}
+		}
+
+		if ($(this).hasClass("btnCopy")) {
+			if (name!==".") {
+				path=obj.href;
+				$("#sourcePanelAction .modal-dialog").removeClass("modal-lg");
+				$("#sourcePanelAction .modal-content").removeClass("alert alert-danger");
+				$("#sourcePanelAction .modal-title").html($("#sourceActions .btnCopy").attr("title"));
+				$("#sourcePanelAction .modal-body").html($("#sourceActions .btnCopy").html());
+				$("#sourcePanelAction .modal-footer").html("");
+				$("#sourcePanelAction .modal-body button").appendTo($("#sourcePanelAction .modal-footer"));
+				$("#sourcePanelAction .modal-body .iPath").val(path);
+				$("#sourcePanelAction .modal-body .iName").val(_path+name);
 				$("#sourcePanelAction .modal-body .iOld").val(name);
 				$("#sourcePanelAction").modal("show");
 			}
@@ -434,6 +482,32 @@ function sourceListButtons() {
 				$("#sourcePanelAction").modal("hide");
 			}
 		}
+		// ################################ Копирование
+		if ($(this).hasClass("btnCopy")) {
+			var name=$("#sourcePanelAction .modal-body .iName").val();
+			var path=$("#sourcePanelAction .modal-body .iPath").val();
+			if (name>"") {
+				$.get("/engine/ajax.php?mode=copyFile&old="+path+"&new="+name,function(data){
+					var data=$.parseJSON(data);
+					if (data!==false && data.error==true) {sourceUpdateTree(path,name,"btnCopy");}
+					
+				});
+				$("#sourcePanelAction").modal("hide");
+			}
+		}
+		// ################################ Перемещение
+		if ($(this).hasClass("btnMove")) {
+			var name=$("#sourcePanelAction .modal-body .iName").val();
+			var path=$("#sourcePanelAction .modal-body .iPath").val();
+			if (name>"" && path!==name) {
+				$.get("/engine/ajax.php?mode=moveFile&old="+path+"&new="+name,function(data){
+					var data=$.parseJSON(data);
+					if (data!==false && data.error==true) {sourceUpdateTree(path,name,"btnCopy");}
+					
+				});
+				$("#sourcePanelAction").modal("hide");
+			}
+		}		
 	});
 }
 

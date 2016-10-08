@@ -198,18 +198,38 @@ function ajax_createFile() {
 function ajax_RenameFile() {
 	$res=array(); $res["error"]=false;
 	if ($_SESSION["user_role"]=="admin") {
-		$old=$_SERVER["DOCUMENT_ROOT"].$_GET["path"]."/".$_GET["old"];
-		$new=$_SERVER["DOCUMENT_ROOT"].$_GET["path"]."/".$_GET["new"];
-		$old=str_replace("//","/",$old);
-		$new=str_replace("//","/",$new);
+		$old=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"].$_GET["path"]."/".$_GET["old"]);
+		$new=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"].$_GET["path"]."/".$_GET["new"]);
 		if ($old!==$new && !is_dir($new) && !is_file($new) && !is_link($new)) {
-			rename($old,$new);
-			if (is_file($new) OR is_dir($new) OR is_link($new)) {$res["error"]=true;}
+			if (rename($old,$new)) {$res["error"]=true;}
 		}
 	}
 	return json_encode($res);	
 }
 
+function ajax_copyFile() {
+	$res=array(); $res["error"]=false;
+	if ($_SESSION["user_role"]=="admin") {
+		$old=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"].$_GET["old"]);
+		$new=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"].$_GET["new"]);
+		if ($old!==$new && !is_dir($new) && !is_file($new) && !is_link($new)) {
+			if (copy($old,$new)) {$res["error"]=true;}
+		}
+	}
+	return json_encode($res);	
+}
+
+function ajax_moveFile() {
+	$res=array(); $res["error"]=false;
+	if ($_SESSION["user_role"]=="admin") {
+		$old=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"].$_GET["old"]);
+		$new=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"].$_GET["new"]);
+		if ($old!==$new && !is_dir($new) && !is_file($new) && !is_link($new)) {
+			if (rename($old,$new)) {$res["error"]=true;}
+		}
+	}
+	return json_encode($res);	
+}
 
 function ajax_createSymlink() {
 	$res=false;

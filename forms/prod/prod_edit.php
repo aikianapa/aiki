@@ -10,6 +10,17 @@
 	  <label class="col-sm-2 control-label">Наименование</label>
 	   <div class="col-sm-10"><input type="text" class="form-control" name="name" placeholder="Наименование" required ></div>
 	</div>
+
+
+<ul class="nav nav-tabs">
+	<li class="active"><a href="#{{form}}Descr" data-toggle="tab">Характеристики</a></li>
+	<li><a href="#{{form}}Text" class="call-editor" data-toggle="tab" >Описание</a></li>
+	<li><a href="#{{form}}Images" class="call-imgloader" data-toggle="tab">Изображения</a></li>
+</ul>
+
+<div class="tab-content">
+<div id="{{form}}Descr" class="tab-pane active">
+<br />
 	
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">Meta-description</label>
@@ -28,16 +39,6 @@
 		<div data-allow="admin" class="col-sm-2" title="Добавить в список лучших"><label class="switch switch-primary"><input type="checkbox" name="best" ><span></span></label></div>
 	</div>
 	
-
-<ul class="nav nav-tabs">
-	<li class="active"><a href="#{{form}}Descr" data-toggle="tab">Характеристики</a></li>
-	<li><a href="#{{form}}Text" class="call-editor" data-toggle="tab" >Описание</a></li>
-	<li><a href="#{{form}}Images" class="call-imgloader" data-toggle="tab">Изображения</a></li>
-</ul>
-
-<div class="tab-content">
-<div id="{{form}}Descr" class="tab-pane active">
-<br />
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">Раздел</label>
 	   <div class="col-sm-10">

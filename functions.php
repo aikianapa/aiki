@@ -1001,6 +1001,7 @@ function aikiReadItem($form=null,$id=null,$func=true) {
 function aikiSaveItem($form,$Item,$func=true) {
 	if ($_SESSION["settings"]["store"]=="on") {$datatype="mysql";} else {$datatype="file";}
 	$save=$datatype."SaveItem";
+	if ($form=="tree" && isset($Item["tree"]) && !is_string($Item["tree"])) {$Item["tree"]=json_encode($Item["tree"], JSON_HEX_QUOT | JSON_HEX_APOS);}
 	if ($datatype=="file") {
 		$res=$save($form,$Item,false,$func); // доп.параметр
 	} else {

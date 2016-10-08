@@ -34,6 +34,7 @@ $__page->find("head")->append("<link rel='stylesheet' href='/engine/appUI/css/bo
 $__page->find("head")->prepend("<script src='/engine/js/jquery.min.js'></script>");
 $__page->find("head")->append("<script src='/engine/bootstrap/js/bootstrap.min.js'></script>");
 $__page->find("head")->append("<script src='/engine/js/functions.js'></script>");
+$__page->find("head")->append("<script src='/engine/appUI/js/plugins.js'></script>");
 $__page->find("body")->html("<div class='col-sm-2'></div><div id='engine__setup' class='col-sm-8'>{$form}</div><div class='col-sm-2'></div>");
 $__page->find("body")->prepend("<div class='jumbotron col-sm-12'><div class='col-sm-2'></div><div class='col-sm-8'><h1>AiKi :: 合気</h1></div><div class='col-sm-2'></div></div>");
 echo $__page;

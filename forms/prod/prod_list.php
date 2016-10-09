@@ -1,25 +1,23 @@
-<div id="{{form}}List" class="col-sm-12">
-			<div class="dropdown">
-				<div class="btn-group">
-					<a href="#" data-toggle="dropdown" class="btn btn-primary btn-sm">Категории</a>
-					<div class="themed-background-dark dropdown-menu">
-					<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true" class="sidebar-nav">
-						<li>
-							<a data-ajax="mode=list&form=prod&division={{id}}" data-html="#prodList .list" >{{name}}</a>
-						</li>
-					</ul>
-					</div>
-					<a href="#" data-ajax="mode=edit&amp;form=tree&amp;id={{form}}_division" class="btn btn-primary btn-sm"
+<div id="{{form}}List" class="row">
+		<div class="col-sm-3">
+				<div class="themed-background-dark text-light">
+					<b class="">Категории
+					<a href="#" data-ajax="mode=edit&amp;form=tree&amp;id={{form}}_division" class="text-light pull-right"
 					data-toggle="modal" data-target="#treeEdit" data-html="#treeEdit .modal-body">
-					<span class="fa fa-gear"></span>
-					</a>
+					<span class="fa fa-gear"></span></a>
+					</b>
+					
+				<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true" class="sidebar-nav">
+					<li>
+						<a data-ajax="mode=list&form=prod&division={{id}}" title="{{name}}" data-html="#prodList .list">{{name}}</a>
+					</li>
+				</ul>
 				</div>
-			</div>			
-			
 			<div data-role="include" src="modal" data-id="treeEdit" data-formsave="#treeEditForm" data-add="false" data-header="Категории"></div>
-
-
-		<div class="col-sm-12" class="list">
+		</div>
+		<div class="col-sm-9" class="list">
+	
+			  <h2 class="sub-header">Список продукции</h2>
 			  <div class="table-responsive">
 				<table class="table table-striped formlist">
 				  <thead>
@@ -60,9 +58,7 @@
 		
 </style>
 <script>
-	$("#{{form}}List")
-	
-	
+
 	$(document).on("tree_after_formsave",function(event,name,item,form,res){
 		template_set_data("#{{form}}Catalog");
 	});

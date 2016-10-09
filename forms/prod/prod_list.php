@@ -1,20 +1,25 @@
 <div id="{{form}}List" class="col-sm-12">
-		<div class="col-sm-3 themed-background-dark">
-			<h2 class="sub-header themed-color">Категории</h2>
-				<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true" class="sidebar-nav">
-					<li>
-						<a data-ajax="mode=list&form=prod&division={{id}}" data-html="#prodList .list">{{name}}</a>
-					</li>
-				</ul>
+			<div class="dropdown">
+				<div class="btn-group">
+					<a href="#" data-toggle="dropdown" class="btn btn-primary btn-sm">Категории</a>
+					<div class="themed-background-dark dropdown-menu">
+					<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true" class="sidebar-nav">
+						<li>
+							<a data-ajax="mode=list&form=prod&division={{id}}" data-html="#prodList .list" >{{name}}</a>
+						</li>
+					</ul>
+					</div>
+					<a href="#" data-ajax="mode=edit&amp;form=tree&amp;id={{form}}_division" class="btn btn-primary btn-sm"
+					data-toggle="modal" data-target="#treeEdit" data-html="#treeEdit .modal-body">
+					<span class="fa fa-gear"></span>
+					</a>
+				</div>
+			</div>			
 			
-			<a href="#" data-ajax="mode=edit&amp;form=tree&amp;id={{form}}_division" class="btn btn-primary btn-sm"
-				data-toggle="modal" data-target="#treeEdit" data-html="#treeEdit .modal-body">
-				<span class="glyphicon glyphicon-edit"></span> Изменить</a>
 			<div data-role="include" src="modal" data-id="treeEdit" data-formsave="#treeEditForm" data-add="false" data-header="Категории"></div>
-		</div>
-		<div class="col-sm-9" class="list">
-	
-			  <h2 class="sub-header">Список продукции</h2>
+
+
+		<div class="col-sm-12" class="list">
 			  <div class="table-responsive">
 				<table class="table table-striped formlist">
 				  <thead>
@@ -46,16 +51,18 @@
 <div data-role="include" src="/engine/forms/form_comModal.php"></div>
 
 <style>
-	#{{form}}List .themed-background-dark {margin-right:10px;}
+	#{{form}}List .themed-background-dark {padding:10px;}
 	#{{form}}List #{{form}}Catalog {padding-left: 0px;}
 	#{{form}}List #{{form}}Catalog a {cursor:pointer;}
 	#{{form}}List #{{form}}Catalog ul li {font-weight:normal;width: 100%;line-height: 11px;}
-	#{{form}}List #{{form}}Catalog ul li a {display: inline-block; width: 95%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-	#{{form}}List #{{form}}Catalog > ul > li > a {width:100%;}
+	#{{form}}List #{{form}}Catalog a {display: inline-block; width: 95%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+	#{{form}}List #{{form}}Catalog > li > a {width:100%;}
 		
 </style>
 <script>
-
+	$("#{{form}}List")
+	
+	
 	$(document).on("tree_after_formsave",function(event,name,item,form,res){
 		template_set_data("#{{form}}Catalog");
 	});

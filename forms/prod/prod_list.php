@@ -1,5 +1,5 @@
 <div id="{{form}}List" class="col-sm-12">
-		<div class="col-sm-3 themed-background-dark catmenu">
+		<div class="col-sm-3 themed-background-dark">
 			<h2 class="sub-header themed-color">Категории</h2>
 				<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true" class="sidebar-nav">
 					<li>
@@ -46,11 +46,12 @@
 <div data-role="include" src="/engine/forms/form_comModal.php"></div>
 
 <style>
-	#{{form}}List .catmenu {margin-right:10px;}
-	#{{form}}List .catmenu ul {padding-left: 0px;}
-	#{{form}}List .catmenu ul li {font-weight:normal;width: 100%;line-height: 11px;}
-	#{{form}}List .catmenu ul li a {cursor:pointer;display: inline-block; width: 95%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
-	#{{form}}List .catmenu > ul > li > a {width:100%;}
+	#{{form}}List .themed-background-dark {margin-right:10px;}
+	#{{form}}List #{{form}}Catalog {padding-left: 0px;}
+	#{{form}}List #{{form}}Catalog a {cursor:pointer;}
+	#{{form}}List #{{form}}Catalog ul li {font-weight:normal;width: 100%;line-height: 11px;}
+	#{{form}}List #{{form}}Catalog ul li a {display: inline-block; width: 95%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+	#{{form}}List #{{form}}Catalog > ul > li > a {width:100%;}
 		
 </style>
 <script>

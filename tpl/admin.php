@@ -203,7 +203,7 @@
                     <!-- END Header -->
 
                     <!-- Page content -->
-                    <div id="page-content">
+                    <div id="page-content" class="row">
                         <div class="row" class="main"></div>
 					</div>
                     <!-- END Page Content -->

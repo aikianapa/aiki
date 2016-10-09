@@ -564,6 +564,7 @@ function active_resize() {
 	$(window).bind('resize', function () {
 		multiinput_resize();
 		active_source_resize();
+		active_tree_resize();
 		console.log("Trigger: window resize");
 	});
 	$(window).trigger("resize");
@@ -574,6 +575,16 @@ function active_source_resize() {
 		if ($("#sourceList .sourcePanels .panel").length) {
 			$("#sourceList .sourcePanels .panel").height($("#page-container").height()-$("#sourceList .sourceButtons").height()-$("#sourceList .sourcePanels .panel").offset().top);
 		}	
+}
+
+function active_tree_resize() {
+		if ($("#treeEditForm .dd-item.active").length) {
+			var offset=	$("#treeEditForm .dd-item.active").width()-$("#treeEditForm .dd-btn").width()-4;
+			var width=	offset-$("#treeEditForm .dd-item.active .dd-handle").width()-40;
+
+			$("#treeEditForm .dd-item.active .dd-btn").css({"margin-left":offset+"px"});
+			$("#treeEditForm .dd-item.active input").css({"width":width+"px"});
+		}
 }
 
 

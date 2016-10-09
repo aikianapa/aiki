@@ -247,15 +247,6 @@ $(function(){
 
 	});
 
-	$(window).on("resize",function(){
-		if ($("#{{form}}EditForm .dd-item.active").length) {
-			var offset=	$("#{{form}}EditForm .dd-item.active").width()-$("#{{form}}EditForm .dd-btn").width()-4;
-			var width=	offset-$("#{{form}}EditForm .dd-item.active .dd-handle").width()-40;
-
-			$("#{{form}}EditForm .dd-item.active .dd-btn").css({"margin-left":offset+"px"});
-			$("#{{form}}EditForm .dd-item.active input").css({"width":width+"px"});
-		}
-	});
 });
 </script>
     <style type="text/css">

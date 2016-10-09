@@ -4,7 +4,7 @@
 			
 			<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true">
 				<li>
-					<a data-ajax="mode=list&form=prod&division={{id}}" data-html="#prodList .list"><i class="fa fa-angle-right"></i> {{name}}</a>
+					<a  class="isFolder" data-ajax="mode=list&form=prod&division={{id}}" data-html="#prodList .list">{{name}}</a>
 				</li>
 			</ul>
 			
@@ -55,7 +55,7 @@
 	#{{form}}List ul {list-style-type:none;}
 </style>
 <script>
-	
+
 	$(document).on("tree_after_formsave",function(event,name,item,form,res){
 		template_set_data("#{{form}}Catalog");
 	});

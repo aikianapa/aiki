@@ -1,12 +1,11 @@
 <div id="{{form}}List" class="col-sm-12">
-		<div class="col-sm-3">
-			<h2 class="sub-header">Категории</h2>
-			
-			<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true">
-				<li>
-					<a  class="isFolder" data-ajax="mode=list&form=prod&division={{id}}" data-html="#prodList .list">{{name}}</a>
-				</li>
-			</ul>
+		<div class="col-sm-3 themed-background-dark catmenu">
+			<h2 class="sub-header themed-color">Категории</h2>
+				<ul id="{{form}}Catalog" data-role="tree" from="{{form}}_division" data-build-tree="true" data-add="true" class="sidebar-nav">
+					<li>
+						<a data-ajax="mode=list&form=prod&division={{id}}" data-html="#prodList .list">{{name}}</a>
+					</li>
+				</ul>
 			
 			<a href="#" data-ajax="mode=edit&amp;form=tree&amp;id={{form}}_division" class="btn btn-primary btn-sm"
 				data-toggle="modal" data-target="#treeEdit" data-html="#treeEdit .modal-body">
@@ -47,12 +46,12 @@
 <div data-role="include" src="/engine/forms/form_comModal.php"></div>
 
 <style>
-	#{{form}}List ul {padding-left: 0px;}
-	#{{form}}List ul li > ul {padding-left: 20px;}
-	#{{form}}List ul li a {cursor:pointer;}
-	#{{form}}List ul li {font-weight:normal;}
-	#{{form}}List ul li.parent {font-weight:bold;}
-	#{{form}}List ul {list-style-type:none;}
+	#{{form}}List .catmenu {margin-right:10px;}
+	#{{form}}List .catmenu ul {padding-left: 0px;}
+	#{{form}}List .catmenu ul li {font-weight:normal;width: 100%;line-height: 11px;}
+	#{{form}}List .catmenu ul li a {cursor:pointer;display: inline-block; width: 95%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+	#{{form}}List .catmenu > ul > li > a {width:100%;}
+		
 </style>
 <script>
 

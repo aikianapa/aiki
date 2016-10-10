@@ -1,8 +1,9 @@
 <?php
 ini_set('display_errors', 0	);
-session_start("engine");
+session_start();
+$_SESSION["app_path"]=$_SERVER["DOCUMENT_ROOT"];
 $_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
-include_once("{$_SESSION["engine_path"]}/functions.php");
+include_once("{$_SESSION["engine_path"]}/engine.php");
 if (is_file("{$_SERVER['DOCUMENT_ROOT']}/contents/admin/settings")) {
 	header("Refresh: 0; URL=http://{$_SERVER["HTTP_HOST"]}/login.htm");
 	die;
@@ -19,7 +20,6 @@ chmod("{$_SERVER['DOCUMENT_ROOT']}/index.php",0766);
 
 recurse_copy("{$_SESSION["engine_path"]}/uploads/__contents","{$_SERVER['DOCUMENT_ROOT']}/contents");
 
-$_SESSION["app_path"]=$_SERVER["DOCUMENT_ROOT"];
 $__page=ki::fromFile("{$_SESSION["engine_path"]}/tpl/admin.php");
 $form=aikiGetForm("admin","settings");
 foreach($form->find(".form-group") as $fg) {
@@ -37,6 +37,26 @@ $__page->find("head")->append("<script src='/engine/js/functions.js'></script>")
 $__page->find("head")->append("<script src='/engine/appUI/js/plugins.js'></script>");
 $__page->find("body")->html("<div class='col-sm-2'></div><div id='engine__setup' class='col-sm-8'>{$form}</div><div class='col-sm-2'></div>");
 $__page->find("body")->prepend("<div class='jumbotron col-sm-12'><div class='col-sm-2'></div><div class='col-sm-8'><h1>AiKi :: 合気</h1></div><div class='col-sm-2'></div></div>");
+$__page->find("#admin_btn_update")->remove();
+
+if (!is_file("{$_SERVER['DOCUMENT_ROOT']}/tpl/default.php")) {
+	$error="
+	<div class='alert alert-danger'>
+		<b>Ошибка!</b><br>
+		<p>Невозможно создать папки и файлы в рабочей дирректории: <i>{$_SESSION["app_path"]}</i></p>
+		<p>Пожалуйста, проверьте права доступа...</p>
+	</div>
+	";
+	
+	
+	$__page->find("#engine__setup")->html($error);
+}
+
+
+
+
+
+
 echo $__page;
 ?>
 <script>

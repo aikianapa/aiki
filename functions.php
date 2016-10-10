@@ -210,7 +210,7 @@ function contentSetValuesStr($tag="",$Item=array(), $limit=2)
 		$exit = false;
 		$err = false;
 		$nIter = 0;
-		$mask = '`(\{\{){1,1}(%*[\w\d]+|_form|_mode|_item|((_SETT|_SETTINGS|_SESS|_SESSION|_COOK|_COOKIE|_GET|_POST|%*[\w\d]+)?([\[]{1,1}(%*[\w\d]+|"%*[\w\d]+")[\]]{1,1})*))(\}\}){1,1}`u';
+		$mask = '`(\{\{){1,1}(%*[\w\d]+|_form|_mode|_item|((_SETT|_SETTINGS|_SESS|_SESSION|_SRV|_COOK|_COOKIE|_GET|_POST|%*[\w\d]+)?([\[]{1,1}(%*[\w\d]+|"%*[\w\d]+")[\]]{1,1})*))(\}\}){1,1}`u';
 		while(!$exit) {
 			$nUndef = 0;
 			$nSub = preg_match_all($mask, $tag, $res, PREG_OFFSET_CAPTURE);				// найти все вставки, не содержащие в себе других вставок
@@ -247,6 +247,9 @@ function contentSetValuesStr($tag="",$Item=array(), $limit=2)
 								break;
 							case '_GET':
 								$sub = '$_GET';
+								break;
+							case '_SRV':
+								$sub = '$_SERVER';
 								break;
 							case '_POST':
 								$sub = '$_POST';

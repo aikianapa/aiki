@@ -3523,6 +3523,9 @@ p, .table, .alert, .carousel {
     background-color: #f9f9f9 !important;
 }
 
+.cursor-wait * {cursor:wait!important;}
+
+
 /*
 =================================================================
 (#m09res) RESPONSIVE

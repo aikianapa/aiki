@@ -1627,7 +1627,7 @@ abstract class kiNode
 						}
 					}
 				}  else {
-				$list=aikiListItems($form);  $Item=array(); $Item=$list["result"];
+				$list=aikiListItems($form,$where);  $Item=array(); $Item=$list["result"];
 				}
 		}
 		if (is_string($Item)) $Item=json_decode($Item,true);
@@ -1645,8 +1645,9 @@ abstract class kiNode
 		}
 		if ($dsort>"") {
 			$Item=array_sort_multi($Item,$dsort);
-			if ($cache!=="") $_SESSION["data"]["foreach"][$cache]=$Item;
+			//if ($cache!=="") $_SESSION["data"]["foreach"][$cache]=$Item;
 		}
+		if ($cache!=="") $_SESSION["data"]["foreach"][$cache]=$Item;
 		if ($ddesc=="true") {$Item=array_reverse($Item);}
 		if ($rand=="true") {shuffle($Item);}
 
@@ -1661,45 +1662,14 @@ abstract class kiNode
 		if ($this->tag()!=="select" && $size=="" && $count>200) {
 			$pagination="ajax"; $size=10; $page=1;
 			$this->attr("data-size",$size);
-		} 
+		}
 		if ($count && $Item!==array(0=>"")) {
 			$cacheList=array();
 			$inner="";
 			$srcVal=array(); foreach($srcItem as $k => $v) {$srcVal["%{$k}"]=$v;}; unset($v);
 			
-			if ($find>"") { // если передана строка поиска, то вначале делаем преобразования и ищем в контексте
-				$list=array();
-				foreach($Item as $key => $val) {
-					$n++;
-					$tmpval=$val;
-					if (!is_array($val)) {$tmp=json_decode($val,true);	if ($tmp) {$val=$tmp;} else {$val=array($val);} } // именно так и никак иначе
-					if ($vars>"") {$val=attrAddData($vars,$val);}
-					if ($where!==NULL) $itemwhere=contentSetValuesStr($where,$val);
-					if ($val!==NULL && ($where==NULL OR aikiWhereItem($val,$itemwhere))) {
-						$itemform=""; if (isset($val["form"])) {$itemform=$val["form"];}
-						$val=(array)$srcVal + (array)$val; // сливаем массивы
-						if ($beforeShow!=="false") $val=aikiBeforeShowItem($val,$dmode,$itemform);
-						if (is_callable($oconv)) {$val=$oconv($val);}
-						$text=aikiFromString($tpl);
-						$text->find(":first")->attr("idx",$key);
-						$val["_idx"]=$_SESSION["foreach_idx"]=$key;
-						$val["_ndx"]=$_SESSION["foreach_ndx"]=$ndx;
-						$val["_num"]=$_SESSION["foreach_num"]=$ndx+1;
-						$text->contentSetData($val);			
-						$string=strip_tags(clearValueTags($text->innerHtml()));
-						if (aikiInString($string,$find) ) {
-							$ndx++; $fdx++;
-							$list[$key]=$tmpval;
-						} else {$n--;}
-						
-					}
-				}
-				$Item=$list;
-			}
-			
-			 $ndx=0; $n=0;
-
-			
+			$ndx=0; $n=0; $f=0;
+			$tmptpl=aikiFromString($tpl);
 			foreach($Item as $key => $val) {
 				$n++;
 				$cacheVal=$val;
@@ -1712,40 +1682,50 @@ abstract class kiNode
 					if ($pagination=="ajax" && ($size=="false" OR $size=="")) {$size=999999999;}
 					if (	$pagination=="ajax" && (
 							($size>"" && $cache>"" && ($n>$page*$size-$size && $n<=$page*$size)) 
-							OR ($size>"" && $cache=="" && $ndx<$size) )
+							OR ($size>"" && $cache=="" && $ndx<$size) 
+							
+							OR $find>"")
 							OR $size=="" OR $pagination=="js"
 						) {
-						$itemform=""; if (isset($val["form"])) {$itemform=$val["form"];} else {$itemform=$_GET["form"];}
+								$itemform=""; if (isset($val["form"])) {$itemform=$val["form"];} else {$itemform=$_GET["form"];}
 
-						$text=aikiFromString($tpl);
+								$text=$tmptpl->clone();
 
-						$val=(array)$srcVal + (array)$val; // сливаем массивы
-						if ($beforeShow!=="false") $val=aikiBeforeShowItem($val,$dmode,$itemform);
-						if (is_callable($oconv)) {$val=$oconv($val);}
+								$val=(array)$srcVal + (array)$val; // сливаем массивы
+								if ($beforeShow!=="false") $val=aikiBeforeShowItem($val,$dmode,$itemform);
+								if (is_callable($oconv)) {$val=$oconv($val);}
 
-						$text->find(":first")->attr("idx",$key);
-						$val["_idx"]=$_SESSION["foreach_idx"]=$key;
-						$val["_ndx"]=$_SESSION["foreach_ndx"]=$ndx;
-						$val["_num"]=$_SESSION["foreach_num"]=$ndx+1;
-
-						$text->contentSetData($val);
-								$ndx++;
-								if ($step>0) { // если степ, то работаем с объектом
-									if ($stepcount==0) {
-										$t_step=aikiFromString($steptpl);
-										$t_step->find(":first")->addClass($tplid);
-										$this->append($t_step);
-									}
-									$this->find(".{$tplid}:last")->append(clearValueTags($text));
-									//$stepcount++;
-									$stepcount=$this->find(".{$tplid}:last")->children()->length;
-									if ($stepcount==$step) {$stepcount=0;}
-								} else { // иначе строим строку
-									$inner.=clearValueTags($text);
+								$text->find(":first")->attr("idx",$key);
+								$val["_idx"]=$_SESSION["foreach_idx"]=$key;
+								$val["_ndx"]=$_SESSION["foreach_ndx"]=$ndx;
+								$val["_num"]=$_SESSION["foreach_num"]=$ndx+1;
+								$text->contentSetData($val);
+								if ($find=="") {$flag=true;}
+								if ($find>"") {
+									$string=strip_tags($text->innerHtml());
+									$flag=aikiInString($string,$find);
 								}
-								$text->remove();
-					}
-					}
+								if ($find>"" && $flag==true) {$f++;}
+								if ($find=="" OR ($find>"" && ($f>$page*$size-$size && $f<=$page*$size))) {$tmp;} else {$flag=false;}
+								if ($flag==true) {
+									$ndx++; 
+										if ($step>0) { // если степ, то работаем с объектом
+											if ($stepcount==0) {
+												$t_step=aikiFromString($steptpl);
+												$t_step->find(":first")->addClass($tplid);
+												$this->append($t_step);
+											}
+											$this->find(".{$tplid}:last")->append(clearValueTags($text));
+											//$stepcount++;
+											$stepcount=$this->find(".{$tplid}:last")->children()->length;
+											if ($stepcount==$step) {$stepcount=0;}
+										} else { // иначе строим строку
+											$inner.=clearValueTags($text);
+										}
+								} else {$n--;}
+										$text->remove();
+						}
+				}
 				}
 			};
 
@@ -1754,8 +1734,9 @@ abstract class kiNode
 			} else {
 				$this->html($inner);
 			}
-			unset($val,$ndx,$t_step,$text,$func,$inner);
+			unset($val,$ndx,$t_step,$string,$text,$func,$inner);
 		}
+
 
 		if ($this->tag()=="select") {
 			if (!is_array($result)) {$this->outerHtml("");}
@@ -1773,7 +1754,7 @@ abstract class kiNode
 						$cacheId=md5($from.$form.$where.$tplid.$sort.$rand.$dsort.$limit.$item.$field.$call.$oconv.$vars.$json.implode("-",$_GET));
 					}
 					if ($cache=="" && isset($cacheList)) $_SESSION["data"]["foreach"][$cacheId]=$cacheList; unset($cacheList);
-					if ($find>"" && !isset($_SESSION["data"]["foreach"][$cacheId])) {$count=$fdx;}
+					if ($find>"") {$count=$f;}
 						else {$count=count($_SESSION["data"]["foreach"][$cacheId]);}
 					$pages=ceil($count/$size);
 					//if (round($pages)<$pages) {$pages=round($pages)+1;}

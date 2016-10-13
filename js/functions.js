@@ -650,12 +650,14 @@ function active_search() {
 	jQuery.expr[":"].contains = function( elem, i, match, array ) {
 		return (elem.textContent || elem.innerText || jQuery.text( elem ) || "").toLowerCase().indexOf(match[3].toLowerCase()) >= 0;
 	}
+	$(document).undelegate("[data-role=search]","keydown");
 	$(document).delegate("[data-role=search]","keydown",function(e) {
 		if (e.keyCode == 13) {return false;}		
 	});
 
+	$(document).undelegate("[data-role=search]","keyup");
 	$(document).delegate("[data-role=search]","keyup",function(e) {
-		if (e.keyCode == 13 || e.isTrigger==3) {		
+		if (e.keyCode == 13 || e.isTrigger==3) {
 			var str=$(this).val();
 			var from=$(this).attr("from");
 
@@ -680,6 +682,7 @@ function active_search() {
 				$("[data-template="+tpl+"]").attr("data-find-type","ajax");
 				$("#ajax-"+tpl+".pagination li:first a").trigger("click");
 			}
+			e.preventDefault();
 			return false;
 		}
 	});
@@ -892,8 +895,8 @@ function active_pagination(pid) {
 		$("[data-page="+id+"-1]").show();
 		$(document).undelegate(".pagination[id="+id+"] li a, thead[data="+id+"] th[data-sort]","click");
 		$(document).delegate(".pagination[id="+id+"] li a, thead[data="+id+"] th[data-sort]","click",function(event){
-			//if (event.originalEvent!==undefined) { // отсекает дубль вызова ajax, но не работает trigger в поиске
-			event.preventDefault();
+			console.log(event);
+			if (event.originalEvent!==undefined || event.currentTarget.ownerDocument.activeElement.dataset.role=="search") { // отсекает дубль вызова ajax, но не работает trigger в поиске
 			console.log("active_pagination(): Click");
 			var that=$(this);
 			if ($(this).is("th[data-sort]")) {
@@ -944,8 +947,9 @@ function active_pagination(pid) {
 				param.sort=sort;
 				param.desc=desc;
 				$("[data-template="+arr[1]+"]").html(ajax_loader());
+				$("body").addClass("cursor-wait");
 				$.ajax({
-					async: 		false,
+					async: 		true,
 					type:		'POST',
 					data:		param,
 					url: 		url,
@@ -964,7 +968,9 @@ function active_pagination(pid) {
 									window.location.hash="page-"+idx+"-"+arr[2];
 									active_plugins();
 									active_pagination();
-								}
+									$("body").removeClass("cursor-wait");
+								},
+					error:		function(data){$("body").removeClass("cursor-wait");}
 				});
 			}
 				$(this).parents("ul").find("li").removeClass("active");
@@ -974,9 +980,9 @@ function active_pagination(pid) {
 				if (scrollTop<0) {scrollTop=0;}
 				$('body,html').animate({scrollTop: scrollTop}, 1000);
 				
-				$(document).trigger("after_pagination_click",[id,page,arr[2]]);
-			return false;
-		//}
+				//$(document).trigger("after_pagination_click",[id,page,arr[2]]);
+				event.preventDefault();
+		}
 		});
 	});
 }

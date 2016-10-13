@@ -1645,9 +1645,15 @@ abstract class kiNode
 		}
 		if ($dsort>"") {
 			$Item=array_sort_multi($Item,$dsort);
+<<<<<<< HEAD
 			if ($cache!=="") $_SESSION["data"]["foreach"][$cache]=$Item;
 		} 
 
+=======
+			//if ($cache!=="") $_SESSION["data"]["foreach"][$cache]=$Item;
+		}
+		if ($cache!=="") $_SESSION["data"]["foreach"][$cache]=$Item;
+>>>>>>> master
 		if ($ddesc=="true") {$Item=array_reverse($Item);}
 		if ($rand=="true") {shuffle($Item);}
 
@@ -1668,6 +1674,7 @@ abstract class kiNode
 			$inner="";
 			$srcVal=array(); foreach($srcItem as $k => $v) {$srcVal["%{$k}"]=$v;}; unset($v);
 			
+<<<<<<< HEAD
 /*			if ($find>"") { // если передана строка поиска, то вначале делаем преобразования и ищем в контексте
 				$list=array();
 				$tmptpl=$text=aikiFromString($tpl);
@@ -1700,6 +1707,8 @@ abstract class kiNode
 			}
 */
 		
+=======
+>>>>>>> master
 			$ndx=0; $n=0; $f=0;
 			$tmptpl=aikiFromString($tpl);
 			foreach($Item as $key => $val) {

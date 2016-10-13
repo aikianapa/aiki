@@ -24,7 +24,6 @@ jQuery(document).ready(function(){
 	active_imageviewer();
 	active_multiinput();
 	active_resize();
-	active_search();
 	active_cart();
 	active_users();
 	active_dropdown();
@@ -39,6 +38,7 @@ jQuery(document).ready(function(){
 	active_login();
 	active_hash();
 	active_source_buttons();
+	active_search();
 });
 
 document.onkeydown = function (event){ // Запрещаем BackSpace
@@ -656,7 +656,6 @@ function active_search() {
 
 	$(document).delegate("[data-role=search]","keyup",function(e) {
 		if (e.keyCode == 13 || e.isTrigger==3) {		
-
 			var str=$(this).val();
 			var from=$(this).attr("from");
 
@@ -893,8 +892,7 @@ function active_pagination(pid) {
 		$("[data-page="+id+"-1]").show();
 		$(document).undelegate(".pagination[id="+id+"] li a, thead[data="+id+"] th[data-sort]","click");
 		$(document).delegate(".pagination[id="+id+"] li a, thead[data="+id+"] th[data-sort]","click",function(event){
-
-			if (event.originalEvent!==undefined) {
+			//if (event.originalEvent!==undefined) { // отсекает дубль вызова ajax, но не работает trigger в поиске
 			event.preventDefault();
 			console.log("active_pagination(): Click");
 			var that=$(this);
@@ -978,7 +976,7 @@ function active_pagination(pid) {
 				
 				$(document).trigger("after_pagination_click",[id,page,arr[2]]);
 			return false;
-		}
+		//}
 		});
 	});
 }

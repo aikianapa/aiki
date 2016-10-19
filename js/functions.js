@@ -890,7 +890,6 @@ function active_pagination(pid) {
 			$(this).data("desc",$(this).attr("data-desc"));
 		});
 		
-		
 		$("[data-page^="+id+"]").hide().removeClass("hidden");
 		$("[data-page="+id+"-1]").show();
 		$(document).undelegate(".pagination[id="+id+"] li a, thead[data="+id+"] th[data-sort]","click");

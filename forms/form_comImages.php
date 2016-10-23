@@ -1,6 +1,6 @@
 <input type="hidden" name="images" data-role="imagestore">
 
-	<div class="form-group">
+	<div class="form-group prop">
 	  <label class="col-sm-2 control-label">Галерея</label>
 	   <div class="col-sm-3">
 			<select name="images_position" class="form-control">
@@ -11,7 +11,7 @@
 	   </div>
 	</div>
 
-	<div class="form-group">
+	<div class="form-group prop">
 		<label class="col-sm-2 control-label">В текст</label>
 		<div class="col-sm-3">
 			<select name="intext_position[pos]" class="form-control">

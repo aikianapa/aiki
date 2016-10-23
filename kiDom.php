@@ -1534,10 +1534,11 @@ abstract class kiNode
 				if ($this->attr("data-item")>"") {$item=$this->attr("data-item");}
 				$path=formPathGet($form,$item);
 				$img=formGetForm("form","comImages");
-				$img->contentSetValues($Item);
 				$ext=$this->attr("data-ext");
 				$max=$this->attr("data-max");
 				$name=$this->attr("data-name");
+				if ($this->attr("data-prop")=="false") {$img->find(".form-group.prop")->remove();}
+				$img->contentSetValues($Item);
 				$this->attr("path",$path["uplitem"]);
 				$this->html($img->outerHtml());
 				$this->attr("load",1);
@@ -1895,6 +1896,7 @@ function tagThumbnail($Item=array()) {
 	$width=$this->attr("width"); if ($width=="") {$width="160px";}
 	$height=$this->attr("height"); if ($height=="") {$height="120px";}
 	$offset=$this->attr("offset");
+	$contain=$this->attr("contain");
 	
 	$srcSrc=$src;
 	$srcImg=explode("/",trim($src)); $srcImg=$srcImg[count($srcImg)-1];
@@ -1961,23 +1963,25 @@ function tagThumbnail($Item=array()) {
 		$this->attr("img",$img);
 		$ext=substr($img,-3);
 	}
+	
 	if ($ext!=="svg") {
+		if ($contain=="true") {$thumb="thumbc";} else {$thumb="thumb";}
 		$src=urldecode($src);
 		if (substr($width,-1)=="%" OR substr($height,-1)=="%" ) {
 			list( $w, $h, $t ) = getimagesize($_SERVER["DOCUMENT_ROOT"].$src);
 			$w=ceil($w/100*($width+0));
 			$h=ceil($h/100*($height+0));
-			$src="/thumb/{$w}x{$h}/src{$src}";
+			$src="/{$thumb}/{$w}x{$h}/src{$src}";
 		} else {
 			$w=$width+0; $h=$height+0;
-			$src="/thumb/{$w}x{$h}/src{$src}";
+			$src="/{$thumb}/{$w}x{$h}/src{$src}";
 		}
 	}
 	
 	if ($bkg==true) {
 		if (!in_array($srcExt,$exts)) {$bSize="contain";} else {$bSize="cover";}
 		
-		$style.="width:{$width}; height: {$height}; background: url({$src}) {$left} {$top} no-repeat; display:inline-block; background-size: {$bSize}; background-clip: content-box;";
+		$style.="width:{$width}; height: {$height}; background: url('{$src}') {$left} {$top} no-repeat; display:inline-block; background-size: {$bSize}; background-clip: content-box;";
 		$this->attr("src","/engine/uploads/__system/transparent.png");
 		$this->attr("width",$width);
 		$this->attr("height",$height);

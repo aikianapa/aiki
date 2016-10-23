@@ -14,6 +14,7 @@
 		<li class="active"><a href="#{{form}}Descr" data-toggle="tab" data-lang="a.descr">Каталог</a></li>
 		<li>				<a href="#{{form}}Prop" data-toggle="tab" data-lang="a.prop">Свойства</a></li>
 		<li class="hidden"><a href="#{{form}}Data" data-toggle="tab" data-lang="a.data">Данные</a></li>
+		<li><a href="#{{form}}Images" data-toggle="tab" data-lang="a.images">Изображения</a></li>
 		<a class="dd3active hidden" href="#dd3active">dd3active</a>
 	</ul>
 
@@ -36,6 +37,7 @@
 				<option value="number">number</option>
 				<option disabled>--== Плагины ==--</option>
 				<option value="editor">editor</option>
+				<option value="image">image</option>
 				<option value="multiinput">multiinput</option>
 				<option value="call">call</option>
 				<option value="enum">enum</option>
@@ -71,6 +73,7 @@
 				<div class="form-group" name="data"></div>
 			</form>
 		</div>
+		<div id="{{form}}Images" class="tab-pane" data-role="imageloader" data-prop="false"></div>
 
 	</div>
 	</form>

@@ -495,42 +495,58 @@ function active_cart() {
 };
 
 function aikiCallEditor() {
-	if ($("textarea.editor").length) {
-		var editor = $("textarea.editor").ckeditor();
-		CKEDITOR.config.toolbarGroups = [
-			{ name: 'document',    groups: [ 'document', 'doctools' ] },
-		//    { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
-		//	{ name: 'mode' },
-			{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
-			{ name: 'links' },
-			{ name: 'insert' },
-			{ name: 'others' },
-			'/',
-			{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-			{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
-			{ name: 'colors' },
-			 { name: 'tools' }
-		];
-		CKEDITOR.config.skin = 'bootstrapck';
-		CKEDITOR.config.allowedContent = true;
-		CKEDITOR.config.forceEnterMode = true;
-		CKEDITOR.plugins.registered['save']=
-		{
-		   init : function( editor )
-		   {
-			  var command = editor.addCommand( 'save',
-				 {
-					modes : { wysiwyg:1, source:1 },
-					exec : function( editor ) {
-					   var fo=editor.element.$.form;
-					   editor.updateElement();
-					   aiki_formsave($(fo));
-					}
-				 }
-			  );
-			  editor.ui.addButton( 'Save',{label : 'Сохранить',command : 'save'});
-		   }
-		}
+	if ($("textarea.editor:not(.loaded)").length) {
+		$("textarea.editor:not(.loaded)").each(function(){
+			
+			if ($(this).attr("id")==undefined || $(this).attr("id")=="") {$(this).attr("id",JSON.parse(ajax_getid()));}
+			
+			var editor = $(this).ckeditor();
+			$(this).addClass("loaded");
+			   
+			CKEDITOR.config.toolbarGroups = [
+				{ name: 'document',    groups: [ 'document', 'doctools' ] },
+			//    { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
+			//	{ name: 'mode' },
+				{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },
+				{ name: 'links' },
+				{ name: 'insert' },
+				{ name: 'others' },
+				'/',
+				{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+				{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
+				{ name: 'colors' },
+				 { name: 'tools' }
+			];
+			CKEDITOR.config.skin = 'bootstrapck';
+			CKEDITOR.config.allowedContent = true;
+			CKEDITOR.config.forceEnterMode = true;
+			CKEDITOR.plugins.registered['save']=
+			{
+			   init : function( editor )
+			   {
+				  var command = editor.addCommand( 'save',
+					 {
+						modes : { wysiwyg:1, source:1 },
+						exec : function( editor ) {
+						   var fo=editor.element.$.form;
+						   editor.updateElement();
+						   aiki_formsave($(fo));
+						}
+					 }
+				  );
+				  editor.ui.addButton( 'Save',{label : 'Сохранить',command : 'save'});
+			   }
+			}
+		});
+			CKEDITOR.on('instanceReady', function(){
+			   $.each( CKEDITOR.instances, function(instance) {
+				CKEDITOR.instances[instance].on("change", function(e) {
+					for ( instance in CKEDITOR.instances )
+					$("textarea#"+instance).html(CKEDITOR.instances[instance].getData());
+					$("textarea#"+instance).trigger("change");
+				});
+			   });
+			});
 	}
 }
 
@@ -894,8 +910,7 @@ function active_pagination(pid) {
 		$("[data-page="+id+"-1]").show();
 		$(document).undelegate(".pagination[id="+id+"] li a, thead[data="+id+"] th[data-sort]","click");
 		$(document).delegate(".pagination[id="+id+"] li a, thead[data="+id+"] th[data-sort]","click",function(event){
-			console.log(event);
-			if (event.originalEvent!==undefined || event.currentTarget.ownerDocument.activeElement.dataset.role=="search") { // отсекает дубль вызова ajax, но не работает trigger в поиске
+			if (!$(this).is("a") || !$(this).parent().hasClass("active")) { // отсекает дубль вызова ajax, но не работает trigger в поиске
 			console.log("active_pagination(): Click");
 			var that=$(this);
 			if ($(this).is("th[data-sort]")) {
@@ -967,6 +982,8 @@ function active_pagination(pid) {
 									window.location.hash="page-"+idx+"-"+arr[2];
 									active_plugins();
 									active_pagination();
+									console.log("active_pagination(): trigger:after-pagination-done");
+									$(document).trigger("after-pagination-done",[id,page,arr[2]]);
 									$("body").removeClass("cursor-wait");
 								},
 					error:		function(data){$("body").removeClass("cursor-wait");}
@@ -1061,6 +1078,24 @@ function com_tree_init() {
 			$("#treeEditForm input[name=tree]").val(JSON.stringify(data));
 		}
 	});
+	
+	
+	$("#treeEditForm div[name=data]").undelegate("textarea","change");
+	$("#treeEditForm div[name=data]").delegate("textarea","change",function(){
+		var did=$("#treeEditForm .dd-list .dd-item.active").attr("data-id");
+		if (did!==undefined) {
+			var data=com_tree_data_serialize();
+			
+			if ($(this).hasClass("editor")) {
+				var name=$(this).attr("data-name");
+				data[name]=str_replace('&quot;','"',data[name]);
+			}
+			
+			$("#treeEditForm .dd-item[data-id="+did+"]").attr("data-data",JSON.stringify(data));
+			var data=com_tree_serialize();
+			$("#treeEditForm input[name=tree]").val(JSON.stringify(data));
+		}
+	});
 
 	$(document).undelegate("#treeEditForm a[href=#treeData]","click");
 	$(document).delegate("#treeEditForm a[href=#treeData]","click",function(){
@@ -1076,7 +1111,9 @@ function com_tree_init() {
 			var fld="";
 			if (fldlabel=="") {fldlabel=fldname;}
 			if (fldtype=="text") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control" data-descr="'+flddescr+'"></textarea>';}
+			if (fldtype=="editor") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control editor" data-descr="'+flddescr+'"></textarea>';}
 			if (fldtype=="multiinput") {fld=com_multiinp_gen(fldname,fldlabel);}
+			if (fldtype=="image") {fld=com_tree_imagesel(fldname,fldlabel);}
 			if (fldtype=="" || fldtype=="string") {fldtype="text";}
 			if (fld=="") {fld='<input type="'+fldtype+'" data-name="'+fldname+'" placeholder="'+fldlabel+'" class="form-control" data-descr="'+flddescr+'" />';}
 
@@ -1125,9 +1162,19 @@ function com_tree_init() {
 			});
 		}
 		active_plugins();
+		aikiCallEditor();
 		return false;
 	});
 
+	function com_tree_imagesel(fldname,fldlabel) {
+		var id=$("#treeEditForm").attr("item");
+		var fld=$("<div><select data-name='"+fldname+"' placeholder='"+fldlabel+"' class='form-control'><option></option></select></div>");
+		var images=JSON.parse($("#treeEditForm #treeImages input[name=images]").val());
+		$(images).each(function(i,img){
+			fld.find("select").append('<option value="'+img.img+'">'+img.img+'</option>');
+		});
+		return fld.html();
+	}
 
 
 		function com_tree_data_serialize() {

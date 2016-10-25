@@ -82,6 +82,11 @@ function ajax_formsave($form) {
 		if (!isset($_SESSION["form"][$form]["datatype"])) {$datatype="file";} else {$datatype=$_SESSION["form"][$form]["datatype"];}
 		if ($_POST["id"]=="" && $_GET["item"]>"") {$_POST["id"]=$_GET["item"];}
 		$res=aikiFormSave($form,$datatype); $ret=array();
+		if (isset($_GET["copy"])) {
+			$old=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"]."/uploads/{$form}/{$_GET["copy"]}/");
+			$new=str_replace("//","/",$_SERVER["DOCUMENT_ROOT"]."/uploads/{$form}/{$_GET["item"]}/");
+			recurse_copy($old,$new);
+		}
 		if ($res!="1") {
 			$ret["error"]=0;
 		} else {$ret["error"]=1; $ret["text"]=$res;}
@@ -139,12 +144,11 @@ function ajax_deleteitem() {
 
 function ajax_deletefile() {
 	$res=false;
-	if ($_SESSION["user_role"]!=="" && $_SESSION["user_role"]!=="noname") {
+	if (isset($_SESSION["user_role"]) AND $_SESSION["user_role"]!=="" AND $_SESSION["user_role"]!=="noname") {
 		$filename=$_SERVER["DOCUMENT_ROOT"].$_GET["path"]."/".$_GET["file"];
 		$filename=str_replace("//","/",$filename);
-		$res=unlink($filename);
-		if (!is_file($filename)) {$res=array(); $res["error"]=0;} else {$tmp=$res; $res=array(); $res["error"]=$tmp;}
-	}
+		if (unlink($filename)) {$res=array(); $res["error"]=0;} else {$res=array(); $res["error"]=1;}
+	} 
 	return json_encode($res);
 }
 

@@ -84,15 +84,8 @@ function form_check_id() {
 			$(this).parents("form[item]").attr("item",$(this).val());
 			var form=$(this).parents("form[item]").attr("name");
 			var item=$(this).parents("form[item]").attr("item");
-			var path=$(this).parents("form[item][name]").find("#"+form+"Images").attr("path");
-			if (!path==undefined) {
-				var tmp=explode("/",path);
-				tmp[tmp.length-2]=item;
-				path=implode("/",tmp);
-				$(this).parents("form[item][name]").find("#"+form+"Images").attr("path",path);
-				$.get("/engine/ajax.php?mode=ajax_change_id&form="+form+"&old="+oldi+"&new="+item,function(data){
-					//
-				});
+			if (oldi>"" && $(this).parents("form[item]").attr("item-old")==undefined) {
+				$(this).parents("form[item]").attr("item-old",oldi);
 			}
 		}
 	});
@@ -1539,12 +1532,17 @@ function aiki_formsave(formObj) {
 		form+=ui_switch+bs_switch+ic_date;
 		var name=formObj.attr("name");
 		var item=formObj.attr("item");
+		var oldi=formObj.attr("item-old");
+
+		
 		if ($(this).attr("data-form")!==undefined) {name=$(this).attr("data-form");}
 		if ($(this).attr("data-src")!==undefined) {
 			var src=$(this).attr("data-src");
 		} else {
 			var src="/engine/ajax.php?mode=save&form="+name+"&item="+item;
 		}
+		if (oldi!==undefined) {src+="&copy="+oldi;}
+		
 		if (ptpl==undefined) {
 			var ptpl=$(document).find("[data-add=true][data-template]").attr("data-template");
 		}

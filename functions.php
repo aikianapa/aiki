@@ -1370,13 +1370,11 @@ function fileDeleteItem($form,$id,$path=false) {
 	// engine - читать из данных движка
 	// app - читать из данных коренвого проекта
 	// prj (не обязательно) - по-умолчанию данные проекта
-	if (isset($_SESSION[$form]["data-type-tmp"])) {
-		$type=$_SESSION[$form]["data-type-tmp"];
-		if ($type=="engine") {$file=$_SESSION["engine_path"]."/contents/".$form."/".$id;}
-		if ($type=="app") {
-			$file=$_SESSION["app_path"]."/contents/".$form."/".$id;
-			$file=str_replace($_SESSION["prj_path"],"",$file);
-		}
+	if (isset($_SESSION[$form]["data-type-tmp"])) {$type=$_SESSION[$form]["data-type-tmp"];} else {$type="file";}
+	if ($type=="engine") {$file=$_SESSION["engine_path"]."/contents/".$form."/".$id;}
+	if ($type=="app") {
+		$file=$_SESSION["app_path"]."/contents/".$form."/".$id;
+		$file=str_replace($_SESSION["prj_path"],"",$file);
 	}
 	if (is_file($file)) {unlink($file); $res=true;}
 	return $res;
@@ -1950,10 +1948,11 @@ function DeleteDir($dir) {
 	      return "No dirname";
 	 while($file = readdir($dir_handle)) {
 	       if ($file !== "." && $file !== "..") {
-	            if (!is_dir($dirname."/".$file)) {
-					DeleteFile($dir."/".$file);
+			   $path=str_replace("//","/",$dirname."/".$file);
+	            if (!is_dir($path)) {
+					unlink($path);
 	            } else {
-	                 DeleteDir($dir.'/'.$file);
+	                rmdir($path);
 	            }
 	       }
 	 }
@@ -2104,7 +2103,10 @@ function recurse_copy($src,$dst) {
             if ( is_dir($src . '/' . $file) ) {
                 recurse_copy($src . '/' . $file,$dst . '/' . $file);
             }
-            else { copy($src . '/' . $file,$dst . '/' . $file); }
+            else { 
+				copy($src . '/' . $file,$dst . '/' . $file); 
+				chmod($dst.'/'.$file,0766);
+			}
         }
     }
     closedir($dir);

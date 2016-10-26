@@ -54,6 +54,31 @@ document.onkeydown = function (event){ // Запрещаем BackSpace
 	}
 };
 
+	$(document).on("add-to-cart-done",function(event,item){
+		$.bootstrapGrowl("<center>Товар добавлен<br><a href='/cart.htm' class='btn btn-default btn-sm'><i class='fa fa-cart-plus'></i> Корзина покупок</a></center>", {
+			ele: 'body',
+			type: 'success',
+			offset: {from: 'top', amount: 20},
+			align: 'right',
+			width: "auto",
+			delay: 4000,
+			allow_dismiss: true,
+			stackup_spacing: 10 
+		});
+	});
+	$(document).on("orders_after_formsave",function(event,name,item,form,res){
+		var form=$.unserialize(form);
+		setcookie("person_name",form.personname[0]);
+		setcookie("person_phone",form.personphone[0]);
+		setcookie("person_email",form.personemail[0]);
+		setcookie("person_city",form.personcity[0]);
+		setcookie("person_address",form.personaddress[0]);
+		$("#modalOrder").modal("hide");
+		$("[data-role=cart] .cart-table").hide();
+		$("[data-role=cart] .cart-success").show();
+		$(document).trigger("cart-clear");
+	});
+
 function include(url){
 	document.write('<script src="'+ url + '" type="text/javascript" ></script>');
 }
@@ -351,6 +376,7 @@ function active_cart() {
 	$("[data-role=cart] .cart-clear").unbind("click");
 	$("[data-role=cart] .add-to-art").unbind("click");
 
+	$(document).undelegate("form[data-role=cart] .add-to-cart","click");
 	$(document).delegate("form[data-role=cart] .add-to-cart","click",function(){
 		$(this).trigger("add-to-cart-click");
 		var that=$(this);
@@ -360,10 +386,12 @@ function active_cart() {
 		if ($(this).hasClass("add-to-cart")) {ajax+="&action=add-to-cart";}
 		$.get(ajax,form,function(data){
 			that.trigger("add-to-cart-done",[getcookie("order_id")]);
+			content_set_data("[data-role=cart][data-template]");
 		});
 		return false;
 	});
 
+	$(document).undelegate(".cart-clear","click");
 	$(document).delegate(".cart-clear","click",function(){
 		$(this).trigger("cart-clear",[this]);
 		return false;
@@ -382,11 +410,13 @@ function active_cart() {
 			$(document).trigger("cart-after-clear",[event]);
 			$("[data-role=cart] .cart-item").remove();
 			$(document).trigger("cart-total-recalc");
+			content_set_data("[data-role=cart][data-template]");
 		});
 	});	
 	
 	$(document).on("cart-item-recalc",function(event,item,flag) {
 		var index=1;
+		var idx=$(item).attr("idx");
 		var fld=$(this).parents("[data-role=cart]").attr("data-update");
 		if (fld==undefined || fld=="") {var fld = new Array ("quant","price");} else {
 			var fld=explode(",",fld);
@@ -407,7 +437,7 @@ function active_cart() {
 		if (ajax==undefined || ajax=="") {var ajax="/engine/ajax.php?mode=cart";}
 		ajax+="&action=cart-item-recalc";
 		if (flag!="noajax") {$.get(ajax,form);}
-		$(item).find(".cart-item-total").html(index);
+		$("[data-role=cart] .cart-item[idx="+idx+"] .cart-item-total").html(index);
 	});
 
 	$(document).on("cart-item-remove",function(event,item,flag) {
@@ -415,8 +445,8 @@ function active_cart() {
 		var ajax=$(this).parents("[data-role=cart]").attr("data-ajax");
 		if (ajax==undefined || ajax=="") {var ajax="/engine/ajax.php?mode=cart";}
 		form="action=cart-item-remove&index="+idx;
-		if (flag!="noajax") {$.get(ajax,form);}
-		$(item).remove();
+		if (flag!=="noajax") {$.get(ajax,form);}
+		$("[data-role=cart] .cart-item[idx="+idx+"]").remove();
 		$("[data-role=cart] .cart-item").each(function(i){
 			$(this).attr("idx",i);
 		});
@@ -425,50 +455,54 @@ function active_cart() {
 
 	$(document).on("cart-item-plus",function(event,item,flag) {
 		var idx=$(item).attr("idx");
-		var quant=$(item).find(".cart-item-quant");
+		var quants=$("[data-role=cart] .cart-item[idx="+idx+"] .cart-item-quant");
 		var max=1000;
 		var ajax=$(this).parents("[data-role=cart]").attr("data-ajax");
 		if (ajax==undefined || ajax=="") {var ajax="/engine/ajax.php?mode=cart";}
 		form="action=cart-item-plus&index="+idx;
 		//if (flag!="noajax") {$.get(ajax,form);}
-		if (quant.is("input") || quant.is("select")) {
-			if (quant.val()<max) {quant.val(quant.val()*1+1);}
-		} else {
-
-		}
+		quants.each(function(quant){
+			if ($(this).is("input") || $(this).is("select")) {
+				if ($(this).val()<max) {$(this).val($(this).val()*1+1);}
+			} else {
+				if ($(this).val()<max) {$(this).html($(this).text()*1+1);}
+			}
+		});
 		$(document).trigger("cart-item-recalc",item);
 		$(document).trigger("cart-total-recalc");
 	});
 
 	$(document).on("cart-item-minus",function(event,item,flag) {
 		var idx=$(item).attr("idx");
-		var quant=$(item).find(".cart-item-quant");
+		var quants=$("[data-role=cart] .cart-item[idx="+idx+"] .cart-item-quant");
 		var ajax=$(this).parents("[data-role=cart]").attr("data-ajax");
 		var min=1;
 		if (ajax==undefined || ajax=="") {var ajax="/engine/ajax.php?mode=cart";}
 		form="action=cart-item-plus&index="+idx;
 		//if (flag!="noajax") {$.get(ajax,form);}
-		if (quant.is("input") || quant.is("select")) {
-			if (quant.val()>min) {quant.val(quant.val()*1-1);}
-		} else {
-
-		}
+		quants.each(function(quant){
+			if ($(this).is("input") || $(this).is("select")) {
+				if ($(this).val()<max) {$(this).val($(this).val()*1-1);}
+			} else {
+				if ($(this).val()<max) {$(this).html($(this).text()*1-1);}
+			}
+		});
 		$(document).trigger("cart-item-recalc",item);
 		$(document).trigger("cart-total-recalc");
 	});
 
 
 	$(document).on("cart-total-recalc",function(event,item,flag) {
-		var cart=$("[data-role=cart]");
 		var total=0;
 		var lines=0;
-		cart.find(".cart-item .cart-item-total").each(function(){
+		$("[data-role=cart]:first .cart-item .cart-item-total").each(function(){
 			total=total+$(this).text()*1;
 			lines++;
 
 		});
-		cart.find(".cart-total").text(total);
-		cart.find(".cart-lines").text(lines);
+		$("[data-role=cart] .cart-total").text(total);
+		$("[data-role=cart] .cart-lines").text(lines);
+		$(document).trigger("cart-update-done");
 	});
 
 	$("[data-role=cart]").find("input,select,textarea").on("change",function(){
@@ -477,7 +511,8 @@ function active_cart() {
 		$(document).trigger("cart-total-recalc");
 	});
 
-	$("[data-role=cart] .cart-item").find("*").on("click",function(){
+	$(document).undelegate("[data-role=cart] .cart-item *","click");
+	$(document).delegate("[data-role=cart] .cart-item *","click",function(){
 		var item=$(this).parents(".cart-item");
 		if ($(this).hasClass("cart-item-remove")) {$(document).trigger("cart-item-remove",item);}
 		if ($(this).hasClass("cart-item-plus")) {$(document).trigger("cart-item-plus",item);}

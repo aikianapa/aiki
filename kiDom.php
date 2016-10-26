@@ -1360,6 +1360,9 @@ abstract class kiNode
 	function tagCart() {
 		if ($this->find(".cart-item")->length) {
 			$Item=aikiReadItem("orders",$_SESSION["order_id"]);
+			$tplid=uniqId();
+			$this->attr("data-template",$tplid);
+			$this->after("<textarea id='{$tplid}' style='display:none;'>".urlencode($this->innerHtml())."</textarea>");
 			$this->contentSetData($Item);
 		}
 	}

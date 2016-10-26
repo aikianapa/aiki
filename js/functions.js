@@ -461,11 +461,11 @@ function active_cart() {
 		if (ajax==undefined || ajax=="") {var ajax="/engine/ajax.php?mode=cart";}
 		form="action=cart-item-plus&index="+idx;
 		//if (flag!="noajax") {$.get(ajax,form);}
-		quants.each(function(quant){
+		quants.each(function(){
 			if ($(this).is("input") || $(this).is("select")) {
 				if ($(this).val()<max) {$(this).val($(this).val()*1+1);}
 			} else {
-				if ($(this).val()<max) {$(this).html($(this).text()*1+1);}
+				if ($(this).text()*1<max) {$(this).html($(this).text()*1+1);}
 			}
 		});
 		$(document).trigger("cart-item-recalc",item);
@@ -480,11 +480,11 @@ function active_cart() {
 		if (ajax==undefined || ajax=="") {var ajax="/engine/ajax.php?mode=cart";}
 		form="action=cart-item-plus&index="+idx;
 		//if (flag!="noajax") {$.get(ajax,form);}
-		quants.each(function(quant){
+		quants.each(function(){
 			if ($(this).is("input") || $(this).is("select")) {
-				if ($(this).val()<max) {$(this).val($(this).val()*1-1);}
+				if ($(this).val()>min) {$(this).val($(this).val()*1-1);}
 			} else {
-				if ($(this).val()<max) {$(this).html($(this).text()*1-1);}
+				if ($(this).text()*1>min) {$(this).html($(this).text()*1-1);}
 			}
 		});
 		$(document).trigger("cart-item-recalc",item);

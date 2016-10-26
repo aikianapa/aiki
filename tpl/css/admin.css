@@ -66,13 +66,11 @@ table.formlist .dropdown {position: absolute;}
 [data-role=multiinput] .multi-fld-row .multisort {margin-top:-25px; left:-2px;}
 
 
-
+[data-role=cart] .cart-item {padding:15px 5px; margin-bottom:15px; border-bottom:1px #eee solid;}
 [data-role=cart] .cart-item .btn {font-size: 10px; padding: 5px 7px;}
-[data-role=cart] tbody tr.cart-item td {vertical-align:middle;}
 [data-role=cart] .cart-item .cart-item-quant {width:70px; text-align:center;}
-[data-role=cart] .cart-item .cart-item-price {text-align:right;}
-[data-role=cart] .cart-item .cart-item-total {text-align:right;}
 [data-role=cart] .cart-total {text-align:right;}
+[data-role=cart] .actions a {margin:5px;}
 
 table.userlist tr.active-off td div.dropdown > a {color:#4D4D4D;}
 

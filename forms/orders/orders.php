@@ -27,12 +27,11 @@ function _ordersAfterSaveItem($Item) {
 
 
 function _ordersMail($Item=null) {
-	require_once '/phpmailer/PHPMailerAutoload.php';
+	require_once $_SERVER["DOCUMENT_ROOT"].'/engine/phpmailer/PHPMailerAutoload.php';
 	if ($Item==null) {$Item=aikiReadItem("orders",$_GET["id"]);}
 	$out=aikiGetForm("orders","mail",true);
 	$out->contentSetData($Item);
 	$out->find(".data-grand-total")->remove();
-	
 	$mail = new PHPMailer;
 	$mail->CharSet = "WINDOWS-1251";
 	$mail->setFrom($_SESSION["email"], $_SERVER["HTTP_HOST"]);

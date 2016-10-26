@@ -386,7 +386,9 @@ function active_cart() {
 		if ($(this).hasClass("add-to-cart")) {ajax+="&action=add-to-cart";}
 		$.get(ajax,form,function(data){
 			that.trigger("add-to-cart-done",[getcookie("order_id")]);
-			content_set_data("[data-role=cart][data-template]");
+			content_set_data("[data-role=cart][data-template]").done(function(){
+				$(document).trigger("cart-total-recalc");
+			});
 		});
 		return false;
 	});
@@ -442,15 +444,19 @@ function active_cart() {
 
 	$(document).on("cart-item-remove",function(event,item,flag) {
 		var idx=$(item).attr("idx");
-		var ajax=$(this).parents("[data-role=cart]").attr("data-ajax");
+		var ajax=$(this).parents("[data-role=cart]:not(form):first").attr("data-ajax");
 		if (ajax==undefined || ajax=="") {var ajax="/engine/ajax.php?mode=cart";}
 		form="action=cart-item-remove&index="+idx;
-		if (flag!=="noajax") {$.get(ajax,form);}
+		if (flag!=="noajax") {var diff=$.get(ajax,form);}
 		$("[data-role=cart] .cart-item[idx="+idx+"]").remove();
-		$("[data-role=cart] .cart-item").each(function(i){
-			$(this).attr("idx",i);
+		$("[data-role=cart]").each(function(){
+			 $(this).find(".cart-item").each(function(i){
+				$(this).attr("idx",i);
+			});
 		});
-		$(document).trigger("cart-total-recalc");
+		diff.done(function(){
+			$(document).trigger("cart-total-recalc");
+		});
 	});
 
 	$(document).on("cart-item-plus",function(event,item,flag) {
@@ -495,10 +501,10 @@ function active_cart() {
 	$(document).on("cart-total-recalc",function(event,item,flag) {
 		var total=0;
 		var lines=0;
-		$("[data-role=cart]:first .cart-item .cart-item-total").each(function(){
-			total=total+$(this).text()*1;
+		$("[data-role=cart]:not(form):first .cart-item").each(function(){
+			$(document).trigger("cart-item-recalc",$(this));
+			total=total+$(this).find(".cart-item-total").text()*1;
 			lines++;
-
 		});
 		$("[data-role=cart] .cart-total").text(total);
 		$("[data-role=cart] .cart-lines").text(lines);
@@ -1061,7 +1067,7 @@ function content_set_data(selector,data,ret) {
 	if (selector==undefined) {var selector="body";}
 		var param={html:html,data:data};
 		var url="/engine/ajax.php?mode=content_set_data";
-		$.ajax({
+		var diff=$.ajax({
 			async: 		false,
 			type:		'POST',
 			data:		param,
@@ -1071,7 +1077,8 @@ function content_set_data(selector,data,ret) {
 					$(selector).after(data).remove();
 				} else {return data;}
 			}
-		});	
+		});
+		return diff;
 }
 
 function com_tree_init() {

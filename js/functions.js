@@ -409,10 +409,11 @@ function active_cart() {
 	$(document).on("cart-clear",function(event) {
 		var ajax="/engine/ajax.php?mode=cart&action=cart-clear";
 		$.get(ajax,function(data){
-			$(document).trigger("cart-after-clear",[event]);
 			$("[data-role=cart] .cart-item").remove();
 			$(document).trigger("cart-total-recalc");
-			content_set_data("[data-role=cart][data-template]");
+			
+				$(document).trigger("cart-after-clear",[event]);
+			
 		});
 	});	
 	

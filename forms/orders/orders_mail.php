@@ -1,5 +1,5 @@
 <title>Заказ № {{id}} от {{date}} ({{_SESS[HTTP_HOST]}})</title>
-<div id="order" data-role="cart">
+<div id="order">
 	<table class="cart-detail">
 	<tr><td>Имя</td><td>{{person[name]}}</td></tr>
 	<tr><td>Телефон</td><td>{{person[phone]}}</td></tr>

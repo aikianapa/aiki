@@ -1,5 +1,6 @@
 <div data-role="cart">
-			<div data-role="foreach" from="items" data-hide="*">
+	 <div class="cart-table">
+			<div data-role="foreach" from="items">
 				<div class="cart-item row" data-role="formdata" form="prod" item="{{id}}">
 					<div class="col-sm-2 col-xs-12">
 						<a href="/prod/show/{{id}}.htm">
@@ -29,15 +30,19 @@
 			<div class="col-xs-12 text-right">
 				<h5>ИТОГО: <span class="cart-total"></span></h5>
 			</div>
-			<div class="col-xs-12 actions">
+			<div class="col-xs-12 actions"> 
 				<div class="col-sm-4 col-xs-12 text-center"><a href="/" class="btn btn-primary">Продолжить покупки</a></div>
 				<div class="col-sm-4 col-xs-12 text-center"><a href="#" class="btn btn-success" data-toggle="modal" data-target="#modalOrder">Оформить заказ</a></div>
 				<div class="col-sm-4 col-xs-12 text-center"><a href="#" class="btn btn-danger cart-clear">Опустошить корзину</a></div>
 			</div>
-
-	<div class="cart-success alert alert-info" style="display:none;">
-		<i class="fa fa-info-circle fa-2x pull-right"></i>
-		Ваш заказ успешно отправлен менеджеру. В ближайшее время с вами обязательно свяжутся по телефону, указанному в заказе.
+	</div>
+	<div class="cart-success alert alert-info row" style="display:none;">
+		<div class="col-xs-1">
+			<p><i class="fa fa-info-circle fa-2x"></i></p>
+		</div>
+		<div class="col-xs-11">
+			<p>Ваш заказ успешно отправлен менеджеру. В ближайшее время с вами обязательно свяжутся по телефону, указанному в заказе.</p>
+		</div>
 	</div>
 	
 </div>

@@ -731,7 +731,10 @@ function active_search() {
 			} else {
 				$("#ajax-"+tpl).data("find",str);
 				$("[data-template="+tpl+"]").attr("data-find-type","ajax");
+				var act=$("#ajax-"+tpl+".pagination li.active");
+				act.removeClass("active");
 				$("#ajax-"+tpl+".pagination li:first a").trigger("click");
+				act.addClass("active");
 			}
 			e.preventDefault();
 			return false;

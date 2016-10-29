@@ -2,24 +2,7 @@
 function news__show() {
 	$out=aikiGetForm();
 	$Item=aikiReadItem($_GET["form"],$_GET["item"]);
-	if (!isset($Item["images_position"])) {$out->append('<div data-role="gallery"></div>');}
-	if ($Item["images_position"]=="top") {$out->prepend("<div data-role='gallery'></div>");}
-	if ($Item["images_position"]=="bottom") {$out->append("<div data-role='gallery'></div>");}
-	if (isset($Item["intext_position"]["pos"]) && !$Item["intext_position"]["pos"]=="") {
-		$img="<img data-role='thumbnail' size=''>";
-		if (isset($Item["intext_position"]["pos"]) && $Item["intext_position"]["pos"]>"") {
-			$pos=$Item["intext_position"]["pos"];
-			if (isset($Item["intext_position"]["width"]) && $Item["intext_position"]["width"]>"") {$width=$Item["intext_position"]["width"];} else {$width=200;}
-			if (isset($Item["intext_position"]["height"]) && $Item["intext_position"]["height"]>"") {$width=$Item["intext_position"]["height"];} else {$height=160;}
-			if (!strpos($width,"px") && !strpos($width,"%")) {$width.="px";}
-			if (!strpos($height,"px") && !strpos($height,"%")) {$height.="px";}
-			$size="{$width};{$height};src";
-			$out->find("div.text")->prepend($img);
-			$out->find("img:first")->attr("size",$size);
-			$out->find("img:first")->attr("data-hide","data-role size img data-src");
-			$out->find("img:first")->addClass("pull-{$pos}");
-		}
-	}
+
 	$Item=aikiBeforeShowItem($Item);
 	$out->contentSetData($Item);
 	return $out->htmlOuter();

@@ -1671,38 +1671,7 @@ abstract class kiNode
 			$cacheList=array();
 			$inner="";
 			$srcVal=array(); foreach($srcItem as $k => $v) {$srcVal["%{$k}"]=$v;}; unset($v);
-			
-/*			if ($find>"") { // если передана строка поиска, то вначале делаем преобразования и ищем в контексте
-				$list=array();
-				$tmptpl=$text=aikiFromString($tpl);
-				foreach($Item as $key => $val) {
-					$n++;
-					$tmpval=$val;
-					if (!is_array($val)) {$tmp=json_decode($val,true);	if ($tmp) {$val=$tmp;} else {$val=array($val);} } // именно так и никак иначе
-					if ($vars>"") {$val=attrAddData($vars,$val);}
-					if ($where!==NULL) $itemwhere=contentSetValuesStr($where,$val);
-					if ($val!==NULL && ($where==NULL OR aikiWhereItem($val,$itemwhere))) {
-						$itemform=""; if (isset($val["form"])) {$itemform=$val["form"];}
-						$val=(array)$srcVal + (array)$val; // сливаем массивы
-						if ($beforeShow!=="false") $val=aikiBeforeShowItem($val,$dmode,$itemform);
-						if (is_callable($oconv)) {$val=$oconv($val);}
-						$text=$tmptpl;
-						$text->find(":first")->attr("idx",$key);
-						$val["_idx"]=$_SESSION["foreach_idx"]=$key;
-						$val["_ndx"]=$_SESSION["foreach_ndx"]=$ndx;
-						$val["_num"]=$_SESSION["foreach_num"]=$ndx+1;
-						$text->contentSetData($val);			
-						$text=strip_tags($text->innerHtml());
-						if (aikiInString($text,$find) ) {
-							$ndx++; $fdx++;
-							$list[$key]=$tmpval;
-						} else {$n--;}
-						
-					}
-				}
-				$Item=$list;
-			}
-*/
+
 		
 			$ndx=0; $n=0; $f=0;
 			$tmptpl=aikiFromString($tpl);

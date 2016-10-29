@@ -17,23 +17,6 @@ function page__show($out=null,$Item=null) {
 	if ($out==null) {
 		if (isset($Item["template"]) && $Item["template"]>"") {$out=aikiGetTpl($Item["template"]);} else {$out=aikiGetForm();}
 	}
-	if (isset($Item["images_position"]) && $Item["images_position"]=="bottom") {
-		$Item["text"].='<div data-role="gallery"></div>';
-	}
-	if (isset($Item["images_position"]) && $Item["images_position"]=="top") {
-		$Item["text"]='<div data-role="gallery"></div>'.$Item["text"];
-	}
-	if (isset($Item["intext_position"]["pos"]) && $Item["intext_position"]["pos"]>"") {
-		$align=$Item["intext_position"]["pos"];
-		if (isset($Item["intext_position"]["width"]) && $Item["intext_position"]["width"]>"") {$width=$Item["intext_position"]["width"];} else {$width=200;}
-		if (isset($Item["intext_position"]["height"]) && $Item["intext_position"]["height"]>"") {$width=$Item["intext_position"]["height"];} else {$height=160;}
-		$image=aikiGetItemImg($Item);
-		$Item["text"]=" 
-		<a href='{$image}'>
-		<img class='intext-image' data-role='thumbnail' src='0' size='{$width}px;{$height}px;src' align='{$align}' hspace='5' vspace='5' />
-		</a>
-		".$Item["text"];
-	}
 	$out->contentSetData($Item);
 	return $out->outerHtml();
 }
@@ -65,6 +48,7 @@ function page__getajax() {
 
 function _pageBeforeShowItem($Item) {
 	if (isset($Item["tags"])) $Item["tags"]=explode(",",$Item["tags"]);
+	if ($_GET["mode"]=="show") {$Item=aikiAddItemGal($Item);}
 	return $Item;
 }
 

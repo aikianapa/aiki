@@ -537,7 +537,7 @@ function aikiCallEditor() {
 			
 			var editor = $(this).ckeditor();
 			$(this).addClass("loaded");
-			   
+			CKEDITOR.config.extraPlugins = 'youtube';
 			CKEDITOR.config.toolbarGroups = [
 				{ name: 'document',    groups: [ 'document', 'doctools' ] },
 			//    { name: 'editing',     groups: [ 'find', 'selection', 'spellchecker' ] },
@@ -550,7 +550,7 @@ function aikiCallEditor() {
 				{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 				{ name: 'paragraph',   groups: [ 'list', 'indent', 'blocks', 'align' ] },
 				{ name: 'colors' },
-				 { name: 'tools' }
+				{ name: 'tools' }
 			];
 			CKEDITOR.config.skin = 'bootstrapck';
 			CKEDITOR.config.allowedContent = true;

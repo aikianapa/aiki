@@ -30,7 +30,6 @@ if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 		if ($_SESSION["error"]=="noitem") {$error="noitem";} else {
 			if (isset($Item["template"])) {$tpl=$Item["template"];} else {$tpl="";}
 		}
-		$Item=aikiAddItemGal($Item);
 	}
 	if ($_SESSION["error"]=="noitem") {$empty=1;} else {$empty=0;}
 	if ($form=="page" && $mode=="show" && $item=="home" && $tpl=="") {

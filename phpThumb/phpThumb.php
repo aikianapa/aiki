@@ -27,9 +27,14 @@ if (phpversion() < '4.1.0') {
 if (!is_file($_SERVER["DOCUMENT_ROOT"]."/".$_GET['src'])) $_GET['src']=urldecode($_GET['src']);
 if (!is_file($_SERVER["DOCUMENT_ROOT"]."/".$_GET['src'])) $_GET['src']=str_replace(" ","+",$_GET['src']);
 
+if (strpos($_GET['src'],"@2x.")) {
+	$_GET['src']=str_replace("@2x.",".",$_GET['src']);
+	if (isset($_GET['h'])) {$_GET['h']=$_GET['h']*2;}
+	if (isset($_GET['w'])) {$_GET['w']=$_GET['w']*2;}
+}
 
 
-$_GET['src']=str_replace("@2x.",".",$_GET['src']);
+
 if (substr($_GET['src'],0,5)!=="http:") $_GET['src']="/".$_GET['src'];
 
 function SendSaveAsFileHeaderIfNeeded() {

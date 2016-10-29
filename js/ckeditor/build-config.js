@@ -56,6 +56,7 @@ var CKBUILDER_CONFIG = {
 		'indentblock' : 1,
 		'indentlist' : 1,
 		'smiley' : 1,
+		'youtube' : 1,
 		'justify' : 1,
 		'language' : 1,
 		'link' : 1,

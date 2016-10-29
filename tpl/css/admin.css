@@ -78,3 +78,4 @@ span.glyphicon.loader { background: url(/engine/uploads/__system/loader.gif) 50%
 span.glyphicon.loader:before {opacity:0;}
 
 thead th[data-sort] {cursor:pointer;}
+.text-center {text-align: -webkit-center;}

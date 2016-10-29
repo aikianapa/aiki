@@ -53,6 +53,9 @@ function _newsBeforeShowItem($Item,$mode=NULL) {
 			if (!isset($Item["date"])) {$Item["date"]=date("Y-m-d");}
 			$Item["date"]=date("Y-m-d",strtotime($Item["date"]));
 			break;
+		case "show" :
+			$Item=aikiAddItemGal($Item);
+			break;
 		case "list"	:
 			$Item["datesort"]=$Item["date"];
 			$Item["date"]=date("d.m.Y",strtotime($Item["date"]));

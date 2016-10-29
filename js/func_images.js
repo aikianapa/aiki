@@ -55,6 +55,7 @@ function commonImageUpload() {
 				$("#filelist #"+file.id).remove();
 				var name=file.name.toLowerCase();
 				comImagesAddToList(name);
+				$("#comImagesAll ul.gallery li:last").trigger("click");
 			},
 			UploadProgress: function(up, file) {
 				document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
@@ -193,7 +194,7 @@ function comImagesList(path) {
 		$("#comImagesAll ul").sortable({	update: function() { comImagesToField(); }	});
 	});
 }
-
+ 
 function comImagesSort() {
 	var  store=$("div.imageloader input[data-role=imagestore]");
 	var images=store.val();
@@ -256,7 +257,7 @@ function comImagesAddToList(name,vis) {
 			$("#comImagesAll ul.gallery li:last").append(thumbnail);
 			$("#comImagesAll ul.gallery li:last").append('<a href="#" class="btn btn-default btn-xs delete dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-remove-sign"></span></a>');
 			$("#comImagesAll ul.gallery li:last").append('<a href="#" class="btn btn-default btn-xs info"><span class="glyphicon glyphicon-info-sign"></span></a>');
-			$("#comImagesAll ul.gallery li:last").trigger("click");
+			//$("#comImagesAll ul.gallery li:last").trigger("click");
 		}
 	});
 }

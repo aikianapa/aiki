@@ -1,5 +1,6 @@
 <?php
 include_once($_SERVER['DOCUMENT_ROOT']."/engine/engine.php");
+unset($_SESSION["data"]["foreach"]);
 parse_str($_SERVER["REQUEST_URI"],$req);
 $role=dict_filter_value("user_role","code",$_SESSION["user-role"]);
 $tpl=$role["tpl"];

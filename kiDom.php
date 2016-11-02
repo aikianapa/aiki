@@ -1000,6 +1000,12 @@ abstract class kiNode
 
 //======================================================================//
 //======================================================================//
+
+	public function aikiBaseHref() {
+		aikiBaseHref($this);
+		return $this;
+	}
+
 	function contentSetData($Item=array()) {
 			if (!isset($_SESSION["ta_save"])) {$_SESSION["ta_save"]=array();}
 			$this->contentSetAttributes($Item);

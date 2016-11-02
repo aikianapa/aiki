@@ -621,8 +621,9 @@ function aikiTableProcessor($out) {
 	$out->html($tbody->innerHtml());
 }
 
-function aikiGetItemImg($Item,$idx=0,$noimg="") {
+function aikiGetItemImg($Item=null,$idx=0,$noimg="",$imgfld="images") {
 	$res=false; $count=0;
+	if ($Item==null) {$Item=$_SESSION["Item"];}
 	if (!is_file("{$_SERVER["DOCUMENT_ROOT"]}/{$noimg}")) {
 		if (is_file("{$_SERVER["DOCUMENT_ROOT"]}/engine/uploads/__system/{$noimg}")) {
 			$noimg="/engine/uploads/__system/{$noimg}";
@@ -631,10 +632,10 @@ function aikiGetItemImg($Item,$idx=0,$noimg="") {
 		}
 	}
 	$image=$noimg;
-	if (isset($Item["images"])) {
-		if (!is_array($Item["images"])) {$Item["images"]=json_decode($Item["images"],true);}
-		if (!is_array($Item["images"])) {$Item["images"]=array();}
-		foreach($Item["images"] as $key => $img) {
+	if (isset($Item[$imgfld])) {
+		if (!is_array($Item[$imgfld])) {$Item[$imgfld]=json_decode($Item[$imgfld],true);}
+		if (!is_array($Item[$imgfld])) {$Item[$imgfld]=array();}
+		foreach($Item[$imgfld] as $key => $img) {
 			if (!isset($img["visible"])) {$img["visible"]=1;}
 			if ($res==false AND $img["visible"]==1 AND is_file("{$_SESSION["app_path"]}/uploads/{$Item["form"]}/{$Item["id"]}/{$img["img"]}")) {
 				if ($idx==$count) {
@@ -839,6 +840,7 @@ function engineSettingsRead() {
 		}}
 	}
 	if (!isset($_SESSION["settings"]["login"]) OR $_SESSION["settings"]["login"]=="") {$_SESSION["settings"]["login"]="admin"; $_SESSION["settings"]["pass"]="admin";}
+	return $_SESSION["settings"];
 }
 
 function aikiDatabaseConnect() {
@@ -1204,6 +1206,7 @@ function aikiGetTpl($tpl=NULL,$path=FALSE) {
 	$file=explode("/",$tpl); $file=$file[count($file)-1];
 	if ($path==FALSE) $_SESSION["tplpath"]=strtr($tpl,array($_SERVER["DOCUMENT_ROOT"]=>"",$file=>""));
 	aikiCheckCache($__page);
+	if ($path==false) aikiBaseHref($__page);
 	return $__page;
 }
 

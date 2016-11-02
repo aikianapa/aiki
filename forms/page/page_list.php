@@ -8,7 +8,7 @@
                   <th data-sort="header">Заголовок</th>
                 </tr>
               </thead>
-              <tbody  data-role="foreach" from="result" data-add="true" >
+              <tbody  data-role="foreach" form="page" data-add="true" data-sort="id" data-size="15">
                 <tr item="{{id}}">
                   <td>
 					<div class="dropdown">

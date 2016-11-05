@@ -1210,7 +1210,7 @@ function aikiGetTpl($tpl=NULL,$path=FALSE) {
 	return $__page;
 }
 
-function aikiBaseHref($__page) {
+function aikiBaseHref($__page,$path=false) {
 	if (!$__page->find("base")->length && $__page->find("head")->length) {
 		if (!isset($_SESSION["tplpath"])) {$_SESSION["tplpath"]="/";}
 		$_SESSION["tplpath"]=normalizePath($_SESSION["tplpath"]);

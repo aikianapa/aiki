@@ -1025,7 +1025,10 @@ function active_pagination(pid) {
 									$(document).trigger("after-pagination-done",[id,page,arr[2]]);
 									$("body").removeClass("cursor-wait");
 								},
-					error:		function(data){$("body").removeClass("cursor-wait");}
+					error:		function(data){
+						$("body").removeClass("cursor-wait");
+						(document).trigger("after-pagination-error",[id,page,arr[2]]);
+					}
 				});
 			}
 				$(this).parents("ul").find("li").removeClass("active");

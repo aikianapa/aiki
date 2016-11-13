@@ -1016,11 +1016,7 @@ abstract class kiNode
 				if (!$tag==FALSE && !$inc->hasClass("loaded")) {
 					if ($inc->has("[json]")) {$inc->json=contentSetValuesStr($inc->json,$Item);}
 					if ($inc->hasRole("variable")) {$Item=$inc->tagVariable($Item);} else {
-						if ($inc->is("[data-template=true]")) {
-							$tplid=uniqId();
-							$inc->attr("data-template",$tplid);
-							$inc->after("<textarea id='{$tplid}' style='display:none;'>".urlencode($inc->innerHtml())."</textarea>");
-						}
+						if ($inc->is("[data-template=true]")) {	$inc->addTemplate();}
 						$inc->contentProcess($Item,$tag);					
 						//if (isset($_SESSION["itemAfterWhere"])) {$Item=$_SESSION["itemAfterWhere"]; unset($_SESSION["itemAfterWhere"]);}
 					}
@@ -1574,12 +1570,13 @@ abstract class kiNode
 			$this->attr("data-template",$tplid);
 			$that=$this->clone();
 			$that->removeClass("loaded");
-			$this->after("<textarea id='{$tplid}' style='display:none;'>".urlencode($that->$type())."</textarea>");
+			if ($type=="innerHtml") {$tpl=urlencode($that->innerHtml());} else {$tpl=urlencode($that->outerHtml());}
+			$this->after("<textarea data-role='template' id='{$tplid}' style='display:none;'>{$tpl}</textarea>");
 	}
 
 
 	function tagForeach($Item=array()) {
-		if (!$this->is("[data-template]") && ($this->is("[data-add=true]") OR $this->is("[data-size]")) ) {$this->addTemplate();}
+		if (!$this->is("[data-template]")) {$this->addTemplate(); }
 		$srcItem=$Item;
 		$pagination="";
 		$sort=$this->attr("sort");
@@ -1605,7 +1602,7 @@ abstract class kiNode
 		$find=$this->attr("data-find"); // контекстный поиск
 		$tplid=$this->attr("data-template");
 		$beforeShow=$this->attr("data-before-show"); 
-		if ($from>"" && isset($Item[$from]) && $this->hasRole("foreach")) {
+		if ($from>"" && isset($Item[$from]) && $this->hasRole("foreach") && $cache=="") {
 			if ($this->attr("form")=="" && isset($Item["form"])) {$form=$Item["form"];} else {$form="";}
 			if ($this->attr("item")=="" && isset($Item["id"])) {$item=$Item["id"];} else {$item="";}
 			$Item=$Item[$from];
@@ -1621,7 +1618,7 @@ abstract class kiNode
 		$json=$this->attr("json"); 	if ($json>"") {$Item=json_decode($json,true);}
 		$index=$this->attr("index");
 
-		if (($this->attr("form")>"" OR $this->attr("data-form")>"") && $from=="" ) {
+		if (($this->attr("form")>"" OR $this->attr("data-form")>"") && $from==""  && $cache=="") {
 			$form=$this->attr("form"); if ($form=="") {$form=$this->attr("data-form");}
 			$type=$this->attr("data-type"); if ($type>"") {$_SESSION[$form]["data-type-tmp"]=$type;}
 			formCurrentInclude($form);

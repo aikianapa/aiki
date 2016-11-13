@@ -160,7 +160,9 @@ function contentAppends($__page) {
 	$__page->ContentSetData();
 	comAdminMenu($__page);
 	if ($engine==true OR $_SESSION["settings"]["jquery"]=="on") {
-			$__page->find("head")->prepend('<script src="/engine/js/jquery-2.1.3.min.js"></script>');}
+			$__page->find("head")->prepend('<script src="/engine/js/jquery.min.js"></script>');
+			$__page->find("body")->append('<script src="/engine/js/modernizr-2.8.3.min.js"></script>');
+			}
 	if ($engine==true OR $_SESSION["settings"]["jqueryui"]=="on") {
 			$__page->find("head script:last")->after('<script src="/engine/js/jquery-ui.min.js"></script>');}
 	if ($engine==true OR $_SESSION["settings"]["bootstrap"]=="on") {
@@ -180,8 +182,6 @@ function contentAppends($__page) {
 	if ($engine==true OR $_SESSION["settings"]["appuiplugins"]=="on") {
 			$__page->find("head")->append('<link rel="stylesheet" href="/engine/appUI/css/plugins.css">');
 			$__page->find("body")->append('<script src="/engine/appUI/js/plugins.js" data="appUIplugins"></script>');}
-
-	$__page->find("body")->append('<script src="/engine/js/modernizr-2.8.3.min.js"></script>');
 
 	if (isset($Item["meta_keywords"])) {
 		$__page->find("head meta[name=keywords]")->remove();
@@ -822,12 +822,17 @@ function engineSettingsRead() {
 			if ($domain[0]!="www") {
 				$_SESSION["project"]=$domain[0];
 				$_SESSION["app_path"].="/projects/".$domain[0];
-				$settings=fileReadItem("admin","settings");
+				$settings=fileReadItem("admin","settings".$_SESSION["project"]);
+				if (isset($_SESSION["settings"]["variables"])) {
+					foreach($_SESSION["settings"]["variables"] as $key => $val) {unset($_SESSION["key"]);}
+				}
+				foreach($_SESSION["settings"] as $key => $val) {unset($_SESSION["key"]);}
 			}
 		} else {
 			$_SESSION["project"]="";
 		}
 	}
+	
 	if (isset($settings["elogin"]) AND $settings["elogin"]=="on") {
 		$settings["elogin"]="email";
 	} else { $settings["elogin"]="login";}
@@ -1097,7 +1102,7 @@ function aikiLogin() {
 			if (isset($_POST["login-remember-me"]) && $_POST["login-remember-me"]=="on") {setcookie("user_id",$_SESSION["user_id"],time()+3600*24*30,"/");}
 			$role=dict_filter_value("user_role","code",$_SESSION["user_role"]);
 			$redirect=$role["redirect"];
-			header("Refresh: 0; URL=http://{$_SERVER["HTTP_HOST"]}{$redirect}");
+			header("Refresh: 0; URL={$_SERVER["HTTP_SCHEME"]}{$redirect}");
 			echo "Вход успешно выполнен, ждите...";
 			die;
 		}
@@ -1775,7 +1780,6 @@ function comSession() {
 	if (!is_file($_SESSION["app_path"]."/contents/dict/user_role")) {
 		copy("{$_SESSION["engine_path"]}/uploads/__contents/dict/user_role",$_SESSION["app_path"]."/contents/dict/user_role");
 	}
-	if ($_SERVER["SCRIPT_NAME"]=="/engine/index.php") {unset($_SESSION["data"]["foreach"]);}
 }
 
 function comAdminMenu($__page) {

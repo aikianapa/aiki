@@ -62,8 +62,8 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
 				$dir_array[ $i ]["isExpanded"]=false;
 				$dir_array[ $i ]["isLazy"]=true;
 				$dir_array[ $i ]["text"]=$d;
-				$dir_array[ $i ]["href"]=$dir."/".$d;
-				$dir_array[ $i ]["hrefTarget"]=$dir."/";
+				$dir_array[ $i ]["href"]=$dir."/".$d."/";
+				$dir_array[ $i ]["hrefTarget"]=$dir;
 				//$dir_array[ $i ]["children"] = getDirectoryJson( $outerDir."/".$d , $x);
 			} else {
 				preg_match("/{$x}/",$d,$tmp);
@@ -72,7 +72,7 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
 					$dir_array[ $i ]["isActive"]=false;
 					$dir_array[ $i ]["isFolder"]=false;
 					$dir_array[ $i ]["href"]=$dir."/".$d;
-					$dir_array[ $i ]["hrefTarget"]=$dir."/";
+					$dir_array[ $i ]["hrefTarget"]=$dir;
 					$dir_array[ $i ]["text"]=$d;					
 					//$dir_array[ $d ] = $d;
 				}

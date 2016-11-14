@@ -1,4 +1,4 @@
-<div class="row" data-allow="admin" id="sourceList">
+<div class="content" data-allow="admin" id="sourceList">
 	<div class="col-xs-12 sourcePanels">
 		<div class="col-xs-6">
 			<div class="panel panel-default l active">
@@ -13,14 +13,14 @@
 		</div>
 		
 		<div class="col-xs-12 sourceButtons">
-			<a class="btn btn-info btn-sm btnDir 	ePanel eDir eFile"	>Создать каталог</a>
-			<a class="btn btn-info btn-sm btnFile 	ePanel eDir eFile"	>Создать файл</a> 
-			<a class="btn btn-info btn-sm btnLink 	ePanel eDir eFile"	>Создать ссылку</a> 
-			<a class="btn btn-info btn-sm btnRen 	eDir eFile"			>Переименовать</a> 
-			<a class="btn btn-info btn-sm btnEdit 	eFile"				>Редактировать</a> 
-			<a class="btn btn-info btn-sm btnView 	eFile"				>Просмотреть</a>
-			<a class="btn btn-info btn-sm btnCopy	eDir eFile"			>Копировать</a> 
-			<a class="btn btn-info btn-sm btnDel	eDir eFile"			>Удалить</a> 
+			<a class="btn btn-info btn-sm btnDir 	ePanel eDir eFile"	><i class="fa fa-folder-o"></i><span class="hidden-xs"> Создать каталог</span></a>
+			<a class="btn btn-info btn-sm btnFile 	ePanel eDir eFile"	><i class="fa fa-file-o"></i><span class="hidden-xs"> Создать файл</span></a> 
+			<a class="btn btn-info btn-sm btnLink 	ePanel eDir eFile"	><i class="fa fa-link"></i><span class="hidden-xs"> Создать ссылку</span></a> 
+			<a class="btn btn-info btn-sm btnRen 	eDir eFile"			><i class="fa fa-retweet"></i><span class="hidden-xs"> Переименовать</span></a> 
+			<a class="btn btn-info btn-sm btnEdit 	eFile"				><i class="fa fa-edit"></i><span class="hidden-xs"> Редактировать</span></a> 
+			<a class="btn btn-info btn-sm btnView 	eFile"				><i class="fa fa-search-plus"></i><span class="hidden-xs"> Просмотреть</span></a>
+			<a class="btn btn-info btn-sm btnCopy	eDir eFile"			><i class="fa fa-clone"></i><span class="hidden-xs"> Копировать</span></a> 
+			<a class="btn btn-info btn-sm btnDel	eDir eFile"			><i class="fa fa-trash-o"></i><span class="hidden-xs"> Удалить</span></a> 
 		</div>
 		<div data-role="include" src="modal" data-id="sourcePanelAction" data-formsave="false" data-hide="*"></div>
 		
@@ -308,7 +308,7 @@ function sourceNodeClick() {
 		var node=$(this).children(".easytree-node").attr("id");
 		if ($(this).parents(".sourceTree").parent(".panel").hasClass("l")) {
 				easytree=leftTree; nodes=leftNodes;
-		} else {easytree=rightNodes;nodes=rightNodes;}
+		} else {easytree=rightTree; nodes=rightNodes;}
 		var obj=easytree.getNode(node);
 
 		var path=obj.hrefTarget;

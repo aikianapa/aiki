@@ -145,7 +145,7 @@
 <script data-allow="admin">
 // Tree plugin, for more examples you can check out http://www.easyjstree.com/
 
-$(function(){
+$(document).ready(function(){
 	$("#sourceModal").addClass("sourceModal");
 	$("#sourceModal").noSelect();
 	$("#sourceList .sourceTree :not(li span)").noSelect();
@@ -157,37 +157,48 @@ $(function(){
 	$("#sourceList .sourcePanels .l .sourceTree").attr("id","leftTree");
 	$("#sourceList .sourcePanels .r .sourceTree").attr("id","rightTree");
 	
-	var leftTree=$("#sourceList #leftTree").easytree({
-			ordering: 'orderedFolder',
-			enableDnd: true,
-            dropped: sourceDrop
-			//disableIcons:true
-	});
+	var leftNodes, rightNodes, leftTree, rightTree;
+	var defr=sourceGetDir('');
+	defr.done(function(d){
+		leftTree=$("#sourceList #leftTree").easytree({
+				ordering: 'orderedFolder',
+				enableDnd: true,
+				dropped: sourceDrop,
+				openLazyNode: sourceLazyNode,
+				opened: sourceOpenedNode,
+				data: $("#sourceList").data("dirlist")
+				//disableIcons:true
+		});
 
-	var rightTree=$("#sourceList #rightTree").easytree({
-			ordering: 'orderedFolder',
-			enableDnd: true,
-            dropped: sourceDrop
-			//disableIcons:true
+		rightTree=$("#sourceList #rightTree").easytree({
+				ordering: 'orderedFolder',
+				enableDnd: true,
+				dropped: sourceDrop,
+				openLazyNode: sourceLazyNode,
+				opened: sourceOpenedNode,
+				data: $("#sourceList").data("dirlist")
+				//disableIcons:true
+		});
+		$("#sourceList").data("dirlist","");
+		leftNodes=leftTree.getAllNodes();
+		rightNodes=rightTree.getAllNodes();
 	});
 	
-	var leftNodes=leftTree.getAllNodes();
-	var rightNodes=rightTree.getAllNodes();
+
+		
+		$(document).data("sourceFile",null);
+		var theme=getcookie("sourceEditorTheme");
+		var fsize=getcookie("sourceEditorFsize")*1;
+		if (theme==undefined || theme=="") {var theme="ace/theme/chrome"; 	setcookie("sourceEditorTheme",theme);}
+		if (fsize==undefined || fsize=="") {var fsize=12; 					setcookie("sourceEditorFsize",fsize);}
+		if ($(document).data("sourceClipboard")==undefined) {$(document).data("sourceClipboard","");}
 
 
+
+		editor=aikiCallSourceEditor();
+		editor.setTheme(theme);
+		editor.setFontSize(fsize);
 	
-	$(document).data("sourceFile",null);
-	var theme=getcookie("sourceEditorTheme");
-	var fsize=getcookie("sourceEditorFsize")*1;
-	if (theme==undefined || theme=="") {var theme="ace/theme/chrome"; 	setcookie("sourceEditorTheme",theme);}
-	if (fsize==undefined || fsize=="") {var fsize=12; 					setcookie("sourceEditorFsize",fsize);}
-	if ($(document).data("sourceClipboard")==undefined) {$(document).data("sourceClipboard","");}
-
-
-
-	editor=aikiCallSourceEditor();
-	editor.setTheme(theme);
-	editor.setFontSize(fsize);
 
 	
 	$(document).undelegate("#sourceModal .nav-tabs li:not(.active) a","click");
@@ -203,8 +214,8 @@ $(function(){
 		}
 	});
 
-    $('.sourceTree li').unbind("click");
-    $('.sourceTree li').on("click",function(e) {
+    $(document).undelegate('.sourceTree li',"click");
+    $(document).delegate('.sourceTree li',"click",function(e) {
         e.stopPropagation();
     });
 
@@ -242,14 +253,36 @@ function sourceDrop(event, nodes, isSourceNode, source, isTargetNode, target) {
 	
 }
 
-function sourceNodeClick() {
-	$("#sourceList .sourceTree li").on("click",function(e){
-		var node=$(this).children(".easytree-node").attr("id");
-		if ($(this).parents(".sourceTree").parent(".panel").hasClass("l")) {
-				easytree=leftTree; nodes=leftNodes;
-		} else {easytree=rightTree;nodes=rightNodes;}
-		var obj=easytree.getNode(node);
+function sourceLazyNode(event, nodes, node, hasChildren) {
+	$("body").addClass("cursor-wait");
+	node.lazyUrl = "/engine/forms/source/source.php?mode=ajax&action=getdir&dir="+node.href;
+}
 
+function sourceOpenedNode(event, nodes, node, hasChildren) {
+	$("body").removeClass("cursor-wait");
+}
+
+
+function sourceGetDir(dir) {
+	var d = $.Deferred();
+	var res;
+	$("body").addClass("cursor-wait");
+	$.get("/engine/forms/source/source.php?mode=ajax&action=getdir&dir="+dir,function(data){
+		$("#sourceList").data("dirlist",data);
+		d.resolve();
+		$("body").removeClass("cursor-wait");
+	});
+	return d;
+}
+
+function sourceNodeClick() {
+	$(document).undelegate("#sourceList .sourceTree li","click");
+	$(document).delegate("#sourceList .sourceTree li","click",function(e){
+		var node=$(this).children(".easytree-node").attr("id");
+		if ($(this).parents(".panel").hasClass("l")) {
+				var easytree=leftTree; nodes=leftNodes;
+		} else {var easytree=rightTree;nodes=rightNodes;}
+		var obj=easytree.getNode(node);
 		var name=obj.text;
 		if (obj.isFolder==true) {var path=obj.href;} else {var path=obj.hrefTarget;}
 		if (path=="") {path="/";}
@@ -261,7 +294,7 @@ function sourceNodeClick() {
 		return false;
 	});	
 	
-	$("#sourceList .sourceTree li span").on("click",function(e){
+	$(document).delegate("#sourceList .sourceTree li span","click",function(e){
 		$("#sourceList .sourcePanels .panel").removeClass("active");
 		$(this).parents(".panel").find("li").removeClass("active");
 		$(this).parents(".panel").addClass("active");
@@ -270,9 +303,8 @@ function sourceNodeClick() {
 		e.preventDefault();
 	});	
 	
-	$("#sourceList .sourceTree li").unbind("dblclick");
-	$("#sourceList .sourceTree li").on("dblclick",function(){
-
+	$(document).undelegate("#sourceList .sourceTree li","dblclick");
+	$(document).delegate("#sourceList .sourceTree li","dblclick",function(){
 		var node=$(this).children(".easytree-node").attr("id");
 		if ($(this).parents(".sourceTree").parent(".panel").hasClass("l")) {
 				easytree=leftTree; nodes=leftNodes;
@@ -347,6 +379,7 @@ function sourceListButtons() {
 		var _name=$(_tree).data("name");
 		var _node=$(_tree).data("node");
 
+		if (_path==undefined) {_path="/";}
 
 		if ($(tree).parent(".panel").hasClass("l")) {
 				var easytree=leftTree; 			var _easytree=rightTree; 

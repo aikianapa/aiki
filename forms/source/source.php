@@ -54,7 +54,6 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
     foreach( $dirs as $d ){
         if (!in_array($d,$exclude)) {
 			$dir=substr($outerDir,strlen($_SESSION["app_path"]));
-			
 			if( is_dir($outerDir."/".$d)  ){
 				$dir_array[ $i ]["id"]=null;
 				$dir_array[ $i ]["isFolder"]=true;
@@ -63,18 +62,46 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
 				$dir_array[ $i ]["isLazy"]=true;
 				$dir_array[ $i ]["text"]=$d;
 				$dir_array[ $i ]["href"]=$dir."/".$d."/";
+				$dir_array[ $i ]["uiIcon"]="fa fa-folder-o";
 				$dir_array[ $i ]["hrefTarget"]=$dir;
 				//$dir_array[ $i ]["children"] = getDirectoryJson( $outerDir."/".$d , $x);
 			} else {
 				preg_match("/{$x}/",$d,$tmp);
 				if (isset($tmp[0])) {
+					$ext=explode(".",$d); $ext=$ext[count($ext)-1];
+					
+					switch($ext) {
+						case "js"; case "php";
+							$ico="fa fa-file-code-o";
+							break;
+						case "pdf";
+							$ico="fa fa-file-pdf-o";
+							break;
+						case "jpeg"; case "jpg"; case "png"; case "gif"; case "tif"; case "tiff";  case "bmp";  case "svg";
+							$ico="fa fa-file-image-o";
+							break;
+						case "zip"; case "arj"; case "tar"; case "gz"; case "rar"; 
+							$ico="fa fa-file-archive-o";
+							break;
+						case "mov"; case "avi"; case "wmv"; case "mpeg"; case "mp4";
+							$ico="fa fa-file-movie-o";
+							break;
+						case "txt"; case "log"; case "css";
+							$ico="fa fa-file-text-o";
+							break;
+						default; 
+							$ico="fa fa-file-o"; 
+							break;
+						
+					}
+					
 					$dir_array[ $i ]["id"]=null;
 					$dir_array[ $i ]["isActive"]=false;
 					$dir_array[ $i ]["isFolder"]=false;
 					$dir_array[ $i ]["href"]=$dir."/".$d;
 					$dir_array[ $i ]["hrefTarget"]=$dir;
-					$dir_array[ $i ]["text"]=$d;					
-					//$dir_array[ $d ] = $d;
+					$dir_array[ $i ]["uiIcon"]=$ico;
+					$dir_array[ $i ]["text"]=$d;
 				}
 			}
 			$i++;

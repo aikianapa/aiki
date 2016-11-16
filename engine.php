@@ -15,6 +15,7 @@ aikiSettingsRead();
 aikiDatabaseConnect();
 aikiLogin();
 if (is_file("{$_SESSION["app_path"]}/functions.php")) {	include_once("{$_SESSION["app_path"]}/functions.php");}
+if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 if (is_callable("aikiBeforeEngine")) {$Item=aikiBeforeEngine($__page,$Item);}
 if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 	$form="page"; $mode="show"; $item="home";
@@ -79,7 +80,6 @@ if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 				if (!is_object($__page)) {$__page=ki::fromString($__page); }
 				$call="_{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=@$call($Item);}
 				$call="{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=@$call($Item);}
-
 				$__page->contentSetData($Item);
 				$call=$form."ChangeHtml"; if (is_callable($call)) {$call($__page,$Item);}
 				$__page->contentTargeter($Item);
@@ -105,5 +105,7 @@ if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 		aikiBaseHref($__page);
 	}
 }
+}
 if (is_callable("aikiAfterEngine")) {$Item=aikiAfterEngine($__page,$Item);}
+
 ?>

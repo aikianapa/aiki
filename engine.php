@@ -14,6 +14,7 @@ comPathCheck();
 aikiSettingsRead();
 aikiDatabaseConnect();
 aikiLogin();
+
 if (is_file("{$_SESSION["app_path"]}/functions.php")) {	include_once("{$_SESSION["app_path"]}/functions.php");}
 if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 if (is_callable("aikiBeforeEngine")) {$Item=aikiBeforeEngine($__page,$Item);}

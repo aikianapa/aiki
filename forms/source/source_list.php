@@ -129,6 +129,7 @@
     #sourceEditor {position: relative;}
     .sourceTree {overflow-x:auto; margin-right:10px;}
     .sourceTree .easytree-exp-c > .fa-folder-o::before {content:"\f114";}
+    .sourceTree .easytree-exp-cl > .fa-folder-o::before {content:"\f114";}
     .sourceTree .easytree-exp-e > .fa-folder-o::before {content:"\f115";}
     #sourceModal .panel {border-radius:0; border:0;}
     #sourceModal .nav-tabs li a {padding: 5px 10px;}

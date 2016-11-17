@@ -286,7 +286,6 @@ function sourceNodeClick() {
 				var easytree=leftTree; nodes=leftNodes;
 		} else {var easytree=rightTree;nodes=rightNodes;}
 		var obj=easytree.getNode(node);
-		console.log(obj);
 		var name=obj.text;
 		if (obj.isFolder==true) {var path=obj.href;} else {var path=obj.hrefTarget;}
 		if (path=="") {path="/";}
@@ -560,6 +559,9 @@ function sourceUpdateTree(path,name,mode) {
 			sourceNode.isFolder = true;
 			sourceNode.href=href;
 			sourceNode.hrefTarget=path;
+			sourceNode.uiIcon="fa fa-folder-o";
+			sourceNode.isExpanded=false;
+			sourceNode.isLazy=true;
 			leftTree.addNode(sourceNode, targetId);
 			leftTree.rebuildTree();
 	}
@@ -568,7 +570,8 @@ function sourceUpdateTree(path,name,mode) {
 			sourceNode.text = name;
 			sourceNode.isFolder = false;
 			sourceNode.href=href;
-			sourceNode.hrefTarget=path;
+			sourceNode.hrefTarget=path+"/";
+			sourceNode.uiIcon="fa fa-file-o";
 			leftTree.addNode(sourceNode, targetId);
 			leftTree.rebuildTree();
 	}

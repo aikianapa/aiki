@@ -18,8 +18,8 @@ function admin__settings() {
 		$out->find("select[name=checkout]")->parents(".form-group")->remove();
 	}
 	$Item["tpllist"]=aikiListTpl();
+	$Item["formlist"]=aikiListForms();
 	$out->contentSetData($Item);
 	return $out->htmlOuter();
 }
-
 ?>

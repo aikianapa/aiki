@@ -54,6 +54,7 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
     foreach( $dirs as $d ){
         if (!in_array($d,$exclude)) {
 			$dir=substr($outerDir,strlen($_SESSION["app_path"]));
+			if ($dir=="") $dir="/";
 			if( is_dir($outerDir."/".$d)  ){
 				$dir_array[ $i ]["id"]=null;
 				$dir_array[ $i ]["isFolder"]=true;
@@ -61,7 +62,7 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
 				$dir_array[ $i ]["isExpanded"]=false;
 				$dir_array[ $i ]["isLazy"]=true;
 				$dir_array[ $i ]["text"]=$d;
-				$dir_array[ $i ]["href"]=$dir."/".$d."/";
+				$dir_array[ $i ]["href"]=$dir.$d."/";
 				$dir_array[ $i ]["uiIcon"]="fa fa-folder-o";
 				$dir_array[ $i ]["hrefTarget"]=$dir;
 				//$dir_array[ $i ]["children"] = getDirectoryJson( $outerDir."/".$d , $x);

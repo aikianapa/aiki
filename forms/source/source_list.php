@@ -286,6 +286,7 @@ function sourceNodeClick() {
 				var easytree=leftTree; nodes=leftNodes;
 		} else {var easytree=rightTree;nodes=rightNodes;}
 		var obj=easytree.getNode(node);
+		console.log(obj);
 		var name=obj.text;
 		if (obj.isFolder==true) {var path=obj.href;} else {var path=obj.hrefTarget;}
 		if (path=="") {path="/";}

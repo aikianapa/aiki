@@ -115,7 +115,9 @@
 	</div>
 	<div id="adminForms" class="tab-pane" data-allow="admin">
 			<div data-role="multiinput" name="forms" class="ui-sortable">
-			<input name='name' type='text' placeholder="Имя формы">
+			<select name='name' type='text' placeholder="Имя формы" data-role="foreach" from="formlist">
+				<option value="{{0}}">{{0}}</option>
+			</select>
 			<input name='descr' type='text' placeholder="Описание">
 			<input name='allow' type='text' placeholder="Доступ разрешён (data-allow)">
 			<input name='disallow' type='text' placeholder="Доступ запрещён (data-disallow)">

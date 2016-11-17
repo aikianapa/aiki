@@ -530,6 +530,53 @@ $list=array_sort($list);
 return $list;
 }
 
+function aikiListForms() {
+	$exclude=array("common","admin","source");
+	$list=array();
+	$eList=aikiListFilesRecursive($_SESSION["engine_path"] ."/forms");
+	$aList=aikiListFilesRecursive($_SESSION["app_path"] ."/forms");
+	$arr=$eList; foreach($aList as $a) {$arr[]=$a;}
+	unset($eList,$aList);
+	foreach($arr as $i => $name) {
+			$inc=strpos($name,".inc");
+			$ext=explode(".",$name); $ext=$ext[count($ext)-1];
+			$name=substr($name,0,-(strlen($ext)+1));
+			$name=explode("_",$name); $name=$name[0];
+			if ($ext=="php" && !$inc && !in_array($name,$exclude)) {
+				$exclude[]=$list[]=$name;
+			}
+	}
+	unset($arr);
+	return $list;
+}
+
+function aikiListFilesRecursive($dir,$path=false) {
+   $list = array();
+   $stack[] = $dir;
+   while ($stack) {
+       $thisdir = array_pop($stack);
+       if ($dircont = scandir($thisdir)) {
+           $i=0; $idx=0;
+           while (isset($dircont[$i])) {
+               if ($dircont[$i] !== '.' && $dircont[$i] !== '..') {
+                   $current_file = "{$thisdir}/{$dircont[$i]}";
+                   if (is_file($current_file)) {
+					   if ($path==true) {
+							$list[$idx]["file"] = "{$dircont[$i]}"; 
+							$list[$idx]["path"] = "{$thisdir}"; 
+						} else { $list[] = "{$dircont[$i]}"; }
+                       $idx++;
+                   } elseif (is_dir($current_file)) {
+						$stack[] = $current_file;
+                   }
+               }
+               $i++;
+           }
+       }
+   }
+   return $list;
+}
+
 
 function aikiTableProcessor($out) {
 	$data=array(); $grps=array(); $total=array(); $grand=array();

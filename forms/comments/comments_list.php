@@ -12,7 +12,7 @@
                   <th>Запись</th>
                 </tr>
               </thead>
-              <tbody  id="comments_list" data-role="foreach" form="comments" data-sort="date:d" data-pagination="15" data-add="true">
+              <tbody  id="comments_list" data-role="foreach" form="comments" data-sort="date:d" data-size="15" data-add="true">
 				<meta data-role="variable" where=' visible =  "on" ' var="class" value="">
 				<meta data-role="variable" where=' visible <> "on" ' var="class" value="text-danger">
                 <tr item="{{id}}" class="{{class}}">

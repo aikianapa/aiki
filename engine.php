@@ -3,12 +3,16 @@ ini_set('display_errors', 0	);
 if(!isset($_SESSION["SESSID"])) { session_start();}
 if (!isset($_SESSION["SESSID"])) {$_SESSION["SESSID"]=session_id();} else {session_id($_SESSION["SESSID"]);}
 if (!isset($aiki_projects)) {$_SESSION["projects"]=FALSE;}	else {$_SESSION["projects"]=$aiki_projects;}
+if (!isset($_GET["form"])) {$_GET["form"]="";}
+if (!isset($_GET["mode"])) {$_GET["mode"]="";}
+if (!isset($_GET["item"])) {$_GET["item"]="";}
 $_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
+$_ENV["cache"]=array("_readitem"=>array(),"_fileds"=>array());
 $tmp=explode("?",$_SERVER["REQUEST_URI"]);
 if (isset($tmp[1])) {parse_str($tmp[1],$get); $_GET=(array)$_GET+(array)$get; unset($tmp,$get);}
 include_once("{$_SESSION["engine_path"]}/functions.php");
 $__page=aikiFromString("");
-$Item=array(); $form=""; $mode=""; $id=""; $error=null;
+$Item=array(); $form=""; $mode=""; $id=""; $error=null; $tpl="";
 comSession();
 comPathCheck();
 aikiSettingsRead();
@@ -30,7 +34,7 @@ if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 		include_once("{$_SESSION["engine_path"]}/forms/common/common.php");
 		$Item=$_SESSION["Item"]=aikiReadItem($form,$item);
 		if ($_SESSION["error"]=="noitem") {$error="noitem";} else {
-			if (isset($Item["template"])) {$tpl=$Item["template"];} else {$tpl="";}
+			if (isset($Item["template"])) {$tpl=$Item["template"];} 
 		}
 	}
 	if ($_SESSION["error"]=="noitem") {$empty=1;} else {$empty=0;}

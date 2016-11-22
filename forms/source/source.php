@@ -63,7 +63,7 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
 				$dir_array[ $i ]["isLazy"]=true;
 				$dir_array[ $i ]["text"]=$d;
 				$dir_array[ $i ]["href"]=$dir.$d."/";
-				$dir_array[ $i ]["uiIcon"]="fa fa-folder-o";
+				$dir_array[ $i ]["uiIcon"]="fa fa-folder-o text-primary";
 				$dir_array[ $i ]["hrefTarget"]=$dir;
 				//$dir_array[ $i ]["children"] = getDirectoryJson( $outerDir."/".$d , $x);
 			} else {
@@ -101,7 +101,7 @@ function getDirectoryJson( $outerDir , $x, $exclude=array()){
 					$dir_array[ $i ]["isFolder"]=false;
 					$dir_array[ $i ]["href"]=$dir.$d;
 					$dir_array[ $i ]["hrefTarget"]=$dir;
-					$dir_array[ $i ]["uiIcon"]=$ico;
+					$dir_array[ $i ]["uiIcon"]=$ico."  text-primary" ;
 					$dir_array[ $i ]["text"]=$d;
 				}
 			}

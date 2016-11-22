@@ -16,7 +16,7 @@ if (!include_once(dirname(__FILE__).'/phpthumb.functions.php')) {
 }
 ob_end_clean();
 
-class phpthumb {
+class phpthumbclass {
 
 	// public:
 	// START PARAMETERS (for object mode and phpThumb.php)

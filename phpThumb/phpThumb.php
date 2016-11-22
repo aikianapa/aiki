@@ -130,7 +130,7 @@ if (!include_once(dirname(__FILE__).'/phpthumb.class.php')) {
 	die('failed to include_once("'.realpath(dirname(__FILE__).'/phpthumb.class.php').'")');
 }
 ob_end_clean();
-$phpThumb = new phpThumb();
+$phpThumb = new phpThumbClass();
 $phpThumb->DebugTimingMessage('phpThumb.php start', __FILE__, __LINE__, $starttime);
 $phpThumb->SetParameter('config_error_die_on_error', true);
 

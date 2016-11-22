@@ -109,7 +109,7 @@ function users__activation() {
 }
 
 function _usersAfterReadItem($Item) {
-	if ($_GET["mode"]=="list") {
+	if (isset($_GET["mode"]) && $_GET["mode"]=="list") {
 		if (!isset($Item["active"])) {$Item["active"]="";}
 		if ($Item["active"]!="on") {$Item["active"]="off";}
 	}

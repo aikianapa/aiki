@@ -19,7 +19,8 @@ function aikiBeforeShowItem($Item,$mode="show",$form=null) {
 }
 
 function aikiCallFormFunc($name,$Item,$form=null,$mode=null) {
-	
+	if (!isset($_GET["mode"])) {$_GET["mode"]="";}
+	if (!isset($_GET["form"])) {$_GET["form"]="";}
 	if ($mode==null) {$mode=$_GET["mode"];}
 	if ($mode=="") {$mode="list";}
 	if ($form==null) {
@@ -210,7 +211,7 @@ function contentSetValuesStr($tag="",$Item=array(), $limit=2)
 		$exit = false;
 		$err = false;
 		$nIter = 0;
-		$mask = '`(\{\{){1,1}(%*[\w\d]+|_form|_mode|_item|((_SETT|_SETTINGS|_SESS|_SESSION|_SRV|_COOK|_COOKIE|_GET|_POST|%*[\w\d]+)?([\[]{1,1}(%*[\w\d]+|"%*[\w\d]+")[\]]{1,1})*))(\}\}){1,1}`u';
+		$mask = '`(\{\{){1,1}(%*[\w\d]+|_form|_mode|_item|((_SETT|_SETTINGS|_SESS|_SESSION|_SRV|_COOK|_COOKIE|$_ENV|_REQ|_GET|_POST|%*[\w\d]+)?([\[]{1,1}(%*[\w\d]+|"%*[\w\d]+")[\]]{1,1})*))(\}\}){1,1}`u';
 		while(!$exit) {
 			$nUndef = 0;
 			$nSub = preg_match_all($mask, $tag, $res, PREG_OFFSET_CAPTURE);				// найти все вставки, не содержащие в себе других вставок
@@ -245,8 +246,14 @@ function contentSetValuesStr($tag="",$Item=array(), $limit=2)
 							case '_COOKIE':
 								$sub = '$_COOKIE';
 								break;
+							case '_REQ':
+								$sub = '$_REQUEST';
+								break;
 							case '_GET':
 								$sub = '$_GET';
+								break;
+							case '_ENV':
+								$sub = '$_ENV';
 								break;
 							case '_SRV':
 								$sub = '$_SERVER';
@@ -651,7 +658,7 @@ function aikiTableProcessor($out) {
 		$tbody->append($inner);
 	}
 	// выводим общий итог
-	if (count($grp["total"])>0) {
+	if (isset($grp["total"]) && count($grp["total"])>0) {
 		$grtot=aikiFromString("<tr>".$out->find("tr:eq({$idx})")->html()."</tr>");
 		$grtot->find("tr")->addClass("data-grand-total info");
 		$tmp=$grtot->find("td"); foreach($tmp as $temp) {$temp->html("");}
@@ -663,8 +670,8 @@ function aikiTableProcessor($out) {
 				$grfld->addClass("data-total");
 			}
 		}
+		$tbody->append($grtot);
 	}
-	$tbody->append($grtot);
 	$out->html($tbody->innerHtml());
 }
 
@@ -1029,17 +1036,23 @@ function ReadItem($form,$id,$datatype="file") {
 }
 
 function aikiReadItem($form=null,$id=null,$func=true) {
-		$Item=array();
-		if ($form==null && isset($_GET["form"])) {$form=$_GET["form"];}
-		if ($id==null && isset($_GET["id"])) {$id=$_GET["id"];}
-		if (isset($_SESSION["settings"]["store"]) AND $_SESSION["settings"]["store"]=="on") {$datatype="mysql";} else {$datatype="file";}
-		$read=$datatype."ReadItem";
-		if ($datatype=="file") {
-			if ($form!==null && $id!==null) $Item=$read($form,$id,false,$func); // доп.параметр
+		if (!isset($_ENV["cache"]["_readitem"][$form])) {$_ENV["cache"]["_readitem"][$form]=array();}
+		if (!isset($_ENV["cache"]["_readitem"][$form][$id]) && $id!=="_new") {
+			$Item=array();
+			if ($form==null && isset($_GET["form"])) {$form=$_GET["form"];}
+			if ($id==null && isset($_GET["id"])) {$id=$_GET["id"];}
+			if (isset($_SESSION["settings"]["store"]) AND $_SESSION["settings"]["store"]=="on") {$datatype="mysql";} else {$datatype="file";}
+			$read=$datatype."ReadItem";
+			if ($datatype=="file") {
+				if ($form!==null && $id!==null) $Item=$read($form,$id,false,$func); // доп.параметр
+			} else {
+				if ($form!==null && $id!==null) $Item=$read($form,$id,$func);
+			}
+			if (!isset($Item["id"]) OR $Item["id"]=="_new") {$Item["id"]=newIdRnd();}
+			$_ENV["cache"]["_readitem"][$form][$id]=$Item;
 		} else {
-			if ($form!==null && $id!==null) $Item=$read($form,$id,$func);
+			$Item=$_ENV["cache"]["_readitem"][$form][$id];
 		}
-		if ($Item["id"]=="_new") {$Item["id"]=newIdRnd();}
 	return $Item;
 }
 
@@ -1137,7 +1150,7 @@ function aikiLogin() {
 			if (isset($_POST["login-remember-me"]) && $_POST["login-remember-me"]=="on") {setcookie("user_id",$_SESSION["user_id"],time()+3600*24*30,"/");}
 			$role=dict_filter_value("user_role","code",$_SESSION["user_role"]);
 			$redirect=$role["redirect"];
-			header("Refresh: 0; URL={$_SERVER["HTTP_SCHEME"]}{$redirect}");
+			header("Refresh: 0; URL={$_SERVER["REQUEST_SCHEME"]}://{$_SERVER["HTTP_HOST"]}{$redirect}");
 			echo "Вход успешно выполнен, ждите...";
 			die;
 		}
@@ -1200,7 +1213,6 @@ function aikiGetTpl($tpl=NULL,$path=FALSE) {
 		$_GET["form"]="page";
 		$_GET["id"]="home";
 	} else {
-		$mode=$_GET["mode"]; $form=$_GET["form"];
 		if ($tpl==NULL) {$tpl="{$_GET["form"]}_{$_GET["mode"]}.php";}
 	}
 	if ($_GET["mode"]=="show" && $_GET["form"]=="login") {$tpl="login.php";}
@@ -1217,8 +1229,8 @@ function aikiGetTpl($tpl=NULL,$path=FALSE) {
 		if ($res==false && is_file($_SESSION["engine_path"].$tpl)) {$current=$_SESSION["engine_path"].$tpl; $res=true;}
 		$current=str_replace($_SESSION["root_path"],"",$current);
 
-			if (isset($_GET["form"]) && $_GET["form"]>"") {$form=$_GET["form"];}
-			if (isset($_GET["mode"]) && $_GET["mode"]>"") {$mode=$_GET["mode"];}
+			if (isset($_GET["form"]) && $_GET["form"]>"") {$_GET["form"]=$_GET["form"];}
+			if (isset($_GET["mode"]) && $_GET["mode"]>"") {$_GET["mode"]=$_GET["mode"];}
 
 			if (!isset($_SESSION["getTpl"])) { // нужно, чтобы небыло зацикливания
 				$inc=array(
@@ -1231,10 +1243,10 @@ function aikiGetTpl($tpl=NULL,$path=FALSE) {
 				include_once("{$_SESSION["engine_path"]}/forms/common/common.php");
 
 				$res=false;	$_SESSION["getTpl"]=true;
-				if ($res==false && is_callable($mode)) {$__page=$mode(); $res=true;}
-				$call="{$form}_{$mode}"; if ($res==false && is_callable($call)) {  $__page=$call(); $res=true;} // в проектах
-				$call="common__{$mode}"; if ($res==false && is_callable($call)) {$__page=$call(); $res=true;} // в общем случае
-				$call="{$form}__{$mode}"; if ($res==false && is_callable($call)) {$__page=$call(); $res=true;} // в engine
+				if ($res==false && is_callable($_GET["mode"])) {$__page=$_GET["mode"](); $res=true;}
+				$call="{$_GET["form"]}_{$_GET["mode"]}"; if ($res==false && is_callable($call)) {  $__page=$call(); $res=true;} // в проектах
+				$call="common__{$_GET["mode"]}"; if ($res==false && is_callable($call)) {$__page=$call(); $res=true;} // в общем случае
+				$call="{$_GET["form"]}__{$_GET["mode"]}"; if ($res==false && is_callable($call)) {$__page=$call(); $res=true;} // в engine
 				unset($_SESSION["getTpl"]);
 			}
 			if (!is_object($__page) && $current>"") $__page=ki::fromFile("{$_SERVER["DOCUMENT_ROOT"]}{$current}");
@@ -1424,6 +1436,7 @@ function fileDeleteItem($form,$id,$path=false) {
 }
 
 function fileReadItem($form,$id,$path=false,$func=true) {
+	if (!isset($_ENV["cache"]["_fields"][$form])) {$_ENV["cache"]["_fields"][$form]=array();}
 	$_SESSION["error"]="";
 	$Item=array(); $Item["id"]=$id;
 	$before="_{$form}BeforeReadItem";	if (is_callable ($before) && $func==true) { $Item =$before($Item) ; }
@@ -1452,11 +1465,16 @@ function fileReadItem($form,$id,$path=false,$func=true) {
 		}*/
 		$Item=json_decode($file,TRUE);
 	} else {$_SESSION["error"]="noitem";}
+	$iKeys=array_flip(array_keys($Item));
+	$cKeys=$_ENV["cache"]["_fields"][$form];
+	$_ENV["cache"]["_fields"][$form]=array_merge  ($iKeys, $cKeys);
+	
 	//if (is_file($file)) {$Item=json_decode(file($file)[0],TRUE);} else {$_SESSION["error"]="noitem";}
 	$after="_".$form."AfterReadItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
 	$after=$form."AfterReadItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
 	if (isset($form) && !isset($Item["form"])) {$Item["form"]=$form;}
 	unset($file,$before,$after,$type);
+	
 	return $Item;
 }
 

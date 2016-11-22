@@ -1007,7 +1007,7 @@ abstract class kiNode
 	}
 
 	function contentSetData($Item=array()) {
-			if (!isset($_SESSION["ta_save"])) {$_SESSION["ta_save"]=array();}
+			if (!isset($_ENV["ta_save"])) {$_ENV["ta_save"]=array();}
 			$this->contentSetAttributes($Item);
 			$this->contentUserAllow();
 			foreach($this->find("*") as $inc) {
@@ -1120,13 +1120,14 @@ abstract class kiNode
 
 	function excludeTextarea($Item=array()) {
 		$list=$this->find("textarea,pre");
+		$_ENV["ta_save"]=array();
 		foreach ($list as $ta) {
 			$id=newIdRnd();
 			$ta->attr("taid",$id);
 			if ($ta->is("textarea[value]")) {
-				$_SESSION["ta_save"][$id]=contentSetValuesStr($ta->attr("value"),$Item);
+				$_ENV["ta_save"][$id]=contentSetValuesStr($ta->attr("value"),$Item);
 			} else {
-				$_SESSION["ta_save"][$id]=$ta->html();
+				$_ENV["ta_save"][$id]=$ta->html();
 			}
 			$ta->html("");
 		}; unset($ta,$list);
@@ -1135,14 +1136,14 @@ abstract class kiNode
 		$list=$this->find("textarea[taid],pre[taid]");
 		foreach ($list as $ta) {
 			$id=$ta->attr("taid"); $name=$ta->attr("name");
-			$ta->html($_SESSION["ta_save"][$id]);
+			if (isset($_ENV["ta_save"][$id])) $ta->html($_ENV["ta_save"][$id]);
 			//if ($name>"" && isset($Item[$name]) && !is_array($Item[$name]) && $_GET["mode"]=="edit") {
 			if ($name>"" && isset($Item[$name]) && !is_array($Item[$name])) {
 				$ta->html(htmlspecialchars($Item[$name]));
 			} else {
-				$ta->html($_SESSION["ta_save"][$id]);
+				if (isset($_ENV["ta_save"][$id])) $ta->html($_ENV["ta_save"][$id]);
 			}
-			unset($_SESSION["ta_save"][$id]);
+			unset($_ENV["ta_save"][$id]);
 			$ta->removeAttr("taid");
 		}; unset($ta,$list);
 	}
@@ -1314,8 +1315,15 @@ abstract class kiNode
 	}
 
 	function getAttrVars() {
-			$tag=$this->outerHtml();
-			$tag=preg_match('/(?s).*<.*>.*/',$tag,$match); // ищем текущий тэг
+		/* непонятная функция, возвращающая зачение атрибута vars
+		зачем так сложно?
+		 если можно return $tag->attr("vars");
+		*/
+//			$tag=$this->outerHtml();
+//			$tag=htmlspecialchars_decode($tag);
+//			$tag=strtr($tag,array("'"=>'"',"&#039;"=>'"',"&quot;"=>'"'));
+//			$tag=preg_match('/(?s).*<.*>.*/',$tag,$match); // ищем текущий тэг
+/*
 			if (isset($match[0])) {
 				$tag=explode(">",$match[0]);
 				$tag=$tag[0];
@@ -1332,6 +1340,8 @@ abstract class kiNode
 				}; unset($attr);
 			}
 		return $res;
+		*/
+		return $tag->attr("vars");
 	}
 
 
@@ -1370,13 +1380,14 @@ abstract class kiNode
 	}
 
 	function tagTree($Item=array()) {
+		$this->contentSetAttributes($Item);
 		if ($this->is("[data-add=true]")) {$this->addTemplate("outerHtml");}
 		if ($this->is("ul[data-build-tree=true]")) {
 			$this->tagTreeUl($Item);
 		} else {
-		$name=$this->attr("from"); if ($name>"") {$name=contentSetValuesStr($name,$Item);}
-		$item=$this->attr("item"); if ($item>"") {$item=contentSetValuesStr($item,$Item);}
-		$nobranch=$this->attr("branch"); if ($nobranch>"") {$nobranch=contentSetValuesStr($nobranch,$Item);}
+		$name=$this->attr("from"); 
+		$item=$this->attr("item"); 
+		$nobranch=$this->attr("branch");
 		$parent=$this->attr("parent"); if ($parent=="true" OR $parent=="1" OR $parent=="") {$parent=true;} else {$parent=false;}
 		$tree=aikiReadTree($name);
 		$html=$this->html();
@@ -1384,9 +1395,12 @@ abstract class kiNode
 		$id="";
 		if ($item>"") {
 			$branch=tagTree_find($tree["tree"],$item);
-			if ($branch!==false && $nobranch!=="false") {$tree["tree"]=$branch["children"];} else {$id=$item;}
+			if ($branch!==false && $nobranch!=="false" ) {
+				if  (isset($branch["children"])) {$tree["tree"]=$branch["children"];} else {$tree["tree"]="";}
+			} else {$id=$item;}
 		}
 		if (!isset($branch) OR $branch!==$Item) {
+			if (!isset($branch)) {$branch=array();}
 			$_SESSION["tree_idx"]=0;
 			$_SESSION["tmp_srcTree"]=$Item;
 			$this->tagTree_step($tree["tree"],$html,$id,$nobranch,$Item);
@@ -1408,7 +1422,9 @@ abstract class kiNode
 
 	function tagTree_step($branch=array(),$html="",$id="",$nobranch="",$Item=array()) {
 		$res=false; $i=0;
+		if (!is_array($branch)) {$branch=array();}
 		foreach($branch as $key => $val) {
+			if (!is_array($Item)) {$Item=array($Item);}
 			foreach($Item as $k => $v) {$val["%{$k}"]=contentSetValuesStr($v,$Item);}; unset($v);
 			$tpl=aikiFromString($html);
 			if ($this->is("select")) {
@@ -1439,9 +1455,10 @@ abstract class kiNode
 	}
 	
 	function tagTreeUl($Item=array()) {
-		$name=$this->attr("from"); if ($name>"") {$name=contentSetValuesStr($name,$Item);}
-		$item=$this->attr("item"); if ($item>"") {$item=contentSetValuesStr($item,$Item);}
-		$nobranch=$this->attr("branch"); if ($nobranch>"") {$nobranch=contentSetValuesStr($nobranch,$Item);}
+		$this->contentSetAttributes($Item);
+		$name=$this->attr("from"); 
+		$item=$this->attr("item"); 
+		$nobranch=$this->attr("branch"); 
 		$parent=$this->attr("parent"); if ($parent=="true" OR $parent=="1" OR $parent=="") {$parent=true;} else {$parent=false;}
 		$that=$this->clone();
 		$tree=aikiReadTree($name);
@@ -1921,7 +1938,7 @@ function tagThumbnail($Item=array()) {
 	}
 	
 	$img=explode("/",trim($src)); $img=$img[count($img)-1];
-	$ext=explode(".",trim($ext)); $ext=$ext[count($ext)-1];
+	$ext=explode(".",trim($src)); $ext=$ext[count($ext)-1];
 
 	if (is_array($images)) {
 		if (isset($images[$idx])) {$img=$images[$idx]["img"];} else {$img="";}
@@ -2057,7 +2074,7 @@ function tagThumbnail($Item=array()) {
 		$this->remove();
 	}
 
-	function contentAppends() {
+	public function contentAppends() {
 		contentAppends($this);
 	}
 	

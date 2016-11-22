@@ -1464,10 +1464,11 @@ function fileReadItem($form,$id,$path=false,$func=true) {
 			$Item=json_decode($file,TRUE);
 		}*/
 		$Item=json_decode($file,TRUE);
+		$iKeys=array_flip(array_keys($Item));
+		$cKeys=$_ENV["cache"]["_fields"][$form];
+		$_ENV["cache"]["_fields"][$form]=array_merge  ($iKeys, $cKeys);
+
 	} else {$_SESSION["error"]="noitem";}
-	$iKeys=array_flip(array_keys($Item));
-	$cKeys=$_ENV["cache"]["_fields"][$form];
-	$_ENV["cache"]["_fields"][$form]=array_merge  ($iKeys, $cKeys);
 	
 	//if (is_file($file)) {$Item=json_decode(file($file)[0],TRUE);} else {$_SESSION["error"]="noitem";}
 	$after="_".$form."AfterReadItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }

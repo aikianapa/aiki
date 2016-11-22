@@ -727,22 +727,10 @@ function aikiWhere($list,$where=NULL) {
 function aikiWhereItem($item,$where=NULL) {
 	$where=htmlspecialchars_decode($where);
 	$where=strtr($where,array("'"=>'"',"&#039;"=>'"',"&quot;"=>'"'));
-	$result=array();
 	$res=true;
 	if (!$where==NULL) {
-		if (substr($where,0,1)=="%") {$phpif=substr($where,1);} else {
-			//if (!strpos(strtolower($where)," like ")) {
-				$phpif=aikiWherePhp($where,$item);
-			/*} else {
-				$phpif="";
-				$where=contentSetValuesStr($where,$item);
-				$parser = new PHPSQLParser("where {$where}");
-				$parser = $parser->parsed; $parser = $parser["WHERE"];
-				foreach ($parser as $node) {$phpif.=aikiWhereNode($node,$item);}
-			}*/
-		}
+		if (substr($where,0,1)=="%") {$phpif=substr($where,1);} else {$phpif=aikiWherePhp($where,$item);}
 		@eval('if ( '.$phpif.' ) { $res=1; } else { $res=0; } ;');
-		unset($parser);
 	};
 	return $res;
 }

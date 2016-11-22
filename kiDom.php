@@ -1686,7 +1686,7 @@ abstract class kiNode
 					if ($vars>"") {$val=attrAddData($vars,$val);}
 					if ($where!==NULL) $itemwhere=contentSetValuesStr($where,$val);
 					if ($val!==NULL && ($where==NULL OR aikiWhereItem($val,$itemwhere))) { // если не обнулено в вызываемой ранее функцией (например, если стоит флаг скрытия в списке)
-					if ($cache=="") $cacheList[$key]=$cacheVal;
+					if ($cache=="" && $size!=="false" && $size!=="") $cacheList[$key]=$cacheVal;
 					if ($pagination=="ajax" && ($size=="false" OR $size=="")) {$size=999999999;}
 					if (	$pagination=="ajax" && (
 							($size>"" && $cache>"" && ($n>$page*$size-$size && $n<=$page*$size)) 
@@ -1708,8 +1708,7 @@ abstract class kiNode
 								$val["_ndx"]=$_SESSION["foreach_ndx"]=$ndx;
 								$val["_num"]=$_SESSION["foreach_num"]=$ndx+1;
 								$text->contentSetData($val);
-								if ($find=="") {$flag=true;}
-								if ($find>"") {
+								if ($find=="") {$flag=true;} else {
 									$string=strip_tags($text->innerHtml());
 									$flag=aikiInString($string,$find);
 								}

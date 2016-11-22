@@ -1,6 +1,6 @@
 <?php
 function tree__getajax() {
-	$tree=aikiReadTree("tree");
+	$tree=aikiReadTree($_GET["from"]);
 	if (!isset($_GET["item"])) {$tree=$tree["tree"];} else {
 		$tree=tagTree_find($tree["tree"],$_GET["item"]);
 	}

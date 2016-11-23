@@ -11,5 +11,5 @@ $__page->contentTargeter();
 if (is_callable("aikiBeforeShowHtml")) {aikiBeforeShowHtml($__page);}
 $__page->contentTargeter();
 echo $__page->outerHtml();
-unset($__page);
+aikiClearMemory();
 ?>

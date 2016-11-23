@@ -37,8 +37,10 @@ if ($res==true) {
 	if (is_object($out)) {$out=$out->outerHtml();}
 	echo $out;
 	unset($out,$Item,$call,$form,$mode);
-	gc_collect_cycles();
 } else {echo "No function: ".$mode;}
+
+aikiClearMemory();
+
 
 function ajax_out($out) {
 	if (!is_object($out)) {$out=aikiFromString($out);}

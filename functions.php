@@ -18,6 +18,12 @@ function aikiBeforeShowItem($Item,$mode="show",$form=null) {
 	return aikiCallFormFunc("BeforeShowItem",$Item,$form,$mode);
 }
 
+function aikiClearMemory() {
+	$vars=get_defined_vars();
+	unset($vars["$_SESSION"],$vars["$_COOKIE"]);
+	foreach($vars as $key) {unset($$key);}
+}
+
 function aikiCallFormFunc($name,$Item,$form=null,$mode=null) {
 	if (!isset($_GET["mode"])) {$_GET["mode"]="";}
 	if (!isset($_GET["form"])) {$_GET["form"]="";}

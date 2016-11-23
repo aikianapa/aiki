@@ -1600,7 +1600,7 @@ abstract class kiNode
 		$dsort=$this->attr("data-sort");
 		$pagination="ajax"; $size=999999999;
 		if ($this->attr("data-pagination")>"") {$size=$this->attr("data-pagination"); $pagination="js";}
-		if ($this->attr("data-size")>"") {$size=$this->attr("data-size"); $pagination="ajax";}
+		if ($this->attr("data-size")>"") {$size=$this->attr("data-size"); $pagination="ajax";} else {$size="false";}
 		$mode=$this->attr("mode");
 		$dmode=$this->attr("data-mode"); if ($dmode=="") {$dmode="list";}
 		$desc=$this->attr("desc");
@@ -1657,7 +1657,7 @@ abstract class kiNode
 		if (is_string($Item)) $Item=json_decode($Item,true);
 		if (!is_array($Item)) $Item=array($Item);
 
-		if ($cache>"") {
+		if ($cache>"" && isset($_SESSION["data"]["foreach"][$cache])) {
 			$Item=$_SESSION["data"]["foreach"][$cache];
 			$first=array_shift($Item); array_unshift($Item,$first);
 			if (isset($first["form"])) {$form=$first["form"]; formCurrentInclude($form);}
@@ -1678,7 +1678,7 @@ abstract class kiNode
 		if (is_callable($call)) {$Item=$call($Item);}
 
 		$tpl=$this->innerHtml(); $inner=""; $this->html("");
-		if ($step>0) {$steptpl=$this->outerHtml(); $stepcount=0;}
+		if ($step>0) {$steptpl=$this->clone(); $stepcount=0;}
 		if ($tplid=="") $tplid="tpl".newIdRnd(); 
 		$ndx=0; $fdx=0; $n=0;
 		$count=count($Item);
@@ -1726,16 +1726,15 @@ abstract class kiNode
 								$val["_num"]=$_SESSION["foreach_num"]=$ndx+1;
 								$text->contentSetData($val);
 								if ($find=="") {$flag=true;} else {
-									$string=strip_tags($text->innerHtml());
-									$flag=aikiInString($string,$find);
+									$flag=aikiInString(strip_tags($text->innerHtml()),$find);
+									if ($flag) $f++;
 								}
-								if ($find>"" && $flag==true) {$f++;}
-								if ($find=="" OR ($find>"" && ($f>$page*$size-$size && $f<=$page*$size))) {$tmp;} else {$flag=false;}
+								if ($find=="" OR $size=="false" OR $size=="" OR ($find>"" && ($f>$page*$size-$size && $f<=$page*$size))) {$tmp;} else {$flag=false;}
 								if ($flag==true) {
 									$ndx++; 
 										if ($step>0) { // если степ, то работаем с объектом
 											if ($stepcount==0) {
-												$t_step=aikiFromString($steptpl);
+												$t_step=$steptpl->clone();
 												$t_step->find(":first")->addClass($tplid);
 												$this->append($t_step);
 											}
@@ -1747,12 +1746,11 @@ abstract class kiNode
 											$inner.=clearValueTags($text);
 										}
 								} else {$n--;}
-										$text->remove();
+								$text->remove();
 						}
 				}
 				}
 			};
-
 			if ($step>0) {
 				foreach ($this->find(".{$tplid}") as $tid) {$tid->removeClass($tplid);}; unset($tid);
 			} else {

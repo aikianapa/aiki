@@ -20,8 +20,9 @@ function aikiBeforeShowItem($Item,$mode="show",$form=null) {
 
 function aikiClearMemory() {
 	$vars=get_defined_vars();
-	unset($vars["$_SESSION"],$vars["$_COOKIE"]);
-	foreach($vars as $key) {unset($$key);}
+	unset($vars['$_SESSION'],$vars['$_COOKIE']);
+	foreach($vars as $key) {$$key=null; unset($$key);}
+	gc_collect_cycles();
 }
 
 function aikiCallFormFunc($name,$Item,$form=null,$mode=null) {
@@ -506,8 +507,7 @@ function aikiFromFile($str="") {
 
 function aikiInString($string,$find) {
 	$res = false;
-	$pattern = '/'.$find.'/iu';
-	$res=preg_match($pattern, $string, $matches, PREG_OFFSET_CAPTURE, 3);
+	if (mb_strpos(mb_strtolower(" ".$string),mb_strtolower($find))) $res=true;
 	return $res;
 }
 
@@ -1124,8 +1124,6 @@ function checkDisallow($list) {
 	if (in_array($role,$list)) {$res=false;} else {$res=true;}
 	return $res;
 }
-
-
 
 function aikiLogin() {
 	if (isset($_POST["mode"]) && $_POST["mode"]=="login") {

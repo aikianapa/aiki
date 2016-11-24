@@ -1487,7 +1487,7 @@ function ajax_navigation() {
 			});
 		}
 		return false;
-	};
+	};	
 
 function ajax_getid() {
 	var newid="";

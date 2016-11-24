@@ -1014,18 +1014,25 @@ abstract class kiNode
 				$inc->contentUserAllow();
 				$tag=$inc->contentCheckTag();
 				if (!$tag==FALSE && !$inc->hasClass("loaded")) {
-					if ($inc->has("[json]")) {$inc->json=contentSetValuesStr($inc->json,$Item);}
+					if ($inc->hasAttribute("json")) {$inc->json=contentSetValuesStr($inc->json,$Item);}
 					if ($inc->hasRole("variable")) {$Item=$inc->tagVariable($Item);} else {
 						if ($inc->is("[data-template=true]")) {	$inc->addTemplate();}
-						$inc->contentProcess($Item,$tag);					
-						//if (isset($_SESSION["itemAfterWhere"])) {$Item=$_SESSION["itemAfterWhere"]; unset($_SESSION["itemAfterWhere"]);}
+						if ($inc->hasRole("imageloader")) {$inc->addClass("imageloader");}
+						$inc->contentSetAttributes($Item);
+						$func="tag".$tag;
+						if ($inc->hasAttribute("src")) {$inc->attr("src",normalizePath($inc->attr("src")));}
+						$inc->$func($Item);
+						$inc->tagHideAttrs($Item);
+						$inc->addClass("loaded");
+						//$inc->contentProcess($Item,$tag);					
 					}
 				}
 			}; unset($inc);
 			$this->contentSetValues($Item);
-			$this->contentLoop($Item);
+			if ($this->find("[data-role:not(.loaded)]")) {$this->contentSetValues($Item);}
+			//$this->contentLoop($Item);
 			$this->contentTargeter($Item);
-			$this->contentSetValues($Item);
+			//$this->contentSetValues($Item);
 			gc_collect_cycles();
 	}
 
@@ -1148,13 +1155,13 @@ abstract class kiNode
 		}; unset($ta,$list);
 	}
 
-	function contentLoop($Item) {
+/*	function contentLoop($Item) {
 		$res=0; $list=$this->find("*");
 		foreach($list as $inc) {
 			$tag=$inc->contentCheckTag();
 			if (!$tag==FALSE && !$inc->hasClass("loaded")) {$inc->contentProcess($Item,$tag); }
 		}; unset($inc,$list);
-	}
+	}*/
 
 	function contentSetValues($Item=array(),$obj=TRUE) {
 		$this->excludeTextarea($Item);
@@ -1598,7 +1605,7 @@ abstract class kiNode
 		$pagination="";
 		$sort=$this->attr("sort");
 		$dsort=$this->attr("data-sort");
-		$pagination="ajax"; $size=999999999;
+		$pagination="ajax";
 		if ($this->attr("data-pagination")>"") {$size=$this->attr("data-pagination"); $pagination="js";}
 		if ($this->attr("data-size")>"") {$size=$this->attr("data-size"); $pagination="ajax";} else {$size="false";}
 		$mode=$this->attr("mode");
@@ -1705,12 +1712,14 @@ abstract class kiNode
 					if ($val!==NULL && ($where==NULL OR aikiWhereItem($val,$itemwhere))) { // если не обнулено в вызываемой ранее функцией (например, если стоит флаг скрытия в списке)
 					if ($cache=="" && $size!=="false" && $size!=="") $cacheList[$key]=$cacheVal;
 					if ($pagination=="ajax" && ($size=="false" OR $size=="")) {$size=999999999;}
-					if (	$pagination=="ajax" && (
-							($size>"" && $cache>"" && ($n>$page*$size-$size && $n<=$page*$size)) 
-							OR ($size>"" && $cache=="" && $ndx<$size) 
-							
-							OR $find>"")
-							OR $size=="" OR $pagination=="js"
+					if (	$pagination=="ajax" 
+							AND (
+									($size>"" && $cache>"" && ($n>$page*$size-$size && $n<=$page*$size)) 
+									OR ($size>"" && $cache=="" && $ndx<$size) 
+									OR $find>""
+									)
+							OR $size=="" 
+							OR $pagination=="js"
 						) {
 								$itemform=""; if (isset($val["form"])) {$itemform=$val["form"];} else {$itemform=$_GET["form"];}
 
@@ -1756,7 +1765,7 @@ abstract class kiNode
 			} else {
 				$this->html($inner);
 			}
-			unset($val,$ndx,$t_step,$string,$text,$func,$inner);
+			unset($val,$ndx,$t_step,$string,$text,$func,$inner,$tmptpl);
 		}
 
 

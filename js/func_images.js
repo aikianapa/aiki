@@ -104,7 +104,9 @@ function comImagesEvents() {
 				if (error==0) {
 					that.parents("li.thumbnail").remove();
 				} else {
-					alert(error);
+					if (confirm("Ошибка удаления! Убрать превью?")) {
+					  that.parents("li.thumbnail").remove();
+					}
 				}
 				comImagesToField();
 			});

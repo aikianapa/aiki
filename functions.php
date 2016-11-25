@@ -1154,7 +1154,11 @@ function aikiLogin() {
 			if (isset($_POST["login-remember-me"]) && $_POST["login-remember-me"]=="on") {setcookie("user_id",$_SESSION["user_id"],time()+3600*24*30,"/");}
 			$role=dict_filter_value("user_role","code",$_SESSION["user_role"]);
 			$redirect=$role["redirect"];
-			header("Refresh: 0; URL={$_SERVER["REQUEST_SCHEME"]}://{$_SERVER["HTTP_HOST"]}{$redirect}");
+			$scheme="http";
+			if (isset($_SERVER["HTTP_X_FORWARDED_PROTOCOL"])) {$scheme=$_SERVER["HTTP_X_FORWARDED_PROTOCOL"];}
+			if (isset($_SERVER["REQUEST_SCHEME"])) {$scheme=$_SERVER["REQUEST_SCHEME"];}			
+			
+			header("Refresh: 0; URL={$scheme}://{$_SERVER["HTTP_HOST"]}{$redirect}");
 			echo "Вход успешно выполнен, ждите...";
 			die;
 		}

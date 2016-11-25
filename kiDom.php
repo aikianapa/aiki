@@ -1014,27 +1014,21 @@ abstract class kiNode
 				$inc->contentUserAllow();
 				$tag=$inc->contentCheckTag();
 				if (!$tag==FALSE && !$inc->hasClass("loaded")) {
-					if ($inc->hasAttribute("json")) {$inc->json=contentSetValuesStr($inc->json,$Item);}
+					if ($inc->has("[json]")) {$inc->json=contentSetValuesStr($inc->json,$Item);}
 					if ($inc->hasRole("variable")) {$Item=$inc->tagVariable($Item);} else {
 						if ($inc->is("[data-template=true]")) {	$inc->addTemplate();}
-						if ($inc->hasRole("imageloader")) {$inc->addClass("imageloader");}
-						$inc->contentSetAttributes($Item);
-						$func="tag".$tag;
-						if ($inc->hasAttribute("src")) {$inc->attr("src",normalizePath($inc->attr("src")));}
-						$inc->$func($Item);
-						$inc->tagHideAttrs($Item);
-						$inc->addClass("loaded");
-						//$inc->contentProcess($Item,$tag);					
+						$inc->contentProcess($Item,$tag);					
+						//if (isset($_SESSION["itemAfterWhere"])) {$Item=$_SESSION["itemAfterWhere"]; unset($_SESSION["itemAfterWhere"]);}
 					}
 				}
 			}; unset($inc);
 			$this->contentSetValues($Item);
-			if ($this->find("[data-role:not(.loaded)]")) {$this->contentSetValues($Item);}
-			//$this->contentLoop($Item);
+			$this->contentLoop($Item);
 			$this->contentTargeter($Item);
-			//$this->contentSetValues($Item);
+			$this->contentSetValues($Item);
 			gc_collect_cycles();
 	}
+
 
 	function contentCheckAllow() {
 		foreach($this->find(contentControls("allow")) as $inc) {$inc->contentUserAllow();}
@@ -1155,13 +1149,13 @@ abstract class kiNode
 		}; unset($ta,$list);
 	}
 
-/*	function contentLoop($Item) {
+	function contentLoop($Item) {
 		$res=0; $list=$this->find("*");
 		foreach($list as $inc) {
 			$tag=$inc->contentCheckTag();
 			if (!$tag==FALSE && !$inc->hasClass("loaded")) {$inc->contentProcess($Item,$tag); }
 		}; unset($inc,$list);
-	}*/
+	}
 
 	function contentSetValues($Item=array(),$obj=TRUE) {
 		$this->excludeTextarea($Item);

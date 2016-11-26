@@ -14,6 +14,34 @@ function contentControls($set="") {
 	return $res;
 }
 
+function aikiSaveList($name,$list) {
+	$savePath=formPathGet();
+	$list=array_keys($list);
+	$jsonItem=json_encode($list, JSON_HEX_QUOT | JSON_HEX_APOS);
+	$file=$savePath["base"].$savePath["lists"].$name;
+	$res=file_put_contents($file,$jsonItem, LOCK_EX);
+	return $res;
+}
+
+function aikiReadList($name) {
+	$savePath=formPathGet();
+	$file=$savePath["base"].$savePath["lists"].$name;
+	if (is_file($file)) {
+		$file=file_get_contents($file); 
+		$Item=json_decode($file,TRUE);
+	} else {$_SESSION["error"]="noitem"; $Item=array();}
+	return $Item;
+}
+
+function aikiRemoveList($name) {
+	$res=$false;
+	$savePath=formPathGet();
+	$file=$savePath["base"].$savePath["lists"].$name;
+	if (is_file($file)) {unlink($file); $res=true;}
+	return $res;
+}
+
+
 function aikiBeforeShowItem($Item,$mode="show",$form=null) {
 	return aikiCallFormFunc("BeforeShowItem",$Item,$form,$mode);
 }
@@ -1782,12 +1810,14 @@ function newIdRnd($separator="") {
 
 function formPathGet($form="page",$id="_new") {
 	if (isset($_SESSION["project"]) && $_SESSION["projects"]=="true" && $_SESSION["project"]>"") {$prj="/projects/".$_SESSION["project"];} else {$prj="";}
+	$savePath["base"]=$_SESSION["root_path"].$_SESSION["proj_path"];
 	$savePath["contents"]="{$prj}/contents/";
 	$savePath["form"]=$savePath["contents"].$form."/";
 	$savePath["item"]=$savePath["form"].$id;
 	$savePath["uploads"]="{$prj}/uploads/";
 	$savePath["uplform"]=$savePath["uploads"].$form."/";
 	$savePath["uplitem"]=$savePath["uplform"].$id."/";
+	$savePath["lists"]=$savePath["contents"]."admin/lists/";
 	//$savePath["cache"]=$savePath["uplitem"]."_cache/";
 return $savePath;
 }
@@ -1800,6 +1830,9 @@ function formPathCheck($form="page",$id="_new",$uplflds=array("images")) {
 	if (!is_dir($dir)) { mkdir($dir);}
 	$uplpath=$base.$savePath["uploads"];
 	if (!is_dir($uplpath)) { mkdir($uplpath);}
+
+	$lstpath=$base.$savePath["lists"];
+	if (!is_dir($lstpath)) { mkdir($lstpath);}
 
 	$dir=$base.$savePath["uplform"];
 	if (!is_dir($dir)) { mkdir($dir);}

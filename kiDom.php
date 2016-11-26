@@ -1610,6 +1610,7 @@ abstract class kiNode
 		$step=$this->attr("step");
 		$page=$this->attr("data-page"); if ($page=="") {$page=1;}
 		$cache=$this->attr("data-cache");
+		$dList=$this->attr("data-list"); if ($dList=="") {$dList=false;} else {$dList=aikiReadList($dList);}
 		$limit=$this->attr("limit");
 		$call=$this->attr("call");
 		$oconv=$this->attr("oconv");
@@ -1697,13 +1698,14 @@ abstract class kiNode
 			$ndx=0; $n=0; $f=0;
 			$tmptpl=aikiFromString($tpl);
 			foreach($Item as $key => $val) {
+				if (!isset($val["id"])) {$lid=$key;} else {$lid=$val["id"];}
+				if ($dList==false OR in_array($lid,$dList)) {
 				$n++;
 				$cacheVal=$val;
 				if ($limit=="" OR ($limit*1 > $ndx*1)) {
 					if (!is_array($val)) {$tmp=json_decode($val,true);	if ($tmp) {$val=$tmp;} else {$val=array($val);} } // именно так и никак иначе
 					if ($vars>"") {$val=attrAddData($vars,$val);}
-					if ($where!==NULL) $itemwhere=contentSetValuesStr($where,$val);
-					if ($val!==NULL && ($where==NULL OR aikiWhereItem($val,$itemwhere))) { // если не обнулено в вызываемой ранее функцией (например, если стоит флаг скрытия в списке)
+					if ($val!==NULL && ($where==NULL OR aikiWhereItem($val,$where))) { // если не обнулено в вызываемой ранее функцией (например, если стоит флаг скрытия в списке)
 					if ($cache=="" && $size!=="false" && $size!=="") $cacheList[$key]=$cacheVal;
 					if ($pagination=="ajax" && ($size=="false" OR $size=="")) {$size=999999999;}
 					if (	$pagination=="ajax" 
@@ -1751,7 +1753,8 @@ abstract class kiNode
 								} else {$n--;}
 								$text->remove();
 						}
-				}
+					}
+					}
 				}
 			};
 			if ($step>0) {

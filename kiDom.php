@@ -1738,15 +1738,15 @@ abstract class kiNode
 										if ($step>0) { // если степ, то работаем с объектом
 											if ($stepcount==0) {
 												$t_step=$steptpl->clone();
-												$t_step->find(":first")->addClass($tplid);
+												$t_step->addClass($tplid);
 												$this->append($t_step);
 											}
-											$this->find(".{$tplid}:last")->append(clearValueTags($text));
-											//$stepcount++;
-											$stepcount=$this->find(".{$tplid}:last")->children()->length;
+											$this->find(".{$tplid}:last")->append(clearValueTags($text->outerHtml()));
+											$stepcount++;
+											//$stepcount=$this->find(".{$tplid}:last")->children()->length;
 											if ($stepcount==$step) {$stepcount=0;}
 										} else { // иначе строим строку
-											$inner.=clearValueTags($text);
+											$inner.=clearValueTags($text->outerHtml());
 										}
 								} else {$n--;}
 								$text->remove();

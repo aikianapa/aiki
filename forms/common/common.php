@@ -17,6 +17,7 @@ function common__list() {
 
 function common__edit() {
 	$out=aikiGetForm($_GET["form"],$_GET["mode"]);
+	if (!isset($_GET["id"]) OR $_GET["id"]=="_new" OR $_GET["id"]=="") {$_GET["id"]=newIdRnd();}
 	$Item=aikiReadItem($_GET["form"],$_GET["id"]);
 	$Item["form"]=$_GET["form"];
 	$out->contentSetData($Item); $i=0;

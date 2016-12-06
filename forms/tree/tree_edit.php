@@ -12,8 +12,9 @@
 
 	<ul class="nav nav-tabs">
 		<li class="active"><a href="#{{form}}Descr" data-toggle="tab" data-lang="a.descr">Каталог</a></li>
-		<li>				<a href="#{{form}}Prop" data-toggle="tab" data-lang="a.prop">Свойства</a></li>
+		<li><a href="#{{form}}Prop" data-toggle="tab" data-lang="a.prop">Свойства</a></li>
 		<li class="hidden"><a href="#{{form}}Data" data-toggle="tab" data-lang="a.data">Данные</a></li>
+		<li class="hidden"><a href="#{{form}}Flds" data-toggle="tab" data-lang="a.flds">Поля ввода</a></li>
 		<li><a href="#{{form}}Images" data-toggle="tab" data-lang="a.images">Изображения</a></li>
 		<a class="dd3active hidden" href="#dd3active">dd3active</a>
 	</ul>
@@ -73,6 +74,13 @@
 				<div class="form-group" name="data"></div>
 			</form>
 		</div>
+		<div id="{{form}}Flds" class="tab-pane">
+				<br/>
+				<ul class="fieldSet">форма</ul>
+				
+		</div>
+		
+		
 		<div id="{{form}}Images" class="tab-pane" data-role="imageloader" data-prop="false"></div>
 
 	</div>
@@ -88,12 +96,13 @@ $(function(){
 					'<ul class="dropdown-menu" role="menu">'+
 					'<li><a href="#" class="dd-add"><span class="fa fa-plus"></span>&nbsp;&nbsp;Добавить</a></a></li>'+
 					'<li><a href="#" class="dd-copy"><span class="fa fa-copy"></span>&nbsp;&nbsp;Копировать</a></a></li>'+
+					'<li><a href="#" class="dd-flds"><span class="fa fa-address-card-o"></span>&nbsp;&nbsp;Поля ввода</a></a></li>'+
 					'<li><a href="#" class="dd-edit"><span class="fa fa-edit"></span>&nbsp;&nbsp;Редактировать</a></a></li>'+
 					'<li><a href="#" class="dd-del"><span class="fa fa-trash"></span>&nbsp;&nbsp;Удалить</a></li>'+
 					'</ul></div>';
 
 			var line='<li class="dd-item dd3-item dd-new" data-id="">'+
-					  '<div class="dd-handle dd3-handle">Drag</div><div class="dd3-content">Новая запись</div>'+
+					  '<div class="dd-handle dd3-handle"></div><div class="dd3-content">Новая запись</div>'+
 					  '</li>';
 	$(document).ready(function(){
 		dd_setTree();
@@ -105,6 +114,7 @@ $(function(){
 
 		$("#treeEditForm .nav a[href^=#{{form}}]").on("click",function(e){
 			if ($(this).attr("href")!=="#{{form}}Data") {$("#{{form}}EditForm a[href=#treeData]").parent("li").addClass("hidden");}
+			if ($(this).attr("href")!=="#{{form}}Flds") {$("#{{form}}EditForm a[href=#treeFlds]").parent("li").addClass("hidden");}
 			if ($(this).attr("href")=="#{{form}}Descr" && $("#treeEditForm #dd3active").length) {
 				setTimeout(function(){$("#treeEditForm .nav a.dd3active.hidden").trigger("click");},10);
 			}
@@ -160,6 +170,53 @@ $(function(){
 			$("#{{form}}EditForm a[href=#treeData]").parent("li").removeClass("hidden");
 			$("#{{form}}EditForm a[href=#treeData]").trigger("click");
 		});
+
+		$("#treeEditForm").undelegate(".dd .dd-flds","click");
+		$("#treeEditForm").delegate(".dd .dd-flds","click",function(){
+			$("#{{form}}EditForm #dd3active").data("offset",$("#treeEditForm #dd3active").offset().top);
+			$("#{{form}}EditForm a[href=#treeFlds]").parent("li").removeClass("hidden");
+			$("#{{form}}EditForm a[href=#treeFlds]").trigger("click");
+			$("#{{form}}EditForm #treeFlds .fieldSet").html("");
+			var self=$.parseJSON($("#{{form}}EditForm .dd-item.active").attr("data-fldself"));
+			var child=$.parseJSON($("#{{form}}EditForm .dd-item.active").attr("data-fldchild"));
+			var fldname, fldlabel, fldtype;
+			$("#{{form}}EditForm #treeProp .row").each(function(){
+					fldname=$(this).find("[data-name=fldname]").val();
+					fldlabel=$(this).find("[data-name=fldlabel]").val();
+					fldtype=$(this).find("[data-name=fldtype]").val();
+					$("#{{form}}EditForm #treeFlds .fieldSet").append(''
+					+'<div class="row"><div class="col-sm-2">' +fldname+ '</div>'
+					+'<div class="col-sm-2">(' +fldtype+ ')</div>'
+					+'<div class="col-sm-2">' +fldlabel+ '</div>'
+					+'<div class="col-sm-1 text-center"><label class="switch switch-primary" title="Текущий уровень">'
+							+'<input type="checkbox" data-name="self" value=""><span></span></label></div>'
+					+'<div class="col-sm-1 text-center"><label class="switch switch-primary" title="Вложенные уровни">'
+							+'<input type="checkbox" data-name="child" value=""><span></span></label></div>'
+					+'</div>');
+					$("#{{form}}EditForm #treeFlds .fieldSet .row:last input[type=checkbox]").attr("data-fld",fldname);
+					if (in_array(fldname,self)) {$("#{{form}}EditForm #treeFlds .fieldSet .row:last input[type=checkbox][data-name=self]").trigger("click");}
+					if (in_array(fldname,child)) {$("#{{form}}EditForm #treeFlds .fieldSet .row:last input[type=checkbox][data-name=child]").trigger("click");}
+			});
+			
+			
+			$("#{{form}}EditForm .fieldSet [title]").tooltip();
+			$("#{{form}}EditForm #treeFlds [type=checkbox]").on("change",function(){
+				var self=[];
+				var child=[];
+				var line=$("#{{form}}EditForm .dd-item.active");
+				$("#{{form}}EditForm #treeFlds [type=checkbox]").each(function(){
+						if ($(this).prop("checked")==true) {
+							if ($(this).attr("data-name")=="self") {self.push($(this).attr("data-fld"));}
+							if ($(this).attr("data-name")=="child") {child.push($(this).attr("data-fld"));}
+						}
+					
+				});
+				$("#{{form}}EditForm .dd-item.active").attr("data-fldself",JSON.stringify(self));
+				$("#{{form}}EditForm .dd-item.active").attr("data-fldchild",JSON.stringify(child));
+				dd_setData();
+			});
+		});
+
 
 		$("#treeEditForm").undelegate(".dd .dd-del","click");
 		$("#treeEditForm").delegate(".dd .dd-del","click",function(){
@@ -229,6 +286,8 @@ $(function(){
 				var newline=$(that).find(".dd-new");
 				newline.attr("data-id",tree[key].id);
 				newline.attr("data-data",JSON.stringify(tree[key].data));
+				newline.attr("data-fldself",JSON.stringify(tree[key].fldself));
+				newline.attr("data-fldchild",JSON.stringify(tree[key].fldchild));
 				newline.find(".dd3-content").html(tree[key].name);
 				newline.removeClass("dd-new");
 				if (tree[key].children!==undefined) {
@@ -285,7 +344,10 @@ $(function(){
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
-#{{form}}EditForm .dd3-handle:before { content: '≡'; display: block; position: absolute; left: 0; top: 3px; width: 100%; text-align: center; text-indent: 0; color: #fff; font-size: 20px; font-weight: normal; }
+#{{form}}EditForm .dd3-handle:before {font-family:FontAwesome;  content: '\f07d'; display: block; position: absolute; left: 0; top: 3px; width: 100%; text-align: center; text-indent: 0; color: #fff; font-size: 14px; font-weight: normal; }
 #{{form}}EditForm .dd3-handle:hover { background: #ddd; }
 #{{form}}EditForm .dd-btn {position:absolute; display:inline-flex; top:0; margin:4px;}
+#{{form}}EditForm #treeFlds .fieldSet .switch span {height:16px; width:32px;}
+#{{form}}EditForm #treeFlds .fieldSet .switch input:checked + span:after {width:12px; left:18px;}
+#{{form}}EditForm #treeFlds .fieldSet .switch span:after {width:12px;}
     </style>

@@ -1145,6 +1145,8 @@ function com_tree_init() {
 		var dict=$("#treeEditForm");
 		var data=$("#treeEditForm #treeData div[name=data]");
 		var flds=dict.find("div[name=fields]");
+		var self=$("#treeEditForm .dd-item.active").attr("data-fldself");
+		if (self!==undefined) {self=$.parseJSON(self);} else {self="";}
 		data.html("<div class='form-data'></div>");
 		flds.find(".row").each(function(){
 			var fldname=$(this).find("input[data-name=fldname]").val();
@@ -1152,6 +1154,8 @@ function com_tree_init() {
 			var fldtype=$(this).find("select[data-name=fldtype]").val();
 			var flddescr=$(this).find("input[data-name=flddescr]").val();
 			var fld="";
+			if (in_array(fldname,self) || self=="" || self==undefined) {
+			
 			if (fldlabel=="") {fldlabel=fldname;}
 			if (fldtype=="text") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control" data-descr="'+flddescr+'"></textarea>';}
 			if (fldtype=="editor") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control editor" data-descr="'+flddescr+'"></textarea>';}
@@ -1163,6 +1167,7 @@ function com_tree_init() {
 			data.find(".form-data:last").append(''+
 			'<label class="control-label col-sm-3">'+fldlabel+'</label>'+
 			'<div class="col-sm-9">'+fld+'</div>');
+			}
 		});
 		var did=$("#treeEditForm .dd-list .dd-item.active").attr("data-id");
 		var txt=$("#treeEditForm .dd-list .dd-item.active .dd3-content").html();
@@ -1273,6 +1278,8 @@ function com_tree_init() {
 				var line={};
 				line["id"]=$(this).attr("data-id");
 				if ($(this).attr("data-data")>"") {line["data"]=$.parseJSON($(this).attr("data-data"));} else {line["data"]="";}
+				if ($(this).attr("data-fldself")>"") {line["fldself"]=$.parseJSON($(this).attr("data-fldself"));} else {line["fldself"]="";}
+				if ($(this).attr("data-fldchild")>"") {line["fldchild"]=$.parseJSON($(this).attr("data-fldchild"));} else {line["fldchild"]="";}
 				line["name"]=$(this).children(".dd3-content").text();
 				if ($(this).find(".dd-list").length) {
 					if ($(this).find("[data-action=collapse]").is(":visible")) {line["open"]=1;} else {line["open"]=0;}

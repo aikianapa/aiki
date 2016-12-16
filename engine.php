@@ -42,11 +42,15 @@ if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 		if (is_file($_SESSION["app_path"]."/tpl/home.php")) {$__page=aikiGetTpl("home.php");} else {
 		if (is_file($_SESSION["app_path"]."/tpl/default.php")) $__page=aikiGetTpl("default.php");}
 	} else {
-		if ($tpl>"") {$__page=aikiGetTpl($tpl);} else {/*
+		if ($tpl>"") {$__page=aikiGetTpl($tpl);} else {
 			if ($error==null) {
-				$__page=aikiGetForm(); 
-				if ($_SESSION["error"]=="noform") {$__page=aikiFromString("");}
-			}*/
+				$__form=aikiGetForm(); 
+				if ($_SESSION["error"]=="noform") {
+					if (is_file($_SESSION["app_path"]."/tpl/404.php")) {$__page=aikiGetTpl("404.php");} else {
+						$__form=ki::fromString("[Ошибка 404] Страница отсутствует");
+					}	
+				}
+			}
 		}
 	}
 	if ($_SESSION["cache"]!==1) {
@@ -95,6 +99,12 @@ if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 					}
 				}
 		}
+		if (is_object($__page) && $__page->outerHtml()=="") {
+			$__page=$__form;
+			$__page->contentSetData($Item);
+		}
+		
+		
 		if (isset($Item["meta_description"])) {
 			$tag='<meta name="description" content="'.$Item["meta_description"].'">';
 			$meta=$__page->find("meta[name=description]",0);

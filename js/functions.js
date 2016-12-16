@@ -1217,10 +1217,13 @@ function com_tree_init() {
 	function com_tree_imagesel(fldname,fldlabel) {
 		var id=$("#treeEditForm").attr("item");
 		var fld=$("<div><select data-name='"+fldname+"' placeholder='"+fldlabel+"' class='form-control'><option></option></select></div>");
-		var images=JSON.parse($("#treeEditForm #treeImages input[name=images]").val());
-		$(images).each(function(i,img){
-			fld.find("select").append('<option value="'+img.img+'">'+img.img+'</option>');
-		});
+		var imgstore=$("#treeEditForm #treeImages input[name=images]").val();
+		if (imgstore>"") {
+			var images=JSON.parse(imgstore);
+			$(images).each(function(i,img){
+				fld.find("select").append('<option value="'+img.img+'">'+img.img+'</option>');
+			});
+		}
 		return fld.html();
 	}
 

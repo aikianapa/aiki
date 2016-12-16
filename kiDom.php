@@ -1120,7 +1120,7 @@ abstract class kiNode
 	}
 
 	function excludeTextarea($Item=array()) {
-		$list=$this->find("textarea,pre");
+		$list=$this->find("textarea,pre,.noaiki");
 		$_ENV["ta_save"]=array();
 		foreach ($list as $ta) {
 			$id=newIdRnd();
@@ -1134,7 +1134,7 @@ abstract class kiNode
 		}; unset($ta,$list);
 	}
 	function includeTextarea($Item=array()) { 
-		$list=$this->find("textarea[taid],pre[taid]");
+		$list=$this->find("textarea[taid],pre[taid],.noaiki[taid]");
 		foreach ($list as $ta) {
 			$id=$ta->attr("taid"); $name=$ta->attr("name");
 			if (isset($_ENV["ta_save"][$id])) $ta->html($_ENV["ta_save"][$id]);
@@ -1620,7 +1620,14 @@ abstract class kiNode
 		$from=$this->attr("from");
 		$find=$this->attr("data-find"); // контекстный поиск
 		$tplid=$this->attr("data-template");
-		$beforeShow=$this->attr("data-before-show"); 
+		$beforeShow=$this->attr("data-before-show");
+		
+		if ($from>"" && !isset($Item[$from])) {
+			$tmp="";
+			eval('$tmp=$Item'.$from.";");
+			if ($tmp>"") {$Item[$from]=$tmp;}
+		}
+		
 		if ($from>"" && isset($Item[$from]) && $this->hasRole("foreach") && $cache=="") {
 			if ($this->attr("form")=="" && isset($Item["form"])) {$form=$Item["form"];} else {$form="";}
 			if ($this->attr("item")=="" && isset($Item["id"])) {$item=$Item["id"];} else {$item="";}

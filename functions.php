@@ -1125,14 +1125,18 @@ function get_template($name=NULL) {
 	return $out->outerHtml();
 }
 
+function aikiDictFind($dict,$field,$value) {
+	return dict_filter_value($dict,$field,$value);
+}
 
 function dict_filter_value($dict,$field,$value) {
 	if (is_string($dict)) {$dict=aikiReadDict($dict);}
-	$res=false;
+	$res=false; $c=0;
 	foreach($dict as $line) {
-		if ($res==false) {
-			if ($line[$field]==$value) {$res=$line;}
+		if ($res!==false AND $line[$field]==$value) {
+				if ($c==1) {$res=array($res); $res[]=$line; $c++;}
 		}
+		if ($res==false AND $line[$field]==$value) {$res=$line; $c++;}
 	}; unset($line);
 	return $res;
 }

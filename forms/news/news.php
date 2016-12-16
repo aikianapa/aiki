@@ -1,8 +1,7 @@
 <?php
 function news__show() {
 	$out=aikiGetForm();
-	$Item=aikiReadItem($_GET["form"],$_GET["item"]);
-
+	$Item=aikiReadItem($_GET["form"],$_GET["id"]);
 	$Item=aikiBeforeShowItem($Item);
 	$out->contentSetData($Item);
 	return $out->htmlOuter();

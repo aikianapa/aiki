@@ -99,11 +99,10 @@ if (is_callable("aikiCustomEngine")) {$__page=aikiCustomEngine();} else {
 					}
 				}
 		}
-		if (is_object($__page) && $__page->outerHtml()=="") {
+		if (is_object($__page) && isset($__form) && $__page->outerHtml()=="") {
 			$__page=$__form;
 			$__page->contentSetData($Item);
 		}
-		
 		
 		if (isset($Item["meta_description"])) {
 			$tag='<meta name="description" content="'.$Item["meta_description"].'">';

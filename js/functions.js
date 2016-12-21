@@ -1099,8 +1099,9 @@ function com_tree_init() {
 	$("#treeEditForm #treeData").delegate("input[data-tree]","change",function(){
 		var did=$("#treeEditForm #treeData input[data-tree=id]").val();
 		var txt=$("#treeEditForm #treeData input[data-tree=name]").val();
-		$("#treeEditForm .dd-list .dd-item.active").attr("data-id",did);
-		$("#treeEditForm .dd-list .dd-item.active .dd3-content").html(txt);
+		$("#treeEditForm .dd-list #dd3active").attr("data-id",did);
+		$("#treeEditForm .dd-list #dd3active").children(".dd3-content").html(txt);
+		var data=com_tree_data_serialize();
 		var data=com_tree_serialize();
 		$("#treeEditForm input[name=tree]").val(JSON.stringify(data));
 	});
@@ -1108,6 +1109,7 @@ function com_tree_init() {
 	$("#treeEditForm div[name=data]").undelegate("input","change");
 	$("#treeEditForm div[name=data]").delegate("input","change",function(){
 		var did=$("#treeEditForm .dd-list .dd-item.active").attr("data-id");
+
 		if (did!==undefined) {
 			var data=com_tree_data_serialize();
 			$("#treeEditForm .dd-item[data-id="+did+"]").attr("data-data",JSON.stringify(data));
@@ -1155,23 +1157,25 @@ function com_tree_init() {
 		data.html("<div class='form-data'></div>");
 		flds.find(".row").each(function(){
 			var fldname=$(this).find("input[data-name=fldname]").val();
-			var fldlabel=$(this).find("input[data-name=fldlabel]").val();
-			var fldtype=$(this).find("select[data-name=fldtype]").val();
-			var flddescr=$(this).find("input[data-name=flddescr]").val();
-			var fld="";
-			if (in_array(fldname,self) || self=="" || self==undefined) {
-			
-			if (fldlabel=="") {fldlabel=fldname;}
-			if (fldtype=="text") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control" data-descr="'+flddescr+'"></textarea>';}
-			if (fldtype=="editor") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control editor" data-descr="'+flddescr+'"></textarea>';}
-			if (fldtype=="multiinput") {fld=com_multiinp_gen(fldname,fldlabel);}
-			if (fldtype=="image") {fld=com_tree_imagesel(fldname,fldlabel);}
-			if (fldtype=="" || fldtype=="string") {fldtype="text";}
-			if (fld=="") {fld='<input type="'+fldtype+'" data-name="'+fldname+'" placeholder="'+fldlabel+'" class="form-control" data-descr="'+flddescr+'" />';}
+			if (fldname>"") {
+				var fldlabel=$(this).find("input[data-name=fldlabel]").val();
+				var fldtype=$(this).find("select[data-name=fldtype]").val();
+				var flddescr=$(this).find("input[data-name=flddescr]").val();
+				var fld="";
+				if (in_array(fldname,self) || self=="" || self==undefined) {
+				
+				if (fldlabel=="") {fldlabel=fldname;}
+				if (fldtype=="text") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control" data-descr="'+flddescr+'"></textarea>';}
+				if (fldtype=="editor") {fld='<textarea data-name="'+fldname+'" rows="3" placeholder="'+fldlabel+'" class="form-control editor" data-descr="'+flddescr+'"></textarea>';}
+				if (fldtype=="multiinput") {fld=com_multiinp_gen(fldname,fldlabel);}
+				if (fldtype=="image") {fld=com_tree_imagesel(fldname,fldlabel);}
+				if (fldtype=="" || fldtype=="string") {fldtype="text";}
+				if (fld=="") {fld='<input type="'+fldtype+'" data-name="'+fldname+'" placeholder="'+fldlabel+'" class="form-control" data-descr="'+flddescr+'" />';}
 
-			data.find(".form-data:last").append(''+
-			'<label class="control-label col-sm-3">'+fldlabel+'</label>'+
-			'<div class="col-sm-9">'+fld+'</div>');
+				data.find(".form-data:last").append(''+
+				'<label class="control-label col-sm-3">'+fldlabel+'</label>'+
+				'<div class="col-sm-9">'+fld+'</div>');
+				}
 			}
 		});
 		var did=$("#treeEditForm .dd-list .dd-item.active").attr("data-id");

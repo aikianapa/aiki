@@ -759,7 +759,7 @@ function active_multiinput() {
 			$(document).find("[data-role=multiinput] .multimenu").remove();
 			multiinputFldNum($(this).parent("[data-role=multiinput]"));
 			$(this).addClass("bg-warning");
-			$(this).append('<div class="multimenu">'+
+			$(this).prepend('<div class="multimenu">'+
 			//'<button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-expanded="true">Действия с полем</button>'+
 			'<a class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">'+
 			'<span class="glyphicon glyphicon-list"></span></a>'+
@@ -770,7 +770,12 @@ function active_multiinput() {
 			'<li><a href="#clear">Очистить содержимое</a></li>'+
 			'<li><a href="#delete">Удалить поле</a></li>'+
 			'</ul></div>');
-			$(this).find('.multimenu').css("margin-top",$(this).height()+"px");
+			var offset=$(this).find("a.dropdown-toggle").height()+5;
+			if ($(this).index()==1 && $(this).find(".multi-compact").length) {
+				offset+=$(this).height()-$(this).find(".multi-compact label:first").next().height()-10;
+			}
+			$(this).css("cursor","context-menu");
+			$(this).find('.multimenu').css("margin-top",offset+"px");
 			$(this).find('.multimenu').css("margin-left","-9px");
 			$("[data-role=multiinput]").sortable();
 		}

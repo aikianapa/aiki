@@ -1229,6 +1229,7 @@ abstract class kiNode
 	}
 
 	function tagVariable($Item) {
+		$this->contentSetAttributes($Item);
 		$var=$this->attr("var");
 		$var=contentSetValuesStr($var,$Item);
 		$where=$this->attr("where");
@@ -1348,13 +1349,19 @@ abstract class kiNode
 
 	function contentSetAttributes($Item=array()) {
 		$attributes=$this->attributes();
-		if (is_object($attributes) && strpos($attributes,"}}")) {
+		if (is_object($attributes) && (strpos($attributes,"}}") OR strpos($attributes,"%"))) {
 			foreach($attributes as $at) {
 				$atname=$at->name;
 				$atval=$this->attr($atname);
 				if ($atval>"" && strpos($atval,"}}")) {
 					$this->attr($atname,contentSetValuesStr($atval,$Item));
-				}; unset($atname,$atval,$at);
+				}; 
+				if ($atval>"" && substr($atval,0,1)=="%") {
+					eval('$tmp='.substr($atval,1).";");
+					$this->attr($atname,$tmp);
+				}
+
+				unset($atname,$atval,$at);
 			}; unset($attributes);
 		}
 	}
@@ -1954,6 +1961,7 @@ function tagThumbnail($Item=array()) {
 	if (is_array($images)) {
 		if (isset($images[$idx])) {$img=$images[$idx]["img"];} else {$img="";}
 		$src=aikiGetItemImg($Item,$idx,$noimg);
+		$img=explode($src,"/"); $img=$img[count($img)-1];
 		$this->attr("src",$src);
 	}
 	

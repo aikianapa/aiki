@@ -222,6 +222,12 @@ function active_plugins() {
 					$(this).mask($(this).attr("data-mask"));
 				});
 			}			
+			if ($("input[type=mask][data-descr]").length) {
+				$("input[type=mask][data-descr]").each(function(){
+					$(this).attr("type","text");
+					$(this).mask($(this).attr("data-descr"));
+				});
+			}	
 		}
 		if ($(this).attr("src")=="/engine/bootstrap/rating/bootstrap-rating.min.js" && $("input[name=rating]").length) {
 			$("input[name=rating]").rating();
@@ -1094,7 +1100,7 @@ function content_set_data(selector,data,ret) {
 		return diff;
 }
 
-function com_tree_init() {
+function active_tree() {
 	$("#treeEditForm #treeData").undelegate("input[data-tree]","change");
 	$("#treeEditForm #treeData").delegate("input[data-tree]","change",function(){
 		var did=$("#treeEditForm #treeData input[data-tree=id]").val();
@@ -1623,16 +1629,18 @@ function aiki_formsave(formObj) {
 			url: 		src,
 			data:		form,
 			success:	function(data){
-				$.bootstrapGrowl("Сохранено!", {
-					ele: 'body',
-					type: 'success',
-					offset: {from: 'top', amount: 20},
-					align: 'right',
-					width: "auto",
-					delay: 4000,
-					allow_dismiss: true,
-					stackup_spacing: 10 
-				});
+				if ($.bootstrapGrowl) {
+					$.bootstrapGrowl("Сохранено!", {
+						ele: 'body',
+						type: 'success',
+						offset: {from: 'top', amount: 20},
+						align: 'right',
+						width: "auto",
+						delay: 4000,
+						allow_dismiss: true,
+						stackup_spacing: 10 
+					});
+				}
 
 				if (ptpl!==undefined && padd!=="false") {
 					var tpl=$(document).find("textarea#"+ptpl).html();
@@ -1663,17 +1671,18 @@ function aiki_formsave(formObj) {
 			},
 			error:		function(data){
 				$(document).trigger(name+"_after_formsave",[name,item,form,false]);
-				$.bootstrapGrowl("Ошибка сохранения!", {
-					ele: 'body',
-					type: 'danger',
-					offset: {from: 'top', amount: 20},
-					align: 'right',
-					width: "auto",
-					delay: 4000,
-					allow_dismiss: true,
-					stackup_spacing: 10 
-				});
-
+				if ($.bootstrapGrowl) {
+					$.bootstrapGrowl("Ошибка сохранения!", {
+						ele: 'body',
+						type: 'danger',
+						offset: {from: 'top', amount: 20},
+						align: 'right',
+						width: "auto",
+						delay: 4000,
+						allow_dismiss: true,
+						stackup_spacing: 10 
+					});
+				}
 				return {error:1};
 			}
 		});

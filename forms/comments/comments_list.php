@@ -12,10 +12,10 @@
                   <th>Запись</th>
                 </tr>
               </thead>
-              <tbody  id="comments_list" data-role="foreach" form="comments" data-sort="date:d" data-size="15" data-add="true">
-				<meta data-role="variable" where=' visible =  "on" ' var="class" value="">
-				<meta data-role="variable" where=' visible <> "on" ' var="class" value="text-danger">
-                <tr item="{{id}}" class="{{class}}">
+              <tbody  id="comments_list" data-role="foreach" form="comments" data-sort="date:d" data-size="15" >
+                <tr item="{{id}}">
+					<meta data-role="variable" where=' visible =  "on" ' var="class" value="">
+					<meta data-role="variable" where=' visible <> "on" ' var="class" value="text-danger">
                   <td>
 					<div class="dropdown">
 					  <a data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-th-list"></span></a>
@@ -25,8 +25,8 @@
 					  </ul>
 					</div>
                   </td>
-                  <td>{{date}}</td>
-                  <td>{{name}}</td>
+                  <td class="{{class}}">{{date}}</td>
+                  <td class="{{class}}">{{name}}</td>
                   <td>{{email}}</td>
                   <td>{{rating}}</td>
                   <td>{{target_form}}</td>

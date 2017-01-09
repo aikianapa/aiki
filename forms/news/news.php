@@ -67,6 +67,7 @@ function news__edit() {
 function news__getajax() {
 	if ($_GET["view"]=="modal") {
 		$_GET["mode"]="show";
+		if (isset($_GET["item"]) && !isset($_GET["id"])) $_GET["id"]=$_GET["item"];
 		$out="<div class='row'><div class='col-sm-12'>".news__show()."</div></div>";
 		return $out;
 	}

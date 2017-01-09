@@ -56,7 +56,7 @@
 				<option value="time">time</option>
 				<option value="color">color</option>
 				</select>
-				<input type="text" name="flddescr" placeholder="Комментарий" >
+				<input type="text" name="flddescr" placeholder="Свойства" >
 
 			</div>
 			<div class="data-cache hidden">{{data}}</div>
@@ -89,7 +89,7 @@
 
 <script language="javascript">
 $(function(){
-	com_tree_init();
+	active_tree();
 			var btn='<div class="dd-btn">'+
 					'<a href="#" class="btn btn-xs btn-success dd-edit"><span class="fa fa-edit"></span></a>&nbsp;'+
 					'<a data-toggle="dropdown" href="#" aria-expanded="true" class="btn btn-xs btn-primary dd-menu"><span class="fa fa-list-ul"></span></a>'+
@@ -249,6 +249,12 @@ $(function(){
 				return false;
 			}
 		});
+		
+//		$("#treeEditForm").undelegate(".dd3-content","dblclick");
+//		$("#treeEditForm").delegate(".dd3-content","dblclick",function(){
+//			$(this).trigger("click");
+//			$(this).parents(".dd-item").find(".dd-edit").trigger("click");
+//		});
 
 		$(document).undelegate(".dd3-content","focusout");
 		$(document).delegate(".dd3-content","focusout",function(){

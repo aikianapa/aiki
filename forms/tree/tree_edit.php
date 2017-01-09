@@ -250,11 +250,11 @@ $(function(){
 			}
 		});
 		
-//		$("#treeEditForm").undelegate(".dd3-content","dblclick");
-//		$("#treeEditForm").delegate(".dd3-content","dblclick",function(){
-//			$(this).trigger("click");
-//			$(this).parents(".dd-item").find(".dd-edit").trigger("click");
-//		});
+		$("#treeEditForm").undelegate(".dd3-content","dblclick");
+		$("#treeEditForm").delegate(".dd3-content","dblclick",function(){
+			$(this).trigger("click").trigger("focusout");
+			$(this).parents(".dd-item").find(".dd-edit").trigger("click");
+		});
 
 		$(document).undelegate(".dd3-content","focusout");
 		$(document).delegate(".dd3-content","focusout",function(){

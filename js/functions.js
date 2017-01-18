@@ -968,8 +968,21 @@ function active_pagination(pid) {
 				var page=$source.attr("data")+"-"+$(".pagination[id="+id+"] .active").attr("data-page");
 				var sort=$(this).attr("data-sort");
 				var desc=$(this).attr("data-desc");
-				$(this).parents("thead").find("th[data-desc] .aiki-sort").remove();
-				$(this).parents("thead").find("th[data-desc]").each(function(){
+				var sort=explode(" ",trim(sort));
+				$(sort).each(function(i){
+					var s=explode(":",sort[i]);
+					if (s[1]==undefined) {
+						if (desc==undefined) {s[1]="a";}
+						if (desc!==undefined && desc=="false") {s[1]="a"; desc="false";}
+						if (desc!==undefined && desc=="true") {s[1]="d"; desc="true";}
+					}
+					if (s[1]=="a") {s[1]="d";} else {s[1]="a";}
+					$(that).attr("data-sort",implode(":",s));
+				});
+				var sort=$(this).attr("data-sort");
+				
+				$(this).parents("thead").find("th[data-sort]").each(function(){
+					$(this).find(".aiki-sort").remove();
 					$(this).data("desc","");
 					$(this).removeAttr("data-desc");
 				});
@@ -999,7 +1012,7 @@ function active_pagination(pid) {
 				var foreach=$('<div>').append($("[data-template="+arr[1]+"]").clone());
 				$(foreach).find("[data-template="+arr[1]+"]").html("");
 				$(foreach).find("[data-template="+arr[1]+"]").attr("data-sort",sort);
-				$(foreach).find("[data-template="+arr[1]+"]").attr("data-desc",desc);
+				$(foreach).find("[data-template="+arr[1]+"]").removeAttr("data-desc");
 				var foreach=$(foreach).html();
 				var param={tpl:tpl,tplid:arr[1],idx:idx,page:arr[2],size:size,cache:cache,foreach:foreach};
 				var url="/engine/ajax.php?mode=pagination";
@@ -1009,7 +1022,6 @@ function active_pagination(pid) {
 				if (find>"") {find=urldecode(find);}
 				param.find=find;
 				param.sort=sort;
-				param.desc=desc;
 				$("[data-template="+arr[1]+"]").html(ajax_loader());
 				$("body").addClass("cursor-wait");
 				$.ajax({

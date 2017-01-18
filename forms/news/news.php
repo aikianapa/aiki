@@ -7,19 +7,7 @@ function news__show() {
 	return $out->htmlOuter();
 }
 
-function news__list() {
-	$out=aikiGetForm($_GET["form"],$_GET["mode"]);
-	$Item=aikiListItems("news");
-	foreach($Item["result"] as $key => $item) {
-		$Item["result"][$key]=_newsBeforeShowItem($item);
-	}
-	$out->contentSetData($Item);
-	$out->find("div.modal")->attr("id","newsEdit");
-	$out->find("div.modal")->attr("data-backdrop","static");
-	$out->find("[data-formsave]")->attr("data-formsave","#newsEditForm");
-	$out->find(".modal-title")->html("Редактирование новости");
-	return $out->htmlOuter();
-}
+
 
 function _newsBeforeShowItem($Item,$mode=NULL) {
 	if ($mode==NULL) {$mode=$_GET["mode"];}
@@ -39,7 +27,7 @@ function _newsBeforeShowItem($Item,$mode=NULL) {
 			$Item=aikiAddItemGal($Item);
 			break;
 		case "list"	:
-			$Item["datesort"]=$Item["date"];
+			$Item["datesort"]=date("Y-m-d",strtotime($Item["date"]));
 			$Item["date"]=date("d.m.Y",strtotime($Item["date"]));
 			$Item["text"]=getWords(strip_tags($Item["text"]),50);
 			break;

@@ -4,11 +4,11 @@
               <thead>
                 <tr>
                   <th>&nbsp;</th>
-                  <th data-sort="date:d">Дата</th>
+                  <th data-sort="datesort:d">Дата</th>
                   <th data-sort="header">Заголовок</th>
                 </tr>
               </thead>
-              <tbody  data-role="foreach" from="result" data-sort="datesort:d" data-size="15">
+              <tbody  data-role="foreach" form="news" data-sort="datesort:d" data-size="15">
                 <tr item="{{id}}">
                   <td>
 					<div class="dropdown">

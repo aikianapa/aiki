@@ -28,7 +28,7 @@
 		</div>
 
 		<div id="{{form}}Prop" class="tab-pane">
-			<br />
+			<br/>
 			<div data-role="multiinput" name="fields" class="ui-sortable">
 				<input type="text" name="fldname" placeholder="Имя поля">
 				<input type="text" name="fldlabel" placeholder="Текстовая метка">
@@ -66,10 +66,14 @@
 			<form id="{{form}}EditFormData" class="form-horizontal" role="form">
 				<br>
 				<div class="form-group">
-				  <label class="col-sm-3 control-label">Ключ</label>
+				  <label class="col-sm-3 control-label">Ключ ветви</label>
 				   <div class="col-sm-9"><input type="text" class="form-control" data-tree="id" placeholder="Идентификатор" required ></div>
-				  <label class="col-sm-3 control-label">Текст</label>
+				  <label class="col-sm-3 control-label">Имя ветви</label>
 				   <div class="col-sm-9"><input type="text" class="form-control" data-tree="name" placeholder="Наименование" required ></div>
+				</div>
+				<div class="form-group">
+					 <label class="col-sm-3">&nbsp;</label>
+					<div class="col-sm-9"><b>Свойства ветви</b></div>
 				</div>
 				<div class="form-group" name="data"></div>
 			</form>

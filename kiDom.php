@@ -1822,6 +1822,7 @@ function tagInclude($Item) {
 		if ($src=="imgviewer") 	{$src="/engine/js/imgviewer.php";	$this->attr("data-role-hide","true");}
 		if ($src=="uploader")	{$src="/engine/js/uploader.php";	$this->attr("data-role-hide","true");}
 		if ($src=="editor") 	{$src="/engine/js/editor.php";		$this->attr("data-role-hide","true");}
+		if ($src=="source") 	{$src="/engine/forms/source/source_edit.php"; $this->attr("data-role-hide","true");}
 		$vars=$this->attr("vars");	if ($vars>"") {$Item=attrAddData($vars,$Item);}
 		if ($src=="") {$src=$this->html(); $this_content=ki::fromString($src);} else {
 			$tplpath=explode("/",$src); 

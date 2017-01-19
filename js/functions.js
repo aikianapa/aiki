@@ -592,8 +592,10 @@ function aikiCallEditor() {
 	}
 }
 
-function aikiCallSourceEditor() {
-    var editor = ace.edit("sourceEditor");
+function aikiCallSourceEditor(form) {
+	var editorName="SourceEditor";
+	if (form!==undefined) {editorName=form+editorName;}
+    var editor = ace.edit(editorName);
     editor.setTheme("ace/theme/chrome");
 	editor.setOptions({
             enableBasicAutocompletion: true,

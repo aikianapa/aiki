@@ -2,6 +2,7 @@
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#newsDescr" data-toggle="tab">Характеристики</a></li>
 	<li><a href="#newsText" class="call-editor" data-toggle="tab" >Контент</a></li>
+	<li><a href="#newsSource" class="call-source" data-toggle="tab">Исходник</a></li>
 	<li><a href="#newsImages" class="call-imgloader" data-toggle="tab">Изображения</a></li>
 </ul>
 
@@ -33,6 +34,11 @@
 <div id="newsText" class="tab-pane">
 <textarea name="text" id="text" class="editor" placeholder="Контент" required >{{text}}</textarea>
 </div>
+
+<div id="{{form}}Source" class="tab-pane" data-role="include" src="source" data-name="text" data-id="src-{{id}}">
+</div>
+
+
 <div id="newsImages" class="tab-pane" data-role="imageloader"></div>
 </div>
 </form>

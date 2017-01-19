@@ -56,7 +56,7 @@
 			</ul>
 			<div class="tab-content">
 				<div class="tab-pane active" id="tabSource">
-					<textarea id="sourceEditor"></textarea>
+					<textarea id="SourceEditor"></textarea>
 				</div>
 			</div>
 		</div>

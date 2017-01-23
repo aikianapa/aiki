@@ -1354,10 +1354,12 @@ abstract class kiNode
 				$atname=$at->name;
 				$atval=$this->attr($atname);
 				if ($atval>"" && strpos($atval,"}}")) {
-					$this->attr($atname,contentSetValuesStr($atval,$Item));
+					$atval=contentSetValuesStr($atval,$Item);
+					$this->attr($atname,$atval);
 				}; 
 				if ($atval>"" && substr($atval,0,1)=="%") {
-					eval('$tmp='.substr($atval,1).";");
+					$ev=substr($atval,1);
+					eval('$tmp = ('.$ev.');');
 					$this->attr($atname,$tmp);
 				}
 

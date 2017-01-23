@@ -947,8 +947,9 @@ class phpthumbclass {
 		}
 		$AvailableImageOutputFormats = array_unique($AvailableImageOutputFormats);
 		$this->DebugMessage('$AvailableImageOutputFormats = array('.implode(';', $AvailableImageOutputFormats).')', __FILE__, __LINE__);
-
 		$this->f = preg_replace('#[^a-z]#', '', strtolower($this->f));
+		$myext=explode(".",strtolower($this->src)); $myext=$myext[count($myext)-1];
+		$this->f=$myext;
 		if (strtolower($this->config_output_format) == 'jpg') {
 			$this->config_output_format = 'jpeg';
 		}

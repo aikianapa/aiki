@@ -1,17 +1,18 @@
 <?php
 ini_set('display_errors', 0	);
-if(!isset($_SESSION["SESSID"])) { session_start();}
-if (!isset($_SESSION["SESSID"])) {$_SESSION["SESSID"]=session_id();} else {session_id($_SESSION["SESSID"]);}
-$_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
-include_once("{$_SESSION["engine_path"]}/functions.php");
-if (is_file("{$_SESSION["root_path"]}/functions.php")) {
-	include_once("{$_SESSION["root_path"]}/functions.php");
-}
-$req=(parse_url($_SERVER["REQUEST_URI"]));
-parse_str($req["query"]);
+include_once(__DIR__."/functions.php");
 comSession();
 aikiSettingsRead();
 aikiDatabaseConnect();
+aikiFormFunctions();
+aikiParseUri();
+$req=(parse_url($_SERVER["REQUEST_URI"]));
+parse_str($req["query"]);
+
+if (is_file("{$_SESSION["root_path"]}/functions.php")) {
+	include_once("{$_SESSION["root_path"]}/functions.php");
+}
+
 if (isset($form)) {formCurrentInclude($form);} else {$form="";}
 $out=""; $res=0;
 if ($res==false && is_callable($_GET["mode"])) {$res=true; $out=$_GET["mode"]();}

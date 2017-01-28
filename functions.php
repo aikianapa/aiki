@@ -14,6 +14,29 @@ function contentControls($set="") {
 	return $res;
 }
 
+function aikiParseUri() {
+	$tmp=explode("?",$_SERVER["REQUEST_URI"]);
+	if (isset($tmp[1])) {parse_str($tmp[1],$get); $_GET=(array)$_GET+(array)$get; unset($tmp,$get);}
+	return $_GET;
+}
+
+function aikiFormFunctions() {
+	include_once("{$_SESSION["engine_path"]}/forms/common/common.php");
+	if (is_file("{$_SESSION["app_path"]}/functions.php")) {	include_once("{$_SESSION["app_path"]}/functions.php");}
+	$forms=aikiListForms();
+	foreach($forms as $form) {
+			$inc=array(
+				"{$_SESSION["engine_path"]}/forms/{$form}.php", "{$_SESSION["engine_path"]}/forms/{$form}/{$form}.php",
+				"{$_SESSION["prj_path"]}/forms/{$form}.php", "{$_SESSION["prj_path"]}/forms/{$form}/{$form}.php",
+				"{$_SESSION["app_path"]}/forms/{$form}.php", "{$_SESSION["app_path"]}/forms/{$form}/{$form}.php",
+				"{$_SESSION["root_path"]}/forms/{$form}.php", "{$_SESSION["root_path"]}/forms/{$form}/{$form}.php"
+			); $res=FALSE;
+			foreach($inc as $k => $file) {
+				if (is_file("{$file}") && $res==FALSE ) {include_once("{$file}"); if ($k>1) {$res=TRUE;}; }
+			}
+	}
+}
+
 function aikiSaveList($name,$list) {
 	$savePath=formPathGet();
 	$list=array_keys($list);
@@ -47,8 +70,9 @@ function aikiBeforeShowItem($Item,$mode="show",$form=null) {
 }
 
 function aikiClearMemory() {
+	aikiSaveCache($__page);
 	$vars=get_defined_vars();
-	unset($vars['$_SESSION'],$vars['$_COOKIE']);
+	unset($vars['$_SESSION'],$vars['$_COOKIE'],$vars['$_ENV']);
 	foreach($vars as $key) {$$key=null; unset($$key);}
 	gc_collect_cycles();
 }
@@ -62,7 +86,7 @@ function aikiCallFormFunc($name,$Item,$form=null,$mode=null) {
 		if (isset($Item["form"]) && $Item["form"]>"") {$form=$Item["form"];} else {$form=$_GET["form"];}
 	}
 	$sf=$_GET["form"]; $_GET["form"]=$form;
-	formCurrentInclude($form);
+//	formCurrentInclude($form);
 	$func=$form.$name; $_func="_".$func;
 	if (is_callable($func)) {$Item=$func($Item,$mode);} else {
 		if (is_callable($_func)) {$Item=$_func($Item,$mode);}
@@ -1411,7 +1435,7 @@ function fileListItems($form,$where=NULL,$engine=FALSE) {
 	} else {
 		$dir=$_SESSION["app_path"]."/contents/$form/";
 	}
-	formCurrentInclude($form);
+	// formCurrentInclude($form);
 	// обрабатываем переменную сессии с типом данных
 	// engine - читать из данных движка
 	// app - читать из данных коренвого проекта
@@ -1855,6 +1879,8 @@ function formPathCheck($form="page",$id="_new",$uplflds=array("images")) {
 }
 
 function comSession() {
+	if (!isset($_SESSION["SESSID"])) {session_start(); $_SESSION["SESSID"]=session_id();} else {session_id($_SESSION["SESSID"]);}
+	$_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
 	$_SESSION["cache"]=0;
 	$_SESSION["_new"]=newIdRnd();
 	$_SESSION["app_path"]="{$_SERVER['DOCUMENT_ROOT']}";
@@ -1985,6 +2011,7 @@ function aikiCheckoutForms() {
 
 function formCurrentInclude($form) {
 	$current="";
+	
 	$inc=array(
 		"{$_SESSION["engine_path"]}/forms/{$form}.php", "{$_SESSION["engine_path"]}/forms/{$form}/{$form}.php",
 		"{$_SESSION["root_path"]}/forms/{$form}.php", "{$_SESSION["root_path"]}/forms/{$form}/{$form}.php",

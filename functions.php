@@ -991,6 +991,131 @@ function aikiReadTree($name) {
 	return $tree;
 }
 
+function aikiTreeSaveObj($obj) {
+	$name=$obj->find("tree name")->text();
+	$Item=array(
+		"form"		=>"tree",
+		"id"		=>$name,
+		"descr"		=>$obj->find("tree descr")->text(),
+		"tree"		=>array()
+	);
+	$branches=$obj->find("tree > branch");
+	foreach($branches as $branch) {
+			$tree=aikiTreeSaveObjBranch($obj,$branch);
+			$Item["tree"][]=$tree;
+	}
+	
+	$Item["tree"]=json_encode($Item["tree"],JSON_UNESCAPED_UNICODE);
+	if ($obj->find("tree > images")->length) {
+		$Item["images"]=array();
+		$meta=$obj->find("tree > images > meta");
+		foreach($meta as $img) {
+			$Item["images"][]=$img->attrlist();
+		}
+		$Item["images"]=json_encode($Item["images"]);
+	}
+	if ($obj->find("tree > fields")->length) {
+		$Item["fields"]=array();
+		$meta=$obj->find("tree > fields > meta");
+		foreach($meta as $img) {
+			$Item["fields"][]=$img->attrlist();
+		}
+		unset($meta,$img);
+	}
+	$Item["id"]="test111";
+	aikiSaveItem("tree",$Item);
+}
+
+function aikiTreeSaveObjBranch($obj,$li) {
+	$branch=array(
+		"id"=>$li->attr("data-id"),
+		"name"=>$li->attr("data-name"),
+		"open"=>$li->attr("open"),
+		"fldself"=>"",
+		"fldchild"=>""
+	);
+	if ($li->attr("fldself")) $branch["fldself"]=explode(";",$li->attr("fldself"));
+	if ($li->attr("fldchild")) $branch["fldchild"]=explode(";",$li->attr("fldchild"));
+	if ($li->children("data")->length) {
+			$data=array();
+			$fields=$li->children("data")->find("*");
+			foreach($fields as $fld) {
+				$data[$fld->name]=$fld->html();
+			}
+			$branch["data"]=$data;
+			unset($data,$fields);
+	}
+	if ($li->children("branch")->length) {
+		$branch["children"]=array("0"=>array());
+		$childs=$li->children("branch");
+		foreach($childs as $child) {
+				$tree=aikiTreeSaveObjBranch($obj,$child);
+				$branch["children"]["0"][]=$tree;
+		}
+		unset($childs,$tree);
+	} else {unset($branch["open"]);}
+	return $branch;
+}
+
+function aikiTreeReadObj($name) {
+	$obj=aikiFromString("<tree></tree>");
+	$tree=aikiReadItem("tree",$name);
+	$obj->find("tree")	->append("<name>{$name}</name>")
+						->append("<descr>{$tree["descr"]}</descr>")
+						->append("<images></images>")
+						->append("<fields></fields>");
+
+
+	$images=json_decode($tree["images"],true);
+	foreach($images as $i => $line) {
+		$obj->find("tree images")->append("<meta/>");
+		foreach($line as $name => $value) {$obj->find("tree images meta:last")->attr($name,$value); }
+	}
+
+	$fields=$tree["fields"];
+	foreach($fields as $i => $line) {
+		$obj->find("tree fields")->append("<meta/>");
+		foreach($line as $name => $value) {$obj->find("tree fields meta:last")->attr($name,$value); }	
+	}
+
+	$treedata=json_decode($tree["tree"],true);
+	foreach($treedata as $t) {
+		$brh=aikiTreeReadObjBranch($obj,$t);
+		$obj->find("tree")->append($brh);
+	}
+	return $obj;
+}
+
+function aikiTreeReadObjBranch($obj,$li){
+	$liobj=aikiFromString("<branch></branch>");
+	$node=$liobj->find("branch");
+	$node->attr("data-id",$li["id"])->addClass($li["id"]);
+	$node->attr("data-name",$li["name"]);
+	$node->attr("open",$li["open"]);
+	$node->attr("fldself",implode(";",$li["fldself"]));
+	$node->attr("fldchild",implode(";",$li["fldchild"]));
+	
+	if (count($li["data"])>0) {
+		$fields=$obj->find("fields meta"); $fldlist=array();
+
+		$dt=aikiFromString("<data></data>");
+		$d=$dt->find("data");
+		foreach($li["data"] as $fld => $value) {
+			$d->append("<{$fld}>{$value}</$fld>");
+		}
+		$node->append($dt);
+		unset($d,$dt);
+	}
+	
+	if (isset($li["children"]) && isset($li["children"][0])) {
+		foreach($li["children"][0] as $l) {
+			$brh=aikiTreeReadObjBranch($obj,$l);
+			$node->append($brh);
+		}
+	}
+	unset($node,$li,$treeobj);
+	return $liobj;
+}
 
 function aikiTreeFindData($branch,$field,$value) {
 	return aikiFindTreeData($branch,$field,$value);
@@ -2252,4 +2377,5 @@ function normalizePath( $path ) {
     $replacements = array('/', '/', '', '');
     return preg_replace($patterns, $replacements, $path);
 }
+
 ?>

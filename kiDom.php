@@ -2424,7 +2424,7 @@ function tagThumbnail($Item=array()) {
 		$this->attributes->set($name, $value);
 		return $this;
 	}
-
+	
 	public function removeAttr($name) {
 		$this->attributes && $this->attributes->delete($name);
 		return $this;
@@ -2582,12 +2582,16 @@ function tagThumbnail($Item=array()) {
 		return $this;
 	}
 
-
 	public function after($content)	{
 		if ($p = $this->parent) {
 			$p->insertAt($content, $this->cnid+1);
 		}
 		return $this;
+	}
+	
+	public function attrlist()	{
+		parse_str(str_replace(array(" ",'"'),array("&",""),$this->attributes()),$attr);
+		return $attr;
 	}
 
 	public function before($content) {
@@ -2865,7 +2869,7 @@ function tagThumbnail($Item=array()) {
 
 		return $list;
 	}
-
+	
 	protected function getRelativeAll($type, $selector = null, $list = null)	{
 		$list || $list = new kiNodesList($this);
 
@@ -4411,7 +4415,7 @@ class kiNodesList extends kiList
 		}
 		return $value === null ? null : $this;
 	}
-
+	
 	public function removeAttr($name)	{
 		foreach ($this->list as $node) {
 			$node->attributes && $node->attributes->delete($name);

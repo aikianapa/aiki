@@ -1029,7 +1029,7 @@ function aikiTreeSaveObj($obj) {
 function aikiTreeSaveObjBranch($obj,$li) {
 	$branch=array(
 		"id"=>$li->attr("data-id"),
-		"name"=>$li->attr("data-name"),
+		"name"=>$li->children("name")->html(),
 		"open"=>$li->attr("open"),
 		"fldself"=>"",
 		"fldchild"=>""
@@ -1090,11 +1090,10 @@ function aikiTreeReadObjBranch($obj,$li){
 	$liobj=aikiFromString("<branch></branch>");
 	$node=$liobj->find("branch");
 	$node->attr("data-id",$li["id"])->addClass($li["id"]);
-	$node->attr("data-name",$li["name"]);
 	$node->attr("open",$li["open"]);
 	$node->attr("fldself",implode(";",$li["fldself"]));
 	$node->attr("fldchild",implode(";",$li["fldchild"]));
-	
+	$node->append("<name>{$li["name"]}</name>");
 	if (count($li["data"])>0) {
 		$fields=$obj->find("fields meta"); $fldlist=array();
 
@@ -1627,7 +1626,7 @@ function fileDeleteItem($form,$id,$path=false) {
 function fileReadItem($form,$id,$path=false,$func=true) {
 	if (!isset($_ENV["cache"]["_fields"][$form])) {$_ENV["cache"]["_fields"][$form]=array();}
 	$_SESSION["error"]="";
-	$Item=array(); $Item["id"]=$id;
+	$Item=array("id"=>$id, "form"=>$form);
 	$before="_{$form}BeforeReadItem";	if (is_callable ($before) && $func==true) { $Item =$before($Item) ; }
 	$before="{$form}BeforeReadItem";	if (is_callable ($before) && $func==true) { $Item =$before($Item) ; }
 	$file=$_SESSION["app_path"]."/contents/".$form."/".$id;
@@ -1751,19 +1750,22 @@ function formSave($form,$datatype="file",$table="") {
 	return $res;
 }
 
-function aikiDeleteItem($form,$id) {
+function aikiDeleteItem($form,$id,$upl=true) {
 	$Item=aikiReadItem($form,$id);
+	if (!isset($_GET["upl"])) {$_GET["upl"]=$upl;}
 	$before=$form."BeforeDeleteItem";
 	if (is_callable ($before)) { $Item=aikiReadItem($form,$id); $Item=$before($Item) ; }
 	if ($_SESSION["settings"]["store"]=="on") {$datatype="mysql";} else {$datatype="file";}
 	$res=array(); $res["error"]=0;
-	$dir=formPathGet($_GET["form"],$_GET["item"]);
-	if ($_GET["upl"]=="true" OR !isset($_GET["ulp"])) {	$res1=DeleteDir($dir["uplitem"]); }
+	//$dir=formPathGet($_GET["form"],$_GET["item"]);
+	$dir=formPathGet($form,$id);
+	if ($_GET["upl"]=="true") {	$res1=DeleteDir($dir["uplitem"]); }
 	$call="{$datatype}DeleteItem";
 	$del=$call($form,$id);
-	if ($del==false) {$res["error"]=1;}
-	$after=$form."AfterDeleteItem";
-	if (is_callable ($after)) {$Item=$after($Item) ;}
+	if ($del==false) {$res["error"]=1;} else {
+		$after=$form."AfterDeleteItem";
+		if (is_callable ($after)) {$Item=$after($Item) ;}
+	}
 	return $res;
 }
 

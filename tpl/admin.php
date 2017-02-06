@@ -14,16 +14,6 @@
         <!-- Icons -->
         <!-- The following icons can be replaced with your own, they are used by desktop and mobile browsers -->
         <link rel="shortcut icon" href="/engine/appUI/img/favicon.png">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon57.png" sizes="57x57">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon72.png" sizes="72x72">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon76.png" sizes="76x76">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon114.png" sizes="114x114">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon120.png" sizes="120x120">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon144.png" sizes="144x144">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon152.png" sizes="152x152">
-        <link rel="apple-touch-icon" href="/engine/appUI/img/icon180.png" sizes="180x180">
-        <!-- END Icons -->
-
         <!-- Stylesheets -->
         <!-- Bootstrap is included in its original form, unaltered -->
     </head>
@@ -92,8 +82,11 @@
                                 <li>
 									<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-gear sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Утилиты</span></a>
                                     <ul class="utilites">
+										<li><a href="#" data-ajax="mode=master&amp;form=form" data-html="div.main">Мастер форм
+											<!--span class="pull-right glyphicon glyphicon-plus-sign add-item" data-ajax="mode=add&amp;form=masterform&amp;id=_new" data-toggle="modal" data-target="#prodEdit" data-html="#prodEdit .modal-body"> </span--></a>
+										</li>
 										<li><a href="#" data-ajax="mode=list&amp;form=source" data-html="div.main">Исходники
-											<span class="pull-right glyphicon glyphicon-plus-sign add-item" data-ajax="mode=add&amp;form=souce&amp;id=_new" data-toggle="modal" data-target="#prodEdit" data-html="#prodEdit .modal-body"> </span></a>
+											</a>
 										</li>
                                     </ul>
 								</li>

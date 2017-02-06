@@ -1001,6 +1001,27 @@ abstract class kiNode
 //======================================================================//
 //======================================================================//
 
+	public function aikiHtmlFormat($step=0) {
+		$this->children()->after("{{_line_}}");
+		$this->children()->before("{{_line_}}".str_repeat("{{_tab_}}",$step));
+		$childs=$this->children();
+		foreach($childs as $child) {
+			if ($child->find("*")->length) $child->append(str_repeat("{{_tab_}}",$step));
+			$step++;
+			$child->aikiHtmlFormat($step);
+			$step--;
+			$str=trim($child->outerHtml());
+			$child->after($str);
+			$child->remove();
+		}
+
+		if ($step==0) {
+			$result=trim($this->outerHtml());
+			$result=trim(str_replace(array(" {{_tab_}}","{{_tab_}}","{{_line_}}"),array("{{_tab_}}","    ","\n"),$result));
+			return $result;
+		}
+	}
+
 	public function aikiBaseHref() {
 		aikiBaseHref($this);
 		return $this;

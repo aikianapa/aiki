@@ -327,7 +327,7 @@ function check_email(email) {
 function check_required(form) {
 	var res=true;
 	var idx=0;
-	form.find("input,select,textarea").each(function(i){
+	$(form).find("input,select,textarea").each(function(i){
 	if ($(this).is("[required]:not([disabled],[type=checkbox]):visible")) {
 			if ($(this).val()=="") {res=false; idx++; $(this).data("idx",idx); $(document).trigger("check_required_false",[this]);}
 			else {

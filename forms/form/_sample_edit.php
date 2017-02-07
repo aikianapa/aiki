@@ -1,4 +1,4 @@
-<form id="{{_form_}}EditForm" name="{{_form_}}" item="{{id}}"  class="form-horizontal" role="form">
+<form id="{{_form_}}EditForm" name="{{_form_}}" item="{{id}}" class="form-horizontal" role="form" data-descr="{{_descr_}}">
 <ul class="nav nav-tabs">
 	<li class="active"><a href="#{{_form_}}Prop" data-toggle="tab">Характеристики</a></li>
 	<li><a href="#{{_form_}}Text" class="call-editor" data-toggle="tab" >Контент</a></li>

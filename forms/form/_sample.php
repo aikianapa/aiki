@@ -16,14 +16,13 @@ function {{_form_}}_show($out=null,$Item=null) {
 }
 */
 
-function {{_form_}}_edit() {
+function test_edit() {
 	$out=aikiGetForm();
-	$Item=aikiReadItem("{{_form_}}",$_GET["id"]);
+	$Item=aikiReadItem("test",$_GET["id"]);
 	if ($_GET["id"]=="_new") {$Item["id"]=newIdRnd();}
 	$Item["tpllist"]=aikiListTpl();
-	$options=$out->find("select[name=template] option");
-	foreach($options as $opt) {
-		if (strpos($opt->attr("value"),".inc.")) $opt->remove();
+	foreach($Item["tpllist"] as $key => $tpl) {
+		if (strpos($Item["tpllist"][$key],".inc.")) {unset($Item["tpllist"][$key]);}
 	}
 	$out->contentSetData($Item);
 	return $out->outerHtml();

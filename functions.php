@@ -607,11 +607,16 @@ function aikiListForms() {
 			$ext=explode(".",$name); $ext=$ext[count($ext)-1];
 			$name=substr($name,0,-(strlen($ext)+1));
 			$name=explode("_",$name); $name=$name[0];
-			if ($ext=="php" && !$inc && !in_array($name,$exclude)) {
+			if ($ext=="php" && !$inc && !in_array($name,$exclude) && $name>"") {
 				$exclude[]=$list[]=$name;
 			}
 	}
 	unset($arr);
+	$merchE=aikiCheckoutForms(true);
+	$merchA=aikiCheckoutForms();
+	foreach($merchE as $m) {if (in_array($m["name"],$list)) {unset($list[array_search($m["name"],$list)]);}}
+	foreach($merchA as $m) {if (in_array($m["name"],$list)) {unset($list[array_search($m["name"],$list)]);}}
+	if (in_array("form",$list)) {unset($list[array_search("form",$list)]);}
 	return $list;
 }
 
@@ -2036,8 +2041,11 @@ function comSession() {
 
 function comAdminMenu($__page) {
 	if ($__page->find("ul.formlist")->length) {
-		$forms=array();
-		if (isset($_SESSION["settings"]["forms"])) {$forms=$_SESSION["settings"]["forms"];}
+		if (isset($_SESSION["settings"]["forms"])) {
+			$forms=$_SESSION["settings"]["forms"];
+			$check=""; foreach($forms as $f) {$check.=$f["name"];}
+			if ($check=="") {$forms=array();}
+		} else {$forms=array();}
 		if (count($forms)==0 OR !is_array($forms) OR (count($forms)==1 AND $forms[0]["name"]=="")) {
 			$f=array("name","descr","allow","disallow");
 			$v=array(
@@ -2051,10 +2059,14 @@ function comAdminMenu($__page) {
 			array("tree","Каталоги","","")
 			);
 			foreach($v as $k => $vv) {
-				foreach($vv as $i => $val) {
-					$forms[$k][$f[$i]]=$val;
-				}
+				foreach($vv as $i => $val) { $forms[$k][$f[$i]]=$val; }
 			}
+			$settings=$_SESSION["settings"];
+			$settings["forms"]=$forms;
+			$settings["id"]="settings";
+			aikiSaveItem("admin",$settings);
+			aikiSettingsRead();
+			unset($settings);
 		}
 		foreach($forms as $form) {
 			comAdminMenuAdd($__page,$form["name"],$form["descr"],$form["allow"],$form["disallow"]);
@@ -2113,9 +2125,13 @@ function aikiDatePickerOconv($out) {
 	}
 }
 
-function aikiCheckoutForms() {
+function aikiCheckoutForms($engine=false) {
 	$res=array();
-	$dir=$_SESSION["app_path"]."/forms";
+	if ($engine==false) {
+		$dir=$_SESSION["app_path"]."/forms";
+	} else {
+		$dir=$_SESSION["engine_path"]."/forms";
+	}
 	exec("ls {$dir} -R --ignore'=*_*.php' -D -1 ",$list);
 	foreach($list as $val) {
 		if (substr($val,-1)==":") {$dir=substr($val,0,-1);}
@@ -2123,7 +2139,8 @@ function aikiCheckoutForms() {
 		if (is_file($file)) {
 			$php=strtolower(trim(file_get_contents($file)));
 			$form=explode(".php",$val); $form=$form[0];
-			if ( strpos($php,"function {$form}_checkout") AND strpos($php,"function {$form}_success") ) {
+			if ( ( strpos($php,"function {$form}_checkout") AND strpos($php,"function {$form}_success") )
+			OR   ( strpos($php,"function {$form}__checkout") AND strpos($php,"function {$form}__success") ) ) {
 				$arr=array();
 				$arr["name"]=$form;
 				$arr["dir"]=$dir;

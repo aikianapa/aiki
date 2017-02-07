@@ -3,12 +3,17 @@
 <form id="formMasterForm" name="form" item="master"  class="form-horizontal col-xs-12 col-sm-10 col-md-6" role="form">
 	<div class="form-group">
 	  <label class="col-xs-6 col-sm-4 control-label">ID формы</label>
-	   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="name" value="test" placeholder="ID формы" required ></div>
+	   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="name" value="" placeholder="ID формы" required ></div>
 	</div>
 
 	<div class="form-group">
 	  <label class="col-xs-6 col-sm-4 control-label">Имя формы</label>
-	   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="descr" value="Test" placeholder="Имя формы" required ></div>
+	   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="descr" value="" placeholder="Имя формы" required ></div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-xs-4 control-label">Добавить в список форм</label>
+		<div class="col-xs-4"><label class="switch switch-primary"><input type="checkbox" name="tolist" value="on" checked="checked"><span></span></label></div>
 	</div>
 	
 	<div class="panel panel-default">
@@ -36,7 +41,7 @@
 	</div>
 	
 	<div class="form-group">
-	   <div class="col-xs-12"><button type="button" class="btn btn-success pull-right">Создать форму</button></div>
+		<div class="col-xs-12"><button type="button" class="btn btn-success pull-right">Создать форму</button></div>
 	</div>
 
 </form>
@@ -59,6 +64,7 @@ $(document).ready(function(){
 					if (data.error==false) {
 						var type="success";
 						$(".main").html("");
+						$(".sidebar-nav .formlist").append(data.append);
 					} else {var type="warning";}
 					
 					if ($.bootstrapGrowl) {

@@ -70,7 +70,7 @@ function aikiBeforeShowItem($Item,$mode="show",$form=null) {
 }
 
 function aikiClearMemory() {
-	aikiSaveCache($__page);
+	if (isset($__page)) aikiSaveCache($__page);
 	$vars=get_defined_vars();
 	unset($vars['$_SESSION'],$vars['$_COOKIE'],$vars['$_ENV']);
 	foreach($vars as $key) {$$key=null; unset($$key);}
@@ -940,7 +940,7 @@ function engineSettingsRead() {
 		} else {
 			$_SESSION["project"]="";
 		}
-	}
+	} else {$_SESSION["projects"]="";$_SESSION["project"]="";}
 	
 	if (isset($settings["elogin"]) AND $settings["elogin"]=="on") {
 		$settings["elogin"]="email";
@@ -996,7 +996,9 @@ return $Item;
 
 function aikiReadTree($name) {
 	$tree=aikiReadItem("tree",$name);
-	$tree["tree"]=json_decode($tree["tree"],true);
+	if (!isset($tree["tree"])) {$tree["tree"]=array();}  else {
+		$tree["tree"]=json_decode($tree["tree"],true);
+	}
 	return $tree;
 }
 
@@ -1562,7 +1564,7 @@ function getTemplate($tpl=NULL,$path=FALSE) { // устаревшая функц
 }
 
 function fileListItems($form,$where=NULL,$engine=FALSE) {
-	$result="";
+	$result=array();
 	if ($engine==TRUE) {
 		$dir=$_SERVER['DOCUMENT_ROOT']."/engine/contents/$form/";
 	} else {
@@ -1973,8 +1975,8 @@ function newIdRnd($separator="") {
 }
 
 function formPathGet($form="page",$id="_new") {
-	if (isset($_SESSION["project"]) && $_SESSION["projects"]=="true" && $_SESSION["project"]>"") {$prj="/projects/".$_SESSION["project"];} else {$prj="";}
-	$savePath["base"]=$_SESSION["root_path"].$_SESSION["proj_path"];
+	if (isset($_SESSION["projects"]) && $_SESSION["projects"]=="true" && $_SESSION["project"]>"") {$prj="/projects/".$_SESSION["project"];} else {$prj="";}
+	$savePath["base"]=$_SESSION["root_path"].$prj;
 	$savePath["contents"]="{$prj}/contents/";
 	$savePath["form"]=$savePath["contents"].$form."/";
 	$savePath["item"]=$savePath["form"].$id;
@@ -2016,6 +2018,8 @@ function formPathCheck($form="page",$id="_new",$uplflds=array("images")) {
 
 function comSession() {
 	if (!isset($_SESSION["SESSID"])) {session_start(); $_SESSION["SESSID"]=session_id();} else {session_id($_SESSION["SESSID"]);}
+	$settings=json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT']."/contents/admin/settings"),true);
+	if (isset($settings["projects"])) {$_SESSION["projects"]=$settings["projects"];}
 	$_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
 	$_SESSION["cache"]=0;
 	$_SESSION["_new"]=newIdRnd();
@@ -2023,7 +2027,7 @@ function comSession() {
 	$_SESSION["root_path"]="{$_SERVER['DOCUMENT_ROOT']}";
 	$_SESSION["HTTP_HOST"]=$_SERVER['HTTP_HOST'];
 	$domain=explode(".",str_replace("www.","",strtolower($_SERVER["HTTP_HOST"])));
-	if (count($domain)==3 AND $_SESSION["projects"]=="on") {
+	if (count($domain)==3 AND isset($_SESSION["projects"]) AND $_SESSION["projects"]=="on") {
 		if ($domain[0]!="www") {
 			$_SESSION["project"]=$domain[0];
 			$_SESSION["app_path"].="/projects/".$domain[0];

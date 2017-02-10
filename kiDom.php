@@ -1504,7 +1504,7 @@ abstract class kiNode
 			$_SESSION["tree_idx"]=0;
 			$_SESSION["tmp_srcTree"]=$Item;
 			$this->tagTreeUl_step($tree["tree"],$html,$id,$nobranch,$Item,$that);
-			if ($_SESSION["tmp_tagTree"]==false) {
+			if ($_SESSION["tmp_tagTree"]==false && isset($branch)) {
 				$tpl=aikiFromString($html);
 				$tpl->contentSetData($branch);
 				$this->append($tpl);
@@ -1804,7 +1804,7 @@ abstract class kiNode
 
 
 		if ($this->tag()=="select") {
-			if (!is_array($result)) {$this->outerHtml("");}
+			if (isset($result) AND !is_array($result)) {$this->outerHtml("");}
 			$plhr=$this->attr("placeholder");
 			if ($plhr>"") {$this->prepend("<option value=''>$plhr</option>");}
 		} else {
@@ -1819,8 +1819,11 @@ abstract class kiNode
 						$cacheId=md5($from.$form.$where.$tplid.$sort.$rand.$dsort.$limit.$item.$field.$call.$oconv.$vars.$json.implode("-",$_GET));
 					}
 					if ($cache=="" && isset($cacheList)) $_SESSION["data"]["foreach"][$cacheId]=$cacheList; unset($cacheList);
-					if ($find>"") {$count=$f;}
-						else {$count=count($_SESSION["data"]["foreach"][$cacheId]);}
+					if ($find>"") {$count=$f;} else {
+						if (isset($_SESSION["data"]["foreach"][$cacheId])) {
+								$count=count($_SESSION["data"]["foreach"][$cacheId]);
+						} else {$count=0;}
+					}
 					$pages=ceil($count/$size);
 					//if (round($pages)<$pages) {$pages=round($pages)+1;}
 					$this->tagDataPagesAjax($size,$page,$pages,$cacheId,$count,$find);

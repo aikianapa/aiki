@@ -2043,6 +2043,7 @@ function comSession() {
 	include_once("{$_SESSION["engine_path"]}/functions.php");
 	if (!isset($_SESSION["order_id"])) {$_SESSION["order_id"]=get_order_id();}
 	if (!is_file($_SESSION["app_path"]."/contents/dict/user_role")) {
+		if (!is_dir($_SESSION["app_path"]."/contents/dict/)")) {mkdir($_SESSION["app_path"]."/contents/dict/");}
 		copy("{$_SESSION["engine_path"]}/uploads/__contents/dict/user_role",$_SESSION["app_path"]."/contents/dict/user_role");
 	}
 }

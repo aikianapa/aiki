@@ -1924,8 +1924,8 @@ function tagThumbnail($Item=array()) {
 	$bkg=false; $img="";
 	$src=$this->attr("src");
 	$noimg=$this->attr("noimg");
-	$form=$this->attr("form"); if ($form=="") {$form=$Item["form"];}
-	$item=$this->attr("item"); if ($item=="") {$item=$Item["id"];}
+	$form=$this->attr("form"); if ($form=="" && isset($Item["form"])) {$form=$Item["form"];}
+	$item=$this->attr("item"); if ($item=="" && isset($Item["id"])) {$item=$Item["id"];}
 	$show=$this->attr("show");
 	$class=$this->attr("class");
 	$style=$this->attr("style");
@@ -2006,10 +2006,16 @@ function tagThumbnail($Item=array()) {
 		$src=urldecode($src);
 		if (substr($width,-1)=="%" OR substr($height,-1)=="%" ) {
 			list( $w, $h, $t ) = getimagesize($_SERVER["DOCUMENT_ROOT"].$src);
+			if (substr($width,-1)=="%") {$width=substr($width,0,-1)*1;}
+			if (substr($height,-1)=="%") {$height=substr($height,0,-1)*1;}
+
 			$w=ceil($w/100*($width+0));
 			$h=ceil($h/100*($height+0));
+			
 			$src="/{$thumb}/{$w}x{$h}/src{$src}";
 		} else {
+			if (substr($width,-2)=="px") {$width=substr($width,0,-2)*1;}
+			if (substr($height,-2)=="px") {$height=substr($height,0,-2)*1;}
 			$w=$width+0; $h=$height+0;
 			$src="/{$thumb}/{$w}x{$h}/src{$src}";
 		}

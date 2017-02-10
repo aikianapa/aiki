@@ -5,5 +5,5 @@ $__page->contentSetData();
 $__page->contentAppends();
 if (is_callable("aikiBeforeShowHtml")) {aikiBeforeShowHtml($__page);}
 echo $__page->outerHtml();
-aikiClearMemory();
+aikiClearMemory($__page);
 ?>

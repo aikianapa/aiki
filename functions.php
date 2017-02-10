@@ -69,8 +69,8 @@ function aikiBeforeShowItem($Item,$mode="show",$form=null) {
 	return aikiCallFormFunc("BeforeShowItem",$Item,$form,$mode);
 }
 
-function aikiClearMemory() {
-	if (isset($__page)) aikiSaveCache($__page);
+function aikiClearMemory($__page=null) {
+	if ($__page!==null) aikiSaveCache($__page);
 	$vars=get_defined_vars();
 	unset($vars['$_SESSION'],$vars['$_COOKIE'],$vars['$_ENV']);
 	foreach($vars as $key) {$$key=null; unset($$key);}

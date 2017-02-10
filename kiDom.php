@@ -1380,7 +1380,7 @@ abstract class kiNode
 				}; 
 				if ($atval>"" && substr($atval,0,1)=="%") {
 					$ev=substr($atval,1);
-					eval('$tmp = ('.$ev.');');
+					eval('$tmp = '.$ev.';');
 					$this->attr($atname,$tmp);
 				}
 

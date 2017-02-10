@@ -27,6 +27,7 @@ function common__edit() {
 function common__show($Item=array()) {
 	$out="";
 	if (isset($_GET["form"]) && $_GET["form"]>"") {
+		if (!isset($_GET["id"])) {$_GET["id"]="_new";}
 		$Item=aikiReadItem($_GET["form"],$_GET["id"]);
 		if ($_SESSION["error"]=="noitem") {
 			header($_SERVER['SERVER_PROTOCOL']." 404 Not Found");

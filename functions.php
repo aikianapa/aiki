@@ -463,6 +463,10 @@ function get_order_id() {
 	return $order_id;
 }
 
+function cartOrderId() {
+	return get_order_id();
+}
+
 function cartAction($action,$attr=array()) {
 	// $attr список полей по которым идентифицируется строка заказа
 	if (!isset($_SESSION["order_id"]) OR $_SESSION["order_id"]=="") {$_SESSION["order_id"]=get_order_id();}

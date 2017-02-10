@@ -539,7 +539,6 @@ function active_cart() {
 function aikiCallEditor() {
 	if ($("textarea.editor:not(.loaded)").length) {
 		$("textarea.editor:not(.loaded)").each(function(){
-			
 			if ($(this).attr("id")==undefined || $(this).attr("id")=="") {$(this).attr("id",JSON.parse(ajax_getid()));}
 			
 			var editor = $(this).ckeditor();
@@ -1478,7 +1477,7 @@ function ajax_navigation() {
 			ptpl=$($(that).attr("data-target")).parents("div[id]").find("[data-role=foreach]").attr("data-template");
 		}
 		//var sessid=$(this).attr("data-sessid");
-		if (ajax!=undefined) {
+		if (ajax!==undefined) {
 			var link=$(that);
 			var parse=explode("?",ajax);
 			if (parse==ajax && parse[1]==undefined) {

@@ -34,6 +34,11 @@ function form__create() {
 	return json_encode($res);
 }
 
+function form_snippet() {
+	$out=file_get_contents($_SESSION["engine_path"]."/forms/form/snippets/{$_GET["snippet"]}.htm");
+	return $out;
+}
+
 function formPrepForm($file,$form) {
 	$out=aikiFromString($file);
 	$exc=array("prop","text","images","source");

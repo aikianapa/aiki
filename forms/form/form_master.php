@@ -84,6 +84,10 @@ $(document).ready(function(){
 				},
 				error: function(){return false;}
 			});
+		} else {
+			if (document.location.host=="digiport.loc") {
+				ajax_load($('<meta data-ajax="mode=designer&form=form" data-html="div.main">'));
+			}
 		}
 	});
 });

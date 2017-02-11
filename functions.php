@@ -923,25 +923,11 @@ function engineSettingsRead() {
 		foreach($_SESSION["settings"] as $key => $val) {unset($_SESSION["key"]);}
 		unset($_SESSION["settings"]);
 	}
+	$settings=$_SESSION["settings"]=fileReadItem("admin","settings");
+	comBasePath();
 	$_SESSION["error"]="";
-	$settings=fileReadItem("admin","settings");
-	if (isset($settings["projects"]) && ($settings["projects"]=="on" OR $settings["projects"]=="1")) {
-		$domain=explode(".",str_replace("www.","",strtolower($_SERVER["HTTP_HOST"])));
-		if (count($domain)==3) {
-			if ($domain[0]!="www") {
-				$_SESSION["project"]=$domain[0];
-				$_SESSION["app_path"].="/projects/".$domain[0];
-				$settings=fileReadItem("admin","settings".$_SESSION["project"]);
-				if (isset($_SESSION["settings"]["variables"])) {
-					foreach($_SESSION["settings"]["variables"] as $key => $val) {unset($_SESSION["key"]);}
-				}
-				foreach($_SESSION["settings"] as $key => $val) {unset($_SESSION["key"]);}
-			}
-		} else {
-			$_SESSION["project"]="";
-		}
-	} else {$_SESSION["projects"]="";$_SESSION["project"]="";}
-	
+	$_SESSION["cache"]=0;
+	$_SESSION["_new"]=newIdRnd();
 	if (isset($settings["elogin"]) AND $settings["elogin"]=="on") {
 		$settings["elogin"]="email";
 	} else { $settings["elogin"]="login";}
@@ -2018,17 +2004,26 @@ function formPathCheck($form="page",$id="_new",$uplflds=array("images")) {
 
 function comSession() {
 	if (!isset($_SESSION["SESSID"])) {session_start(); $_SESSION["SESSID"]=session_id();} else {session_id($_SESSION["SESSID"]);}
-	$settings=json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT']."/contents/admin/settings"),true);
-	if (isset($settings["projects"])) {$_SESSION["projects"]=$settings["projects"];}
+	comBasePath();
+	if (!isset($_SESSION["User"])) {$_SESSION["User"]="User";}
+	include_once("{$_SESSION["engine_path"]}/functions.php");
+	if (!isset($_SESSION["order_id"])) {$_SESSION["order_id"]=get_order_id();}
+	if (!is_file($_SESSION["app_path"]."/contents/dict/user_role")) {
+		if (!is_dir($_SESSION["app_path"]."/contents/dict/)")) {mkdir($_SESSION["app_path"]."/contents/dict/");}
+		copy("{$_SESSION["engine_path"]}/uploads/__contents/dict/user_role",$_SESSION["app_path"]."/contents/dict/user_role");
+	}
+}
+
+function comBasePath() {
+	$syssettings=json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT']."/contents/admin/settings"),true);
+	if (isset($syssettings["projects"])) {$_SESSION["projects"]=$syssettings["projects"];} else {$_SESSION["projects"]="";$_SESSION["project"]="";}
 	$_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
-	$_SESSION["cache"]=0;
-	$_SESSION["_new"]=newIdRnd();
 	$_SESSION["app_path"]="{$_SERVER['DOCUMENT_ROOT']}";
 	$_SESSION["root_path"]="{$_SERVER['DOCUMENT_ROOT']}";
 	$_SESSION["HTTP_HOST"]=$_SERVER['HTTP_HOST'];
 	$domain=explode(".",str_replace("www.","",strtolower($_SERVER["HTTP_HOST"])));
 	if (count($domain)==3 AND isset($_SESSION["projects"]) AND $_SESSION["projects"]=="on") {
-		if ($domain[0]!="www") {
+		if ($domain[0]!=="www") {
 			$_SESSION["project"]=$domain[0];
 			$_SESSION["app_path"].="/projects/".$domain[0];
 			if (!is_dir($_SESSION["app_path"])) {
@@ -2038,14 +2033,7 @@ function comSession() {
 	} else {
 		$_SESSION["project"]="";
 	}
-	$_SESSION["prj_path"]=str_replace($_SESSION["root_path"],"",$_SESSION["app_path"]);
-	if (!isset($_SESSION["User"])) {$_SESSION["User"]="User";}
-	include_once("{$_SESSION["engine_path"]}/functions.php");
-	if (!isset($_SESSION["order_id"])) {$_SESSION["order_id"]=get_order_id();}
-	if (!is_file($_SESSION["app_path"]."/contents/dict/user_role")) {
-		if (!is_dir($_SESSION["app_path"]."/contents/dict/)")) {mkdir($_SESSION["app_path"]."/contents/dict/");}
-		copy("{$_SESSION["engine_path"]}/uploads/__contents/dict/user_role",$_SESSION["app_path"]."/contents/dict/user_role");
-	}
+	$_SESSION["prj_path"]=str_replace($_SESSION["root_path"],"",$_SESSION["app_path"]);	
 }
 
 function comAdminMenu($__page) {

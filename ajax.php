@@ -27,7 +27,13 @@ if ($res==false && is_callable($call)) {$res=true; $out=$call();} // в обще
 if ($res==false && is_callable($call)) {$res=true; $out=$call();}
 if ($mode=="save") {$res=true; $out=ajax_formsave($form);}
 
-if ($res==false) {$out=aikiGetForm($form,$mode); $out->contentSetData(aikiReadItem()); $res=true;}
+if ($res==false) {
+	$out=aikiGetForm($form,$mode); 
+	if (is_object($out)) {
+		$out->contentSetData(aikiReadItem());
+		$res=true;
+	}
+}
 if ($res==false && is_object($out)) {
 	$Item=aikiReadItem($form,$_GET["id"]);
 	$out->contentSetData($Item);

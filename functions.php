@@ -26,9 +26,11 @@ function aikiFormFunctions() {
 	$forms=aikiListForms();
 	foreach($forms as $form) {
 			$inc=array(
+			// в движке
 				"{$_SESSION["engine_path"]}/forms/{$form}.php", "{$_SESSION["engine_path"]}/forms/{$form}/{$form}.php",
-				"{$_SESSION["prj_path"]}/forms/{$form}.php", "{$_SESSION["prj_path"]}/forms/{$form}/{$form}.php",
+			// в текущем проекте
 				"{$_SESSION["app_path"]}/forms/{$form}.php", "{$_SESSION["app_path"]}/forms/{$form}/{$form}.php",
+			// в основном приложении
 				"{$_SESSION["root_path"]}/forms/{$form}.php", "{$_SESSION["root_path"]}/forms/{$form}/{$form}.php"
 			); $res=FALSE;
 			foreach($inc as $k => $file) {
@@ -604,7 +606,10 @@ function aikiListForms() {
 	$list=array();
 	$eList=aikiListFilesRecursive($_SESSION["engine_path"] ."/forms");
 	$aList=aikiListFilesRecursive($_SESSION["app_path"] ."/forms");
-	$arr=$eList; foreach($aList as $a) {$arr[]=$a;}
+	$rList=aikiListFilesRecursive($_SESSION["root_path"] ."/forms");
+	$arr=$eList; 
+	foreach($aList as $a) {$arr[]=$a;}
+	foreach($rList as $a) {$arr[]=$a;}
 	unset($eList,$aList);
 	foreach($arr as $i => $name) {
 			$inc=strpos($name,".inc");

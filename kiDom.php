@@ -1038,7 +1038,11 @@ abstract class kiNode
 					if ($inc->has("[json]")) {$inc->json=contentSetValuesStr($inc->json,$Item);}
 					if ($inc->hasRole("variable")) {$Item=$inc->tagVariable($Item);} else {
 						if ($inc->is("[data-template=true]")) {	$inc->addTemplate();}
-						$inc->contentProcess($Item,$tag);					
+						$inc->contentProcess($Item,$tag);
+				if ($inc->is("[data-role-hide=true]"))	{
+					$tmp=$inc->innerHtml();
+					$inc->replaceWith($tmp);
+				}
 						//if (isset($_SESSION["itemAfterWhere"])) {$Item=$_SESSION["itemAfterWhere"]; unset($_SESSION["itemAfterWhere"]);}
 					}
 				}
@@ -1843,12 +1847,12 @@ function tagInclude($Item) {
 		$json=$this->attr("json"); 	if ($json>"") {$Item=json_decode($json,true);}
 		$dfs=$this->attr("data-formsave");
 		$class=$this->attr("data-class");
-		if ($src=="comments") 	{$src="/engine/forms/comments/comments_widget.php"; $this->attr("data-role-hide","true");}
-		if ($src=="modal") 		{$src="/engine/forms/form_comModal.php"; $this->attr("data-role-hide","true");}
-		if ($src=="imgviewer") 	{$src="/engine/js/imgviewer.php";	$this->attr("data-role-hide","true");}
-		if ($src=="uploader")	{$src="/engine/js/uploader.php";	$this->attr("data-role-hide","true");}
-		if ($src=="editor") 	{$src="/engine/js/editor.php";		$this->attr("data-role-hide","true");}
-		if ($src=="source") 	{$src="/engine/forms/source/source_edit.php"; $this->attr("data-role-hide","true");}
+		if ($src=="comments") 	{$src="/engine/forms/comments/comments_widget.php"; }
+		if ($src=="modal") 		{$src="/engine/forms/form_comModal.php"; }
+		if ($src=="imgviewer") 	{$src="/engine/js/imgviewer.php";}
+		if ($src=="uploader")	{$src="/engine/js/uploader.php";}
+		if ($src=="editor") 	{$src="/engine/js/editor.php";}
+		if ($src=="source") 	{$src="/engine/forms/source/source_edit.php";}
 		$vars=$this->attr("vars");	if ($vars>"") {$Item=attrAddData($vars,$Item);}
 		if ($src=="") {$src=$this->html(); $this_content=ki::fromString($src);} else {
 			$tplpath=explode("/",$src); 
@@ -2024,7 +2028,7 @@ function tagThumbnail($Item=array()) {
 	if ($bkg==true) {
 		if (!in_array($srcExt,$exts)) {$bSize="contain";} else {$bSize="cover";}
 		
-		$style.="width:{$width}; height: {$height}; background: url('{$src}') {$left} {$top} no-repeat; display:inline-block; background-size: {$bSize}; background-clip: content-box;";
+		$style.="width:{$width}px; height: {$height}px; background: url('{$src}') {$left} {$top} no-repeat; display:inline-block; background-size: {$bSize}; background-clip: content-box;";
 		$this->attr("src","/engine/uploads/__system/transparent.png");
 		$this->attr("width",$width);
 		$this->attr("height",$height);

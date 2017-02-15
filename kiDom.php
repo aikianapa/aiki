@@ -2009,18 +2009,16 @@ function tagThumbnail($Item=array()) {
 		if ($contain=="true") {$thumb="thumbc";} else {$thumb="thumb";}
 		$src=urldecode($src);
 		list( $w, $h, $t ) = getimagesize($_SERVER["DOCUMENT_ROOT"].$src);
+		if (substr($width,-2)=="px") {$width=substr($width,0,-2)*1;}
+		if (substr($height,-2)=="px") {$height=substr($height,0,-2)*1;}
 		if (substr($width,-1)=="%") {
 			$w=ceil($w/100*(substr($width,0,-1)*1));
-		} else {
-			if (substr($width,-2)=="px") {$width=substr($width,0,-2)*1;}
-			$w=$width;
-		}
+		} else {$w=$width;}
+		
 		if (substr($height,-1)=="%" ) {
 			$h=ceil($h/100*(substr($height,0,-1)*1));
-		} else {
-			if (substr($height,-2)=="px") {$height=substr($height,0,-2)*1;}
-			$h=$height;
-		}
+		} else {$h=$height;}
+		
 		$src="/{$thumb}/{$w}x{$h}/src{$src}";
 	}
 	

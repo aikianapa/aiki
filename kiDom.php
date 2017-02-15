@@ -2010,11 +2010,8 @@ function tagThumbnail($Item=array()) {
 		$src=urldecode($src);
 		if (substr($width,-1)=="%" OR substr($height,-1)=="%" ) {
 			list( $w, $h, $t ) = getimagesize($_SERVER["DOCUMENT_ROOT"].$src);
-			if (substr($width,-1)=="%") {$width=substr($width,0,-1)*1;}
-			if (substr($height,-1)=="%") {$height=substr($height,0,-1)*1;}
-
-			$w=ceil($w/100*($width+0));
-			$h=ceil($h/100*($height+0));
+			if (substr($width,-1)=="%") {$width1=substr($width,0,-1)*1; $w=ceil($w/100*($width+0));}
+			if (substr($height,-1)=="%") {$height1=substr($height,0,-1)*1; $h=ceil($h/100*($height+0));}
 			
 			$src="/{$thumb}/{$w}x{$h}/src{$src}";
 		} else {
@@ -2028,7 +2025,7 @@ function tagThumbnail($Item=array()) {
 	if ($bkg==true) {
 		if (!in_array($srcExt,$exts)) {$bSize="contain";} else {$bSize="cover";}
 		
-		$style.="width:{$width}px; height: {$height}px; background: url('{$src}') {$left} {$top} no-repeat; display:inline-block; background-size: {$bSize}; background-clip: content-box;";
+		$style.="width:{$width}; height: {$height}; background: url('{$src}') {$left} {$top} no-repeat; display:inline-block; background-size: {$bSize}; background-clip: content-box;";
 		$this->attr("src","/engine/uploads/__system/transparent.png");
 		$this->attr("width",$width);
 		$this->attr("height",$height);

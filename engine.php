@@ -35,7 +35,7 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 			if ($tpl>"") {$__page=aikiGetTpl($tpl);} else {
 				if ($error==null OR $empty==1) {
 					$__form=aikiGetForm(); 
-					if (($_SESSION["error"]=="noform" && !is_callable($form."_".$mode)) OR $empty==1) {
+					if (($_SESSION["error"]=="noform" && !is_callable($form."_".$mode)) ) {
 						if (is_file($_SESSION["app_path"]."/tpl/404.php")) {$__page=aikiGetTpl("404.php");} else {
 							$__form=ki::fromString("[Ошибка 404] Страница отсутствует");
 						}	

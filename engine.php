@@ -18,7 +18,9 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 		if (isset($_GET["mode"]) && $_GET["mode"]>"") {$mode=$_GET["mode"];} else {$_GET["mode"]=$mode;}
 		if (isset($_GET["item"]) && $_GET["item"]>"") {$item=$_GET["item"];} else {$_GET["item"]=$item;}
 		if (isset($_GET["id"]  ) && $_GET["id"]>""  ) {$item=$_GET["id"];  } else {$_GET["id"]=$item;}
-		if ($_SERVER["REQUEST_URI"]=="/" && $mode=="show" && $form=="page") {$item="home";}
+		$_GET["id"]=$_GET["item"]=$item;
+	
+		//if ($_SERVER["REQUEST_URI"]=="/" && $mode=="show" && $form=="page") {$item="home";}
 		if (isset($form) && isset($item)) {
 			$Item=$_SESSION["Item"]=aikiReadItem($form,$item);
 			if ($_SESSION["error"]=="noitem") {$error="noitem";} else {
@@ -31,9 +33,9 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 			if (is_file($_SESSION["app_path"]."/tpl/default.php")) $__page=aikiGetTpl("default.php");}
 		} else {
 			if ($tpl>"") {$__page=aikiGetTpl($tpl);} else {
-				if ($error==null) {
+				if ($error==null OR $empty==1) {
 					$__form=aikiGetForm(); 
-					if ($_SESSION["error"]=="noform") {
+					if (($_SESSION["error"]=="noform" && !is_callable($form."_".$mode)) OR $empty==1) {
 						if (is_file($_SESSION["app_path"]."/tpl/404.php")) {$__page=aikiGetTpl("404.php");} else {
 							$__form=ki::fromString("[Ошибка 404] Страница отсутствует");
 						}	

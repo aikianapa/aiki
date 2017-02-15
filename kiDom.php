@@ -2008,26 +2008,26 @@ function tagThumbnail($Item=array()) {
 	if ($ext!=="svg") {
 		if ($contain=="true") {$thumb="thumbc";} else {$thumb="thumb";}
 		$src=urldecode($src);
-		if (substr($width,-1)=="%" OR substr($height,-1)=="%" ) {
-			list( $w, $h, $t ) = getimagesize($_SERVER["DOCUMENT_ROOT"].$src);
-			if (substr($width,-1)=="%") {$width1=substr($width,0,-1)*1;}
-			if (substr($height,-1)=="%") {$height=substr($height,0,-1)*1;}
-
-			$w=ceil($w/100*($width+0));
-			$h=ceil($h/100*($height+0));
-			
-			$src="/{$thumb}/{$w}x{$h}/src{$src}";
+		list( $w, $h, $t ) = getimagesize($_SERVER["DOCUMENT_ROOT"].$src);
+		if (substr($width,-1)=="%") {
+			$w=ceil($w/100*(substr($width,0,-1)*1));
 		} else {
 			if (substr($width,-2)=="px") {$width=substr($width,0,-2)*1;}
-			if (substr($height,-2)=="px") {$height=substr($height,0,-2)*1;}
-			$w=$width+0; $h=$height+0;
-			$src="/{$thumb}/{$w}x{$h}/src{$src}";
+			$w=$width;
 		}
+		if (substr($height,-1)=="%" ) {
+			$h=ceil($h/100*(substr($height,0,-1)*1));
+		} else {
+			if (substr($height,-2)=="px") {$height=substr($height,0,-2)*1;}
+			$h=$height;
+		}
+		$src="/{$thumb}/{$w}x{$h}/src{$src}";
 	}
 	
 	if ($bkg==true) {
 		if (!in_array($srcExt,$exts)) {$bSize="contain";} else {$bSize="cover";}
-		
+		if (is_numeric($width)) {$width.="px";}
+		if (is_numeric($height)) {$height.="px";}
 		$style.="width:{$width}; height: {$height}; background: url('{$src}') {$left} {$top} no-repeat; display:inline-block; background-size: {$bSize}; background-clip: content-box;";
 		$this->attr("src","/engine/uploads/__system/transparent.png");
 		$this->attr("width",$width);

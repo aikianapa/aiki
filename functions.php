@@ -629,6 +629,36 @@ function aikiListForms() {
 	return $list;
 }
 
+function aikiListFormsFull() {
+	$list=array(); 
+	$types=array("engine","app","root");
+	foreach($types as $type) {
+		$list[$type]=array();
+		$fList=aikiListFilesRecursive($_SESSION[$type."_path"] ."/forms");
+		foreach($fList as $fname) {
+			$inc=strpos($fname,".inc");
+			$ext=explode(".",$fname); $ext=$ext[count($ext)-1];
+			$name=substr($fname,0,-(strlen($ext)+1));
+			$tmp=explode("_",$name); 
+			$form=$tmp[0]; unset($tmp[0]);
+			$mode=implode("_",$tmp);
+			$uri_path=str_replace($_SESSION["root_path"],"",$_SESSION[$type."_path"]);
+			$data=array(
+				"type"=>$type,
+				"path"=>$_SESSION[$type."_path"] ."/forms/{$form}/".$name,
+				"uri"=>$uri_path ."/forms/{$form}/".$fname,
+				"form"=>$form,
+				"file"=>$fname,
+				"ext"=>$ext,
+				"name"=>$name,
+				"mode"=>$mode
+			);
+			$list[$type][]=$data;
+		}
+	}
+	return $list;
+}
+
 function aikiListFilesRecursive($dir,$path=false) {
    $list = array();
    $stack[] = $dir;

@@ -35,8 +35,40 @@ function form__create() {
 }
 
 function form_snippet() {
-	$out=file_get_contents($_SESSION["engine_path"]."/forms/form/snippets/{$_GET["snippet"]}.htm");
-	return $out;
+	if ($_SESSION["user_role"]=="admin") {
+		$out=file_get_contents($_SESSION["engine_path"]."/forms/form/snippets/{$_GET["snippet"]}.htm");
+		if (isset($_GET["formname"])) {$out=str_replace("{{form}}",$_GET["formname"],$out);}
+		$out=str_replace("data-role","data-strip-role",$out);
+		return $out;
+	}
+}
+
+function form_getform() {
+	if ($_SESSION["user_role"]=="admin") {
+		$out=file_get_contents($_SESSION["app_path"].$_GET["path"]);
+		return $out;
+	}
+}
+
+function form_putform() {
+	if ($_SESSION["user_role"]=="admin" && isset($_POST["content"])) {
+		$out=file_put_contents($_SESSION["app_path"].$_GET["path"],$_POST["content"]);
+		return $out;
+	}
+}
+
+
+
+function form_designer() {
+	$out=aikiGetForm();
+	$Item=array("forms"=>aikiListForms(null,"prj"));
+	$out->contentSetData($Item);
+	return $out->outerHtml();
+}
+
+function form_listModes() {
+		$Item=aikiListFormsFull();
+		return json_encode($Item);
 }
 
 function formPrepForm($file,$form) {

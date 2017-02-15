@@ -40,6 +40,11 @@
 	$(document).data("sourceFile",null);
 	var theme=getcookie("sourceEditorTheme");
 	var fsize=getcookie("sourceEditorFsize")*1;
+	var source="";
+	var fldname="";
+	var form="{{form}}";
+	if ($("#text").length) {source=$("#text").val();}
+	
 	if (theme==undefined || theme=="") {var theme="ace/theme/chrome"; 	setcookie("sourceEditorTheme",theme);}
 	if (fsize==undefined || fsize=="") {var fsize=12; 					setcookie("sourceEditorFsize",fsize);}
 	if ($(document).data("sourceClipboard")==undefined) {$(document).data("sourceClipboard","");}
@@ -47,9 +52,8 @@
     editor=aikiCallSourceEditor("{{form}}");
 	editor.setTheme(theme);
 	editor.setFontSize(fsize);
-	editor.setValue($("#text").val());
+	editor.setValue(source);
 	editor.gotoLine(0,0);
-
 
 	$("#{{form}}EditForm [data-toggle=tab],#{{form}}Edit [data-formsave]").click(function(){
 		var txt=$("#{{form}}SourceEditorMeta").parents("[id][data-name]").attr("data-name");

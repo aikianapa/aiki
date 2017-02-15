@@ -592,30 +592,32 @@ function aikiCallEditor() {
 }
 
 function aikiCallSourceEditor(form) {
-	var editorName="SourceEditor";
-	if (form!==undefined) {editorName=form+editorName;}
-    var editor = ace.edit(editorName);
-    editor.setTheme("ace/theme/chrome");
-	editor.setOptions({
-            enableBasicAutocompletion: true,
-            enableSnippets: true
-	});
-	editor.getSession().setUseWrapMode(true);
-	editor.getSession().setUseSoftTabs(true);
-	editor.setDisplayIndentGuides(true);
-	editor.setHighlightActiveLine(false);
-	editor.setAutoScrollEditorIntoView(true);
-	editor.commands.addCommand({
-		name: 'save',
-		bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
-		exec: function(editor) {
-			$("#sourceEditorToolbar .btnSave").trigger("click");
-		},
-		readOnly: false
-	});
-	editor.gotoLine(0,0);
-	editor.resize(true);
-	return editor;
+	if (!$(form).parents(".formDesignerEditor").length) {
+		var editorName="SourceEditor";
+		if (form!==undefined) {editorName=form+editorName;}
+		var editor = ace.edit(editorName);
+		editor.setTheme("ace/theme/chrome");
+		editor.setOptions({
+				enableBasicAutocompletion: true,
+				enableSnippets: true
+		});
+		editor.getSession().setUseWrapMode(true);
+		editor.getSession().setUseSoftTabs(true);
+		editor.setDisplayIndentGuides(true);
+		editor.setHighlightActiveLine(false);
+		editor.setAutoScrollEditorIntoView(true);
+		editor.commands.addCommand({
+			name: 'save',
+			bindKey: {win: 'Ctrl-S',  mac: 'Command-S'},
+			exec: function(editor) {
+				$("#sourceEditorToolbar .btnSave").trigger("click");
+			},
+			readOnly: false
+		});
+		editor.gotoLine(0,0);
+		editor.resize(true);
+		return editor;
+	}
 }
 
 function active_resize() {
@@ -876,7 +878,7 @@ function active_imageviewer() {
 function engine_editor() {
 	$(document).delegate('.call-editor',"click", function () {
 		//var editor = $("textarea.editor").ckeditor();
-		aikiCallEditor();
+		if (!$(this).parents(".formDesignerEditor").length) {aikiCallEditor();}
 /*
 		$(".engine_editor").raptor({
 		autoEnable: true,
@@ -898,10 +900,12 @@ function engine_editor() {
 	});
 
 	$(document).delegate('.call-imgloader',"click", function () {
-		var form=$(this).parents("form").attr("name");
-		var item=$(this).parents("form").attr("item");
-		//$(this).parents("form").find("[data-role=imageloader]").attr("path","/uploads/"+form+"/"+item);
-		commonImageUpload();
+		if (!$(this).parents(".formDesignerEditor").length) {		
+			var form=$(this).parents("form").attr("name");
+			var item=$(this).parents("form").attr("item");
+			//$(this).parents("form").find("[data-role=imageloader]").attr("path","/uploads/"+form+"/"+item);
+			commonImageUpload();
+		}
 	});
 }
 

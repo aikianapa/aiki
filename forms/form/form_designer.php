@@ -37,7 +37,24 @@
 			</div>
 		  </div>
 		</div>
+		
+		<div data-role="include" src="modal" data-id="formCreator" data-role-hide="true"></div>
+		<form id="formMasterForm" name="form" item="master"  class="form-horizontal" role="form" append="#formCreator .modal-body">
+			<div class="form-group">
+			  <label class="col-xs-6 col-sm-4 control-label">ID формы</label>
+			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="name" value="" placeholder="ID формы" required ></div>
+			</div>
 
+			<div class="form-group">
+			  <label class="col-xs-6 col-sm-4 control-label">Имя формы</label>
+			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="descr" value="" placeholder="Имя формы" required ></div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-4 control-label">Добавить в список форм</label>
+				<div class="col-xs-4"><label class="switch switch-primary"><input type="checkbox" name="tolist" value="on" checked="checked"><span></span></label></div>
+			</div>
+		</form>
 
 			
 	
@@ -113,6 +130,7 @@
 						<option value="{{0}}">{{0}}</option>
 				</select>
 		   </div>
+		   <button type="button" id="formAdd" class="btn btn-success"><i class="fa fa-plus"></i></button>
 		</div>
 
 		<ul class="nav nav-tabs" id="formList"></ul>
@@ -139,6 +157,11 @@
 		if (!$(event.target).is("#formDesignerToolBtn") && !$(event.target).parents("#formDesignerToolBtn").length) {
 			$(event.target).attr("data-hovered",true);
 		}
+	});
+	
+	$("#formDesigner #formAdd").on("click",function(){
+		$("#formCreator .modal-header").html('<h4 class="modal-title">Создать новую форму</h4>');
+		$("#formCreator").modal("show");
 	});
 	
 	$(document).undelegate("#formDesigner #formName","change");
@@ -272,6 +295,8 @@
 		) {
 			$("#formDesignerEditor #formDesignerToolBtn").hide();
 			$("#formDesignerEditor .formDesignerEditor [data-current]").removeAttr("data-current");
+		} else {
+			if ($(event.target).is("[data-ajax]")) {event.preventDefault(); return false;}
 		}
 	});
 	
@@ -312,6 +337,53 @@
 			$(tool).show();
 		}
 	}
+	
+	$("#formDesigner #formCreator input[name=name]").on("keyup",function(){
+		$(this).val($(this).val().replace(/[^a-z0-9]/i, ""));
+	});
+	
+	$("#formDesigner #formCreator [data-formsave]").on("click",function(){
+		if (check_required("#formDesigner #formMasterForm")) {
+			var name=$("#formDesigner  #formMasterForm [name=name]").val();
+			var data=$("#formDesigner  #formMasterForm").serialize();
+			$.ajax({
+				url: "/engine/ajax.php?mode=create&form=form",
+				method: "post",
+				data: data,
+				success: function(data){
+					var data=JSON.parse(data); 
+					if (data.error==false) {
+						var type="success";
+						$("#formDesigner  #formCreator").modal("hide");
+						$(".sidebar-nav .formlist").append(data.append);
+						$("#formDesigner #formName").append('<option>'+name+'</option>');
+						$("#formDesigner #formName option:last").attr("value",name);
+					} else {var type="warning";}
+					
+					if ($.bootstrapGrowl) {
+						$.bootstrapGrowl(data.status, {
+							ele: 'body',
+							type: type,
+							offset: {from: 'top', amount: 20},
+							align: 'right',
+							width: "auto",
+							delay: 4000,
+							allow_dismiss: true,
+							stackup_spacing: 10 
+						});
+					}
+					
+					return data;
+				},
+				error: function(){return false;}
+			});
+		} else {
+			if (document.location.host=="digiport.loc") {
+				ajax_load($('<meta data-ajax="mode=designer&form=form" data-html="div.main">'));
+			}
+		}
+	});
+	
 	
 </script>
 

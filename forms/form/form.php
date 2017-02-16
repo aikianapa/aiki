@@ -10,14 +10,14 @@ function form__create() {
 		$res=array("error"=>true,"status"=>"Форма {$formName} уже существует!");
 		return json_encode($res);
 	} else {
-		if (!is_dir($formPath)) { mkdir($formPath); }
+		if (!is_dir($formPath)) { mkdir($formPath,0755); }
 		$modes=array("","edit","list","show");
 		foreach($modes as $mode) {
 			if ($mode>"") {$mode="_".$mode;}
 			$file=file_get_contents("{$srcPath}/_sample{$mode}.php");
 			$item=array("_form_"=>$formName);
 			$file=str_replace(array('{{_form_}}','{{_descr_}}'),array($formName,$formDescr),$file);
-			$file=formPrepForm($file,$formName);
+			//$file=formPrepForm($file,$formName);
 			file_put_contents("{$formPath}/{$formName}{$mode}.php",$file);			
 			chmod("{$formPath}/{$formName}{$mode}.php",0766);
 		}

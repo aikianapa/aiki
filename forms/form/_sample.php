@@ -16,7 +16,7 @@ function {{_form_}}_show($out=null,$Item=null) {
 }
 */
 
-function test_edit() {
+function {{_form_}}_edit() {
 	$out=aikiGetForm();
 	$Item=aikiReadItem("test",$_GET["id"]);
 	if ($_GET["id"]=="_new") {$Item["id"]=newIdRnd();}

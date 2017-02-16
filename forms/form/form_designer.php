@@ -71,9 +71,8 @@
                         <div class="sidebar-content">
 							<br>
 							<ul class="nav nav-tabs">
-								<li class="active"><a  class="themed-background" href="#snippets" data-toggle="tab"><i class="fa fa-code"></i></a></li>
-								<li><a  class="themed-background" href="#props" data-toggle="tab"><i class="fa fa-gear"></i></a></li>
-								<li><a  class="themed-background" href="#forms" data-toggle="tab"><i class="fa fa-folder-open"></i></a></li>
+								<li class="active"><a  class="themed-background" href="#snippets" data-toggle="tab"><i class="fa fa-code"></i> шаблоны</a></li>
+								<li><a class="themed-background" href="#props" data-toggle="tab"><i class="fa fa-gear"></i> свойства</a></li>
 							</ul>
 
 							<!-- Tab panes -->
@@ -104,20 +103,10 @@
 										<h4 class="text-light">Свойства</h4>
 									</div>								
 								</div>
-								<div class="tab-pane" id="forms">
-									<div class="sidebar-section">
-										<h4 class="text-light">Форма</h4>
-									
-									</div>								
-								</div>
-								
 							</div>
 
-									<!-- END Settings -->
                         </div>
-                        <!-- END Sidebar Content -->
                     </div>
-                    <!-- END Wrapper for scrolling functionality -->
                 </div>
 <div class="row">
 	<div class="panel col-xs-8">
@@ -130,7 +119,8 @@
 						<option value="{{0}}">{{0}}</option>
 				</select>
 		   </div>
-		   <button type="button" id="formAdd" class="btn btn-success"><i class="fa fa-plus"></i></button>
+		   <button type="button" id="formAdd" class="btn btn-primary"><i class="fa fa-plus"></i></button>
+		   <button type="button" id="formSave" class="btn btn-success">Сохранить</a>
 		</div>
 
 		<ul class="nav nav-tabs" id="formList"></ul>
@@ -150,6 +140,7 @@
 </div>
 
 <script language="javascript">
+	App.sidebar('open-sidebar-alt');
 	$("#formDesignerEditor #formDesignerToolBtn").hide();
 	$("#formDesignerEditor").undelegate("*","mouseover");
 	$("#formDesignerEditor").delegate("*","mouseover",function(event){
@@ -194,14 +185,13 @@
 					});
 				}
 			});
-			$("#formDesigner #formList").append('<a href="#" class="btn btn-default pull-right formDesignerSave">Сохранить</a>');
 			$("#formDesigner #formList > li:first").addClass("active");
 			$("#formDesignerEditor > .formDesignerEditor:first").addClass("active");
 		});
 	});
 	
-	$("#formDesigner").undelegate(".formDesignerSave","click");
-	$("#formDesigner").delegate(".formDesignerSave","click",function(){
+	$("#formDesigner").undelegate("#formSave","click");
+	$("#formDesigner").delegate("#formSave","click",function(){
 		$("#formDesignerEditor .formDesignerEditor[data-path]").each(function(){
 			var uri=$(this).attr("data-path");
 			var data={content:$(this).html()};
@@ -413,14 +403,17 @@
 #formDesignerEditor .formDesignerEditor [data-role=include][src=comments]::before {content:'Димамическая вставка: Модуль коментариев';color:#aaa;}
 
 
-    #sourceEditor.fullscr, #sourceEditor.fullscr .modal-dialog {width:100% !important; padding:0 !important; margin:0 !important;}
-    #sourceEditor.fullscr .modal-body {padding:0;}
-    #sourceEditor.fullscr .modal-header, #sourceEditor.fullscr .modal-footer {display:none;}
-    #sourceEditor.fullscr .nav {display:none;}
+
+#formDesigner #sidebar-alt .nav-tabs a {padding:5px;}
+
+#sourceEditor.fullscr, #sourceEditor.fullscr .modal-dialog {width:100% !important; padding:0 !important; margin:0 !important;}
+#sourceEditor.fullscr .modal-body {padding:0;}
+#sourceEditor.fullscr .modal-header, #sourceEditor.fullscr .modal-footer {display:none;}
+#sourceEditor.fullscr .nav {display:none;}
     
-    #sourceEditor .modal-header, #sourceEditor .modal-footer {padding:5px;}
-    #sourceEditor .modal-body {padding:0px;}
+#sourceEditor .modal-header, #sourceEditor .modal-footer {padding:5px;}
+#sourceEditor .modal-body {padding:0px;}
     
-    #sourceEditor .ace_editor {margin:0;}
+#sourceEditor .ace_editor {margin:0;}
 
 </style>

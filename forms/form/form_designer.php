@@ -1,22 +1,19 @@
 <div id="formDesigner" class="container">
 	<header class="navbar navbar-inverse navbar-fixed-bottom">
-                        <!-- Left Header Navigation -->
                         <ul class="nav navbar-nav-custom">
-                            <!-- Main Sidebar Toggle Button -->
                             <li>
                                 <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar-alt');this.blur();">
                                     <i class="fa fa-gear fa-fw animation-fadeInRight" id="sidebar-toggle-mini"></i>
                                     <i class="fa fa-gear fa-fw animation-fadeInRight" id="sidebar-toggle-full"></i>
                                 </a>
                             </li>
-                            <!-- END Main Sidebar Toggle Button -->
-
-                            <!-- Header Link -->
+                            <li>
+                                <a href="#"><i class="fa fa-tags fa-fw animation-fadeInRight"></i></a>
+                            </li>
                             <li class="animation-fadeInQuick toParent"></li>
                             <li class="animation-fadeInQuick">
-                                <a href=""><strong class="currentInfo"></strong></a>
+                                <a href="#"><strong class="currentInfo"></strong></a>
                             </li>
-                            <!-- END Header Link -->
                         </ul>
 	</header>
 
@@ -47,7 +44,7 @@
 
 			<div class="form-group">
 			  <label class="col-xs-6 col-sm-4 control-label">Имя формы</label>
-			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="descr" value="" placeholder="Имя формы" required ></div>
+			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control latin-only" name="descr" value="" placeholder="Имя формы" required ></div>
 			</div>
 
 			<div class="form-group">
@@ -108,9 +105,9 @@
                         </div>
                     </div>
                 </div>
-<div class="row">
+<div id="formDesignerBlock">
 	<div class="panel col-xs-8">
-	<div class="row form-horizontal">
+	<div class="form-horizontal">
 		
 		<div class="form-group row">
 			<label class="col-xs-4 control-label">Форма</label>
@@ -132,7 +129,7 @@
 				<a class="btn btn-sm btn-primary"><i class="fa fa-gear"></i></a>
 				<a class="btn btn-sm btn-primary"><i class="fa fa-copy"></i></a>
 				<a class="btn btn-sm btn-primary"><i class="fa fa-code"></i></a>
-				<a class="btn btn-sm btn-primary"><i class="fa fa-trash"></i></a>
+				<a class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
 			</div>
 		</div>
 	</div>
@@ -168,13 +165,12 @@
 			$("#formDesigner #formDesignerEditor .formDesignerEditor").html("");
 			$.each(forms,function(i,form){
 				if (form.form==name && form.ext=="php" && form.mode>"") {
-					console.log(form);
 					var formId=form.form+'_'+form.mode;
 					var formHref="#"+formId;
 					$("#formDesigner #formList").append(
 						'<li><a data-toggle="tab">'+
 						form.mode+
-						'</a></li>');
+						'<i class="fa fa-remove"></i></a></li>');
 						$("#formDesigner #formList > li:last a").attr("href",formHref);
 					$("#formDesignerEditor").append('<div class="tab-pane formDesignerEditor"></div>');
 					$("#formDesignerEditor > .formDesignerEditor:last").attr("id",formId);
@@ -185,6 +181,7 @@
 					});
 				}
 			});
+			$("#formDesigner #formList").append('<a class="btn btn-primary" href="javascript:formDesignerAddMode();"><i class="fa fa-plus"></i></a>');
 			$("#formDesigner #formList > li:first").addClass("active");
 			$("#formDesignerEditor > .formDesignerEditor:first").addClass("active");
 		});
@@ -194,6 +191,7 @@
 	$("#formDesigner").delegate("#formSave","click",function(){
 		$("#formDesignerEditor .formDesignerEditor[data-path]").each(function(){
 			var uri=$(this).attr("data-path");
+			var name=$(this).attr("id");
 			var data={content:$(this).html()};
 			$.ajax({
 				async: 		true,
@@ -201,9 +199,12 @@
 				method: "post",
 				data: data,
 				success: function(data){
-					console.log(data);
+					growlMsg("Форма "+name+" сохранена");
 				},
-				error: function(){return false;}
+				error: function(){
+					growlMsg("Ошибка сохранения формы!","warning");
+					return false;
+				}
 			});
 
 		});
@@ -237,12 +238,11 @@
 			} else {
 				var content=$(".formDesignerEditor.active [data-current]").prop('outerHTML');
 				content=str_replace('data-current="true"','',content);
-				
-					editor.setValue(content);
-					editor.getSession().setMode("ace/mode/autohotkey");
-					$("#formDesigner #sourceEditor").modal("show");
-					$(".ace_editor").css("height",400);
-					editor.gotoLine(0,0);
+				editor.setValue(content);
+				editor.getSession().setMode("ace/mode/autohotkey");
+				$("#formDesigner #sourceEditor").modal("show");
+				$(".ace_editor").css("height",400);
+				editor.gotoLine(0,0);
 			}
 		}
 		return false;
@@ -255,8 +255,8 @@
 		$("#formDesigner #sourceEditor").modal("hide");
 	});
 
-	$(".formDesignerEditor.active").undelegate("*","mouseleave");
-	$(".formDesignerEditor.active").delegate("*","mouseleave",function(event){
+	$("#formDesigner").undelegate("[data-hovered]","mouseleave");
+	$("#formDesigner").delegate("[data-hovered]","mouseleave",function(event){
 		$(event.target).removeAttr("data-hovered");
 	});
 	
@@ -287,6 +287,28 @@
 			$("#formDesignerEditor .formDesignerEditor [data-current]").removeAttr("data-current");
 		} else {
 			if ($(event.target).is("[data-ajax]")) {event.preventDefault(); return false;}
+		}
+	});
+	
+	$("#formDesigner").delegate("#formList li a","click",function(){
+		var context=$("#formDesignerEditor .formDesignerEditor"+$(this).attr("href"));
+		var tree=childs(context);
+
+		$("#props").html(tree);
+		
+		function childs(that) {
+			var out=$("<ul></ul>");
+			$(that).find(">").each(function(){
+				$(out).append('<li>'+this.tagName+'</li>');
+				if ($(this).attr("id")>"") {
+					$(out).find("li:last").append("#"+$(this).attr("id"));
+				}
+				if ($(this).find(">").length) {
+					$(out).find("li:last").append(childs($(this)));
+				}
+			});
+			if ($(out).html()>"") {return out.prop('outerHTML');}
+			return "";
 		}
 	});
 	
@@ -328,7 +350,8 @@
 		}
 	}
 	
-	$("#formDesigner #formCreator input[name=name]").on("keyup",function(){
+	$("#formDesigner").undelegate(".latin-only","keyup");
+	$("#formDesigner").delegate(".latin-only","keyup",function(){
 		$(this).val($(this).val().replace(/[^a-z0-9]/i, ""));
 	});
 	
@@ -349,20 +372,7 @@
 						$("#formDesigner #formName").append('<option>'+name+'</option>');
 						$("#formDesigner #formName option:last").attr("value",name);
 					} else {var type="warning";}
-					
-					if ($.bootstrapGrowl) {
-						$.bootstrapGrowl(data.status, {
-							ele: 'body',
-							type: type,
-							offset: {from: 'top', amount: 20},
-							align: 'right',
-							width: "auto",
-							delay: 4000,
-							allow_dismiss: true,
-							stackup_spacing: 10 
-						});
-					}
-					
+					growlMsg(data.status,type);
 					return data;
 				},
 				error: function(){return false;}
@@ -374,12 +384,43 @@
 		}
 	});
 	
+	function formDesignerAddMode() {
+		var form=$("#formDesigner #formName").val();
+		$("#formDesigner #formList .btn").before('<li><a data-toggle="tab" href="#formEditorAddMode"><input class="latin-only"></a></li>');
+		$("#formDesigner #formList a.active").removeClass("active");
+		$("#formDesigner #formList li:last").addClass("active");
+		$("#formDesigner #formList li:last input").focus();
+		$("#formDesigner #formList li:last .fa-times").on("click",function(){
+			$("#formDesigner #formList li:last").remove();
+			return false;
+		});
+		$("#formDesigner #formList li:last input").on("focusout",function(){
+			if ($(this).val()=="") {$("#formDesigner #formList li:last").remove();}
+		});
+		$("#formDesigner #formList li:last input").on("change",function(event){
+			var mode=$(this).val();
+			if (mode=="") {var error=true;} else {var error=false;}
+			$("#formDesigner #formList li:not(':last')").each(function(){
+				if ($(this).text()==mode) {error=true; $(this).find("a").trigger("click");}
+			});
+			if (error==true) {$("#formDesigner #formList li:last").remove();} else {
+				$("#formDesigner #formList li:last a").html(mode+'<i class="fa fa-remove"></i>');
+				$("#formDesigner #formList li:last a").attr("href","#"+form+"_"+mode);
+				$("#formDesignerEditor .formDesignerEditor").removeClass("active");
+				$("#formDesignerEditor").append('<div class="tab-pane formDesignerEditor active"></div>')
+				$("#formDesignerEditor .formDesignerEditor:last").attr("id",form+"_"+mode);
+				console.log("строим дальше");
+			}
+		});
+
+	}
+	
 	
 </script>
 
 <style type="text/css" media="screen">
-#formDesigner .formDesignerEditor {min-height:100px; background:#fff;}
-#formDesignerEditor {padding:5px;}
+#formDesigner .formDesignerEditor {min-height:100px; background:#fff; border:3px #eee dashed; padding:5px;}
+#formDesignerEditor {padding:5px 0px;}
 #formDesignerEditor [data-current] {border: 1px #aaa dashed; background: rgba(217, 255, 228, 0.3); cursor:move;}
 #formDesignerEditor [data-hovered] { background: rgba(98, 122, 173, 0.25)!important;}
 #formDesignerToolBtn {position:fixed; display:inline-block; width:auto; z-index:100;}
@@ -393,16 +434,17 @@
 #formDesignerEditor .formDesignerEditor [data-role=imageloader],
 #formDesignerEditor .formDesignerEditor [data-role=source],
 #formDesignerEditor .formDesignerEditor textarea.editor
-	{min-height: 100px; width: 100%; border: 1px #eee dotted; background: rgba(238, 238, 238, 0.3);}
+	{min-height: 100px; width: 100%; border: 1px #eee dotted; background: rgba(238, 238, 238, 0.3); background:url(/engine/tpl/images/diagonals.png);}
 #formDesignerEditor .formDesignerEditor [data-role=include]::before {content:'Динамическая вставка';color:#aaa;}
-#formDesignerEditor .formDesignerEditor [data-role=imageloader]::before {content:'Загрузчик изображений';color:#aaa;}
-#formDesignerEditor .formDesignerEditor [data-role=include][src=source]::before {content:'Димамическая вставка: Редактор исходного кода';color:#aaa;}
-#formDesignerEditor .formDesignerEditor [data-role=include][src=modal]::before {content:'Димамическая вставка: Модальное окно';color:#aaa;}
-#formDesignerEditor .formDesignerEditor [data-role=include][src=editor]::before {content:'Димамическая вставка: Текстовый редактор';color:#aaa;}
-#formDesignerEditor .formDesignerEditor [data-role=include][src=uploader]::before {content:'Димамическая вставка: Загрузчик файлов';color:#aaa;}
-#formDesignerEditor .formDesignerEditor [data-role=include][src=comments]::before {content:'Димамическая вставка: Модуль коментариев';color:#aaa;}
+#formDesignerEditor .formDesignerEditor [data-role=imageloader]::before {content:'Динамическая вставка: Загрузчик изображений';color:#aaa;}
+#formDesignerEditor .formDesignerEditor [data-role=include][src=source]::before {content:'Динамическая вставка: Редактор исходного кода';color:#aaa;}
+#formDesignerEditor .formDesignerEditor [data-role=include][src=modal]::before {content:'Динамическая вставка: Модальное окно';color:#aaa;}
+#formDesignerEditor .formDesignerEditor [data-role=include][src=editor]::before {content:'Динамическая вставка: Текстовый редактор';color:#aaa;}
+#formDesignerEditor .formDesignerEditor [data-role=include][src=uploader]::before {content:'Динамическая вставка: Загрузчик файлов';color:#aaa;}
+#formDesignerEditor .formDesignerEditor [data-role=include][src=comments]::before {content:'Динамическая вставка: Модуль коментариев';color:#aaa;}
+#formDesigner #formList input {border:0;padding:0;margin:0;width:70px;background:transparent;}
 
-
+#formDesigner #formDesignerBlock .panel {padding: 5px 0px;}
 
 #formDesigner #sidebar-alt .nav-tabs a {padding:5px;}
 

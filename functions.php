@@ -2423,6 +2423,24 @@ function recurse_copy($src,$dst) {
 	}
 }
 
+function recurse_delete($src) {
+    $dir = opendir($src);
+	if (is_resource($dir)) {
+		while(false !== ( $file = readdir($dir)) ) {
+			echo $file;
+			if (( $file !== '.' ) && ( $file !== '..' )) {
+				if ( is_dir($src . '/' . $file) ) {
+					recurse_delete($src . '/' . $file);
+				}
+				else { 
+					unlink($src . '/' . $file); 
+				}
+			}
+		}
+		closedir($dir);
+	}
+}
+
 function normalizePath( $path ) {
     $patterns = array('~/{2,}~', '~/(\./)+~', '~([^/\.]+/(?R)*\.{2,}/)~', '~\.\./~');
     $replacements = array('/', '/', '', '');

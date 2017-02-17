@@ -919,6 +919,22 @@ function active_navigation() {
 	});
 }
 
+function growlMsg(msg,type) {
+	if ($.bootstrapGrowl) {
+		if (msg==undefined) {var msg="";}
+		if (type==undefined) {var type="success";}
+		$.bootstrapGrowl(msg, {
+			ele: 'body',
+			type: type,
+			offset: {from: 'top', amount: 20},
+			align: 'right',
+			width: "auto",
+			delay: 4000,
+			allow_dismiss: true,
+			stackup_spacing: 10 
+		});
+	}	
+}
 
 function ajax_tag_attr() {
 	$.each($(document).find("[data-role=ajax]"),function(){

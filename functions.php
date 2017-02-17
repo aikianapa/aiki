@@ -2427,7 +2427,6 @@ function recurse_delete($src) {
     $dir = opendir($src);
 	if (is_resource($dir)) {
 		while(false !== ( $file = readdir($dir)) ) {
-			echo $file;
 			if (( $file !== '.' ) && ( $file !== '..' )) {
 				if ( is_dir($src . '/' . $file) ) {
 					recurse_delete($src . '/' . $file);

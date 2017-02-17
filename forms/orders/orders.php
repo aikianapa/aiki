@@ -41,8 +41,10 @@ function _ordersMail($Item=null) {
 	$headers .= "Content-type: text/html; charset=windows-1251\r\n";
 	$headers .= "From: {$_SERVER["HTTP_HOST"]} <{$_SESSION["settings"]["email"]}>\r\n";
 
-	$body=iconv("UTF-8", "WINDOWS-1251", $out->outerHtml());
-	$subject=iconv("UTF-8", "WINDOWS-1251", $subject);
+	$body=$out->outerHtml();
+	
+	if (is_callable("iconv")) $body=iconv("UTF-8", "WINDOWS-1251", $body);
+	if (is_callable("iconv")) $subject=iconv("UTF-8", "WINDOWS-1251", $subject);
 
 	mail($to, $subject, $body, $headers); 
 	return $out;

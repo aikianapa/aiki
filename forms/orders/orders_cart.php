@@ -44,6 +44,10 @@
 			<p>Ваш заказ успешно отправлен менеджеру. В ближайшее время с вами обязательно свяжутся по телефону, указанному в заказе.</p>
 		</div>
 	</div>
+	<div data-role="where" data='"{{_SESSION[settings][checkout]}}">""' data-role-hide="true">
+		<div data-role="include" data-ajax="/engine/ajax.php?mode=checkout&form={{_SESSION[settings][checkout]}}" autoload="true" id="orderCheckout"  style="display:none;">
+		</div>
+	</div>
 	
 </div>
 

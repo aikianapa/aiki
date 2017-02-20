@@ -645,7 +645,8 @@ function aikiListFormsFull() {
 			$uri_path=str_replace($_SESSION["root_path"],"",$_SESSION[$type."_path"]);
 			$data=array(
 				"type"=>$type,
-				"path"=>$_SESSION[$type."_path"] ."/forms/{$form}/".$name,
+				"path"=>$_SESSION[$type."_path"] ."/forms/{$form}/".$name.".{$ext}",
+				"dir"=>	"/forms/{$form}",
 				"uri"=>$uri_path ."/forms/{$form}/".$fname,
 				"form"=>$form,
 				"file"=>$fname,

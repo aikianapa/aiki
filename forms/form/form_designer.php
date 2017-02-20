@@ -1,4 +1,4 @@
-<div id="formDesigner" class="container">
+<div id="formDesigner">
 	<header class="navbar navbar-inverse navbar-fixed-bottom">
                         <ul class="nav navbar-nav-custom">
                             <li>
@@ -106,14 +106,14 @@
                     </div>
                 </div>
 <div id="formDesignerBlock">
-	<div class="panel col-xs-8">
+	<div class="panel col-xs-9">
 	<div class="form-horizontal">
 		
 		<div class="form-group row">
 			<label class="col-xs-4 control-label">Форма</label>
 			<div class="col-xs-4">
 				<select class="form-control" id="formName" placeholder="форма" data-role="foreach" from="forms">
-						<option value="{{0}}">{{0}}</option>
+						<option value="{{form}}" data-path="{{dir}}">{{form}}</option>
 				</select>
 		   </div>
 		   <button type="button" id="formAdd" class="btn btn-primary"><i class="fa fa-plus"></i></button>
@@ -260,10 +260,10 @@
 		$(event.target).removeAttr("data-hovered");
 	});
 	
-	
+	// TO PARRENT
 	$("#formDesigner header .toParent").undelegate("a[href=#parent]","click");
-	$("#formDesigner header .toParent").delegate("a[href=#parent]","click",function(){
-		if ($(".formDesignerEditor.active [data-current]").parent().attr("id")!=="formDesignerEditor") {
+	$("#formDesigner header").delegate("a[href=#parent]","click",function(event){
+		if (!$(".formDesignerEditor.active [data-current]").parent().hasClass("formDesignerEditor")) {
 			$(".formDesignerEditor.active [data-current]").parent().trigger("click");
 		} else {
 			$(".formDesignerEditor.active [data-current]").removeAttr("data-current");
@@ -271,6 +271,29 @@
 			$("#formDesigner header .currentInfo").html("");
 		}
 	});
+
+	function formDesigner_clickElement(that) {
+		$("#formDesignerEditor .formDesignerEditor.active [data-current]").removeAttr("data-current");
+		$("#formDesignerEditor #formDesignerToolBtn").hide();
+		if (!$(that).is("#formDesignerToolBtn") && !$(that).parents("#formDesignerToolBtn").length) {
+			$(that).attr("data-current","true");
+			var x=$(that).offset().left;
+			var y=$(that).offset().top-24;
+			var tool=$("#formDesignerEditor #formDesignerToolBtn");
+			$(tool).css("left",x+"px").css("top",y+"px");
+			var tagName=that.tagName;
+			if ($(that).attr("id")>"") {tagName+="#"+$(that).attr("id");}
+			var className=that.className;
+				className=trim(str_replace(" ",".",className));
+			if (className>"") {className="."+className;}
+			var parent="";
+			parent='<a href="#parent"><i class="fa fa-arrow-left"></i></a>';
+			$("#formDesigner header .toParent").html(parent);
+			$("#formDesigner header .currentInfo").html(tagName+className);
+			$(tool).show();
+		}
+	}
+	
 	
 	$("#formDesignerEditor").undelegate(".formDesignerEditor.active *","click");
 	$("#formDesignerEditor").delegate(".formDesignerEditor.active *","click",function(event){
@@ -279,6 +302,9 @@
 
 	$(document).undelegate("*","click");
 	$(document).delegate("*","click",function(event){
+		
+		// здесь порылась собака с кнопкой back 
+		
 		if (	!$(event.target).parents(".formDesignerEditor").length
 			&&	!$(event.target).parents("#sourceEditor").length
 			&&	!$(event.target).parents("#sidebar-scroll-alt").length
@@ -290,6 +316,7 @@
 		}
 	});
 	
+	$("#formDesigner").undelegate("#formList li a");
 	$("#formDesigner").delegate("#formList li a","click",function(){
 		var context=$("#formDesignerEditor .formDesignerEditor"+$(this).attr("href"));
 		var tree=childs(context);
@@ -328,28 +355,6 @@
 		});
 	});
 	
-	function formDesigner_clickElement(that) {
-		$("#formDesignerEditor .formDesignerEditor.active [data-current]").removeAttr("data-current");
-		$("#formDesignerEditor #formDesignerToolBtn").hide();
-		if (!$(that).is("#formDesignerToolBtn") && !$(that).parents("#formDesignerToolBtn").length) {
-			$(that).attr("data-current",true);
-			var x=$(that).offset().left;
-			var y=$(that).offset().top-24;
-			var tool=$("#formDesignerEditor #formDesignerToolBtn");
-			$(tool).css("left",x+"px").css("top",y+"px");
-			var tagName=that.tagName;
-			if ($(that).attr("id")>"") {tagName+="#"+$(that).attr("id");}
-			var className=that.className;
-				className=trim(str_replace(" ",".",className));
-			if (className>"") {className="."+className;}
-			var parent="";
-			parent='<a href="#parent"><i class="fa fa-arrow-left"></i></a>';
-			$("#formDesigner header .toParent").html(parent);
-			$("#formDesigner header .currentInfo").html(tagName+className);
-			$(tool).show();
-		}
-	}
-	
 	$("#formDesigner").undelegate(".latin-only","keyup");
 	$("#formDesigner").delegate(".latin-only","keyup",function(){
 		$(this).val($(this).val().replace(/[^a-z0-9]/i, ""));
@@ -386,6 +391,7 @@
 	
 	function formDesignerAddMode() {
 		var form=$("#formDesigner #formName").val();
+		var path=$("#formDesigner #formName option:selected").attr("data-path");
 		$("#formDesigner #formList .btn").before('<li><a data-toggle="tab" href="#formEditorAddMode"><input class="latin-only"></a></li>');
 		$("#formDesigner #formList a.active").removeClass("active");
 		$("#formDesigner #formList li:last").addClass("active");
@@ -409,6 +415,7 @@
 				$("#formDesignerEditor .formDesignerEditor").removeClass("active");
 				$("#formDesignerEditor").append('<div class="tab-pane formDesignerEditor active"></div>')
 				$("#formDesignerEditor .formDesignerEditor:last").attr("id",form+"_"+mode);
+				$("#formDesignerEditor .formDesignerEditor:last").attr("data-path",path+"/"+form+"_"+mode+".php");
 				console.log("строим дальше");
 			}
 		});
@@ -443,8 +450,10 @@
 #formDesignerEditor .formDesignerEditor [data-role=include][src=uploader]::before {content:'Динамическая вставка: Загрузчик файлов';color:#aaa;}
 #formDesignerEditor .formDesignerEditor [data-role=include][src=comments]::before {content:'Динамическая вставка: Модуль коментариев';color:#aaa;}
 #formDesigner #formList input {border:0;padding:0;margin:0;width:70px;background:transparent;}
+#formDesigner #formList .fa-remove {margin-left:8px; color:#555;}
+#formDesigner #formList li.active a {background: ghostwhite;}
 
-#formDesigner #formDesignerBlock .panel {padding: 5px 0px;}
+#formDesigner #formDesignerBlock .panel {padding: 5px 0px; margin: 0px 10px;}
 
 #formDesigner #sidebar-alt .nav-tabs a {padding:5px;}
 

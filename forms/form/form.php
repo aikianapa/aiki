@@ -60,8 +60,13 @@ function form_putform() {
 
 
 function form_designer() {
+	$formlist=aikiListFormsFull(); $formlist=$formlist["app"];
 	$out=aikiGetForm();
-	$Item=array("forms"=>aikiListForms(null,"prj"));
+	$forms=array();
+	foreach($formlist as $form) {
+		if (!isset($forms[$form["form"]]) && $form["mode"]=="") {$forms[$form["form"]]=array("form"=>$form["form"],"dir"=>$form["dir"]);}
+	}
+	$Item=array("forms"=>$forms);
 	$out->contentSetData($Item);
 	return $out->outerHtml();
 }

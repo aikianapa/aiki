@@ -593,6 +593,7 @@ function aikiCallEditor() {
 
 function aikiCallSourceEditor(form) {
 	if (!$(form).parents(".formDesignerEditor").length) {
+		console.log("callSourceEditor");
 		var editorName="SourceEditor";
 		if (form!==undefined) {editorName=form+editorName;}
 		var editor = ace.edit(editorName);
@@ -626,6 +627,7 @@ function active_resize() {
 		multiinput_resize();
 		active_source_resize();
 		active_tree_resize();
+		$(document).trigger("window-resize");
 		console.log("Trigger: window resize");
 	});
 	$(window).trigger("resize");

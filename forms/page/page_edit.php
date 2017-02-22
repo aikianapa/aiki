@@ -45,7 +45,7 @@
 </div>
 
 <div id="pageText" class="tab-pane">
-<textarea name="text" id="text" class="editor" placeholder="Контент" ></textarea>
+	<textarea name="text" id="text" class="editor" placeholder="Контент" ></textarea>
 </div>
 <div id="pageSource" class="tab-pane" data-role="include" src="source" data-name="text">
 </div>

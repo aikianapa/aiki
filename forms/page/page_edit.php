@@ -44,11 +44,7 @@
 
 </div>
 
-<div id="pageText" class="tab-pane">
-	<textarea name="text" id="text" class="editor" placeholder="Контент" ></textarea>
-</div>
-<div id="pageSource" class="tab-pane" data-role="include" src="source" data-name="text">
-</div>
-<div id="pageImages" class="tab-pane" data-role="imageloader" data-ext="jpg png gif zip pdf doc"></div>
-</div>
+<div id="pageText" class="tab-pane" data-role="include" src="editor" data-name="text"></div>
+<div id="pageSource" class="tab-pane" data-role="include" src="source" data-name="text"></div>
+<div id="pageImages" class="tab-pane" data-role="imageloader" data-ext="jpg png gif zip pdf doc"></div></div>
 </form>

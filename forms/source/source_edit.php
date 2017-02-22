@@ -55,13 +55,19 @@
 	editor.gotoLine(0,0);
 
 	$("#{{_GET[form]}}EditForm [data-toggle=tab],#{{_GET[form]}}Edit [data-formsave]").click(function(){
-		var txt=$("#{{_GET[form]}}SourceEditorMeta").parents("[id][data-name]").attr("data-name");
-		if ($("#{{form}}EditForm .call-source").parent("li").hasClass("active")) {$("#{{_GET[form]}}Edit [name="+txt+"]").val(editor.getValue());} else {
+		var text="" ; var txt="text";
+		if ($("#{{_GET[form]}}SourceEditorMeta").parents("[id][data-name]").length) {
+			var txt=$("#{{_GET[form]}}SourceEditorMeta").parents("[id][data-name]").attr("data-name");
+		}
+		if ($("#{{_GET[form]}}Edit [name="+txt+"]").length) {
+			var text=$("#{{_GET[form]}}Edit [name="+txt+"]").val();
+		}
+		if ($("#{{_GET[form]}}EditForm .call-source").parent("li").hasClass("active")) {$("#{{_GET[form]}}Edit [name="+txt+"]").val(editor.getValue());} else {
 				if ($("#cke_text .cke_contents")) {var ace_height=$("#cke_text .cke_contents").height();} else {var ace_height=500;}
 				if (ace_height<500) {var ace_height=500;}
 				$(".ace_editor").css("height",ace_height);
 				editor.getSession().setMode("ace/mode/php");
-				editor.setValue($("#{{_GET[form]}}Edit [name="+txt+"]").val());
+				editor.setValue(text);
 				editor.gotoLine(0,0);
 				editor.resize(true);
 		}

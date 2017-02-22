@@ -31,12 +31,8 @@
 
 </div>
 
-<div id="newsText" class="tab-pane">
-<textarea name="text" id="text" class="editor" placeholder="Контент" required >{{text}}</textarea>
-</div>
-
-<div id="{{form}}Source" class="tab-pane" data-role="include" src="source" data-name="text" data-id="src-{{id}}">
-</div>
+<div id="newsText" class="tab-pane" data-role="include" src="editor" data-name="text"></div>
+<div id="newsSource" class="tab-pane" data-role="include" src="source" data-name="text"></div>
 
 
 <div id="newsImages" class="tab-pane" data-role="imageloader"></div>

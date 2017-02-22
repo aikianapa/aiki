@@ -55,9 +55,7 @@
 
 </div>
 
-<div id="{{form}}Text" class="tab-pane">
-<textarea name="text" id="text" class="editor" placeholder="Контент" required ></textarea>
-</div>
+<div id="{{form}}Text" class="tab-pane" data-role="include" src="editor" data-name="text"></div>
 <div id="{{form}}Images" class="tab-pane" data-role="imageloader"></div>
 </div>
 </form> 

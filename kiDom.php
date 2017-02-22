@@ -1838,7 +1838,7 @@ abstract class kiNode
 	}
 
 function tagInclude($Item) {
-		$src=$this->attr("src"); $res=0;
+		$src=$ssrc=$this->attr("src"); $res=0;
 		$did=$this->attr("data-id");
 		$dad=$this->attr("data-add");
 		$header=$this->attr("data-header"); if ($header>"") {$Item["header"]=$header;}
@@ -1847,6 +1847,7 @@ function tagInclude($Item) {
 		$json=$this->attr("json"); 	if ($json>"") {$Item=json_decode($json,true);}
 		$dfs=$this->attr("data-formsave");
 		$class=$this->attr("data-class");
+		$name=$this->attr("data-name");
 		if ($src=="comments") 	{$src="/engine/forms/comments/comments_widget.php"; }
 		if ($src=="modal") 		{$src="/engine/forms/form_comModal.php"; }
 		if ($src=="imgviewer") 	{$src="/engine/js/imgviewer.php";}
@@ -1873,6 +1874,13 @@ function tagInclude($Item) {
 		if ($dfs>"") {$this_content->find("[data-formsave]")->attr("data-formsave",$dfs);}
 		if ($dfs=="false") {$this_content->find("[data-formsave]")->remove();}
 		if ($class>"") {$this_content->find(":first")->addClass($class);}
+
+		if ($ssrc=="editor" && !$this_content->find("textarea.editor").length) {
+			$this_content->prepend('<textarea class="editor" name="text"></textarea>');
+			if ($name>"") {$this_content->find("textarea.editor")->attr("name",$name);}
+		}
+
+
 
 		if (count($this->find("include"))>0) {
 			$this->append("<div id='___include___' style='display:none;'>{$this_content}</div>");

@@ -82,7 +82,7 @@
                                 <li>
 									<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-gear sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Утилиты</span></a>
                                     <ul class="utilites">
-										<li><a href="#" data-ajax="mode=designer&amp;form=form" data-html="div.main">Мастер форм (beta)
+										<li><a href="#" data-ajax="mode=designer&amp;form=form" data-html="#page-container">Мастер форм (beta)
 											<!--span class="pull-right glyphicon glyphicon-plus-sign add-item" data-ajax="mode=add&amp;form=masterform&amp;id=_new" data-toggle="modal" data-target="#prodEdit" data-html="#prodEdit .modal-body"> </span--></a>
 										</li>
 										<li><a href="#" data-ajax="mode=list&amp;form=source" data-html="div.main">Исходники (beta)

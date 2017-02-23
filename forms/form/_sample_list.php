@@ -14,7 +14,7 @@
 					<div class="dropdown">
 					  <a data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-th-list"></span></a>
 					  <ul class="dropdown-menu" role="menu">
-						<li><a href="#" data-ajax="mode=edit&form=page&id={{id}}" data-toggle="modal" data-target="#pageEdit" data-html="#{{_form_}}Edit .modal-body"><span class="glyphicon glyphicon-edit"></span> Изменить</a></li>
+						<li><a href="#" data-ajax="mode=edit&form={{_form_}}&id={{id}}" data-toggle="modal" data-target="#{{_form_}}Edit" data-html="#{{_form_}}Edit .modal-body"><span class="glyphicon glyphicon-edit"></span> Изменить</a></li>
 						<li><a href="#" data-ajax="mode=delete&form=admin&formname={{_form_}}&itemname={{id}}" data-toggle="modal" data-target="DeleteConfirm"><span class="glyphicon glyphicon-remove"></span> Удалить</a></li>
 					  </ul>
 					</div>

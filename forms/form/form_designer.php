@@ -1,83 +1,28 @@
-<div id="formDesigner">
-	<header class="navbar navbar-inverse navbar-fixed-bottom">
-                        <ul class="nav navbar-nav-custom">
-                            <li>
-                                <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar-alt');this.blur();">
-                                    <i class="fa fa-gear fa-fw animation-fadeInRight" id="sidebar-toggle-mini"></i>
-                                    <i class="fa fa-gear fa-fw animation-fadeInRight" id="sidebar-toggle-full"></i>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"><i class="fa fa-tags fa-fw animation-fadeInRight"></i></a>
-                            </li>
-                            <li class="animation-fadeInQuick toParent"></li>
-                            <li class="animation-fadeInQuick">
-                                <a href="#"><strong class="currentInfo"></strong></a>
-                            </li>
-                        </ul>
-	</header>
-
-		<div class="modal fade" id="sourceEditor" data-keyboard="false" data-backdrop="true" role="dialog" aria-labelledby="comModalLabel" aria-hidden="true">
-		  <div class="modal-dialog modal-md">
-			<div class="modal-content">
-			  <div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title" id="comModalLabel">{{header}}</h4>
-			  </div>
-			  <div class="modal-body">
-					<div data-role="include" src="source" data-role-hide="true"></div>
-			  </div>
-			  <div class="modal-footer">
-				<button type="button" class="btn btn-sm btn-warning" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Отменить</button>
-				<button type="button" class="btn btn-sm btn-primary" data-formsave=""><span class="glyphicon glyphicon-ok"></span> Применить</button>
-			  </div>
-			</div>
-		  </div>
-		</div>
-		
-		<div data-role="include" src="modal" data-id="formCreator" data-role-hide="true"></div>
-		<form id="formMasterForm" name="form" item="master"  class="form-horizontal" role="form" append="#formCreator .modal-body">
-			<div class="form-group">
-			  <label class="col-xs-6 col-sm-4 control-label">ID формы</label>
-			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="name" value="" placeholder="ID формы" required ></div>
-			</div>
-
-			<div class="form-group">
-			  <label class="col-xs-6 col-sm-4 control-label">Имя формы</label>
-			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control latin-only" name="descr" value="" placeholder="Имя формы" required ></div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-xs-4 control-label">Добавить в список форм</label>
-				<div class="col-xs-4"><label class="switch switch-primary"><input type="checkbox" name="tolist" value="on" checked="checked"><span></span></label></div>
-			</div>
-		</form>
-
-			
-	
-
-
-
-                <div id="sidebar-alt" tabindex="-1" aria-hidden="false">
-                    <!-- Toggle Alternative Sidebar Button (visible only in static layout) -->
-                    <a href="javascript:void(0)" id="sidebar-alt-close" onclick="App.sidebar('toggle-sidebar-alt');"><i class="fa fa-times"></i></a>
+                <!-- Main Sidebar -->
+                <div id="sidebar">
+                    <!-- Sidebar Brand -->
+                    <div id="sidebar-brand" class="themed-background">
+                        <a href="/admin.htm" class="sidebar-title">
+                            <i class="fa fa-cube"></i> <span class="sidebar-nav-mini-hide">Администратор</span>
+                        </a>
+                    </div>
+                    <!-- END Sidebar Brand -->
 
                     <!-- Wrapper for scrolling functionality -->
-                    <div id="sidebar-scroll-alt">
+                    <div id="sidebar-scroll">
                         <!-- Sidebar Content -->
                         <div class="sidebar-content">
-							<br>
-							<ul class="nav nav-tabs">
-								<li class="active"><a  class="themed-background" href="#snippets" data-toggle="tab"><i class="fa fa-code"></i> шаблоны</a></li>
-								<li><a class="themed-background" href="#props" data-toggle="tab"><i class="fa fa-gear"></i> свойства</a></li>
-							</ul>
-
-							<!-- Tab panes -->
-							<div class="tab-content" style="height:500px; overflow-y:auto;">
-								<div class="tab-pane active" id="snippets">
-									<div class="sidebar-section">
-									<h4 class="text-light">Шаблоны</h4>
-										<ul>
+                            <!-- Sidebar Navigation -->
+                            <ul class="sidebar-nav">
+								<li>
+									<div class="form-horizontal">
+										<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-vcard sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Формы (mode)</span></a>
+										<ul id="formList"></ul>
+									</div>
+								</li>
+								<li>
+                                    <a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-rocket sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Шаблоны</span></a>
+										<ul id="formDesignerSnippets">
 											<li><a href="#snippet" data="container">container</a></li>
 											<li><a href="#snippet" data="row">row</a></li>
 											<li><a href="#snippet" data="col">col</a></li>
@@ -90,353 +35,167 @@
 											<li><a href="#snippet" data="button">button</a></li>
 											<li><a href="#snippet" data="panel">панель</a></li>
 										</ul>
-									</div>
-									<!-- END Profile -->
+										<div id="formDesignerSnippetsPrompt" style="display:none;">
+											<div>Вставить шаблон</div>
+											<a href="#" class="round btn btn-sm btn-default btn-primary sBefore" title="перед элементом"><i class="fa fa-arrow-left"></i></a>
+											<a href="#" class="round btn btn-sm btn-default btn-warning sPrepend"  title="перед контентом"><i class="fa fa-chevron-left"></i></a>
+											<a href="#" class="round btn btn-sm btn-default btn-warning sAppend" title="после контента"><i class="fa fa-chevron-right"></i></a>
+											<a href="#" class="round btn btn-sm btn-default btn-primary sAfter" title="после элемента"><i class="fa fa-arrow-right"></i></a>
+										</div>
+                                </li>
+                                <li>
+									<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-gear sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Свойства</span></a>
+                                    <ul>
+										<li><a href="#" >
+											null
+											<!--span class="pull-right glyphicon glyphicon-plus-sign add-item" data-ajax="mode=add&amp;form=masterform&amp;id=_new" data-toggle="modal" data-target="#prodEdit" data-html="#prodEdit .modal-body"> </span--></a>
+										</li>
 
+                                    </ul>
+								</li>
+                            </ul>
+                            <!-- END Sidebar Navigation -->
 
-								</div>
-								<div class="tab-pane" id="props">
-									<div class="sidebar-section">
-										<h4 class="text-light">Свойства</h4>
-									</div>								
-								</div>
-							</div>
 
                         </div>
+                        <!-- END Sidebar Content -->
                     </div>
-                </div>
-<div id="formDesignerBlock">
-	<div class="panel col-xs-9">
-	<div class="form-horizontal">
-		
-		<div class="form-group row">
-			<label class="col-xs-4 control-label">Форма</label>
-			<div class="col-xs-4">
-				<select class="form-control" id="formName" placeholder="форма" data-role="foreach" from="forms">
-						<option value="{{form}}" data-path="{{dir}}">{{form}}</option>
-				</select>
-		   </div>
-		   <button type="button" id="formAdd" class="btn btn-primary"><i class="fa fa-plus"></i></button>
-		   <button type="button" id="formSave" class="btn btn-success">Сохранить</a>
-		</div>
+                    <!-- END Wrapper for scrolling functionality -->
 
-		<ul class="nav nav-tabs" id="formList"></ul>
-	</div>
+                    <!-- Sidebar Extra Info -->
+                    <div id="sidebar-extra-info" class="sidebar-content sidebar-nav-mini-hide">
+                        <div class="text-center">
+                            <small><span id="year-copy"></span> &copy; <a href="http://www.digiport.ru" target="_blank">AiKi Engine</a></small>
+                        </div>
+                    </div>
+                    <!-- END Sidebar Extra Info -->
+                </div>
+                <!-- END Main Sidebar -->
+
+                <!-- Main Container -->
+                <div id="main-container">
+                    <!-- Header -->
+                    <!-- In the PHP version you can set the following options from inc/config file -->
+                    <!--
+                        Available header.navbar classes:
+
+                        'navbar-default'            for the default light header
+                        'navbar-inverse'            for an alternative dark header
+
+                        'navbar-fixed-top'          for a top fixed header (fixed main sidebar with scroll will be auto initialized, functionality can be found in js/app.js - handleSidebar())
+                            'header-fixed-top'      has to be added on #page-container only if the class 'navbar-fixed-top' was added
+
+                        'navbar-fixed-bottom'       for a bottom fixed header (fixed main sidebar with scroll will be auto initialized, functionality can be found in js/app.js - handleSidebar()))
+                            'header-fixed-bottom'   has to be added on #page-container only if the class 'navbar-fixed-bottom' was added
+                    -->
+                    <header class="navbar navbar-inverse navbar-fixed-top" id="formDesignerHeader">
+                        <!-- Left Header Navigation -->
+                        <ul class="nav navbar-nav-custom">
+                            <li>
+                                <a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar');this.blur();">
+                                    <i class="fa fa-ellipsis-v fa-fw animation-fadeInRight" id="sidebar-toggle-mini"></i>
+                                    <i class="fa fa-bars fa-fw animation-fadeInRight" id="sidebar-toggle-full"></i>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- Right Header Navigation -->
+                        
+
+                        <ul class="nav navbar-nav-custom" id="formDesignerNav">
+							<li><a href="#" data-ajax="mode=designer&amp;form=form" data-html="#page-container"><i class="fa fa-refresh"></i></a></li>
+							
+							<li><a>
+									<select class="form-control" id="formName" placeholder="Форма" data-role="foreach" from="forms">
+											<option value="{{form}}" data-path="{{dir}}">{{form}}</option>
+									</select>
+							</a></li>
+							<li><a id="formAdd" ><i class="fa fa-plus"></i></a></li>
+							<li><a id="formSave" ><i class="fa fa-save"></i></a></li>
+							
+							<li class="toPrev"><a href="#prev"><i class="fa fa-arrow-left"></i></a></li>
+                            <li class="currentInfo"><a href="#"><strong></strong></a></li>
+                            <li class="toNext"><a href="#next"><i class="fa fa-arrow-right"></i></a></li>
+						</ul>
+                    </header>
+                    <!-- END Header -->
+
+                    <!-- Page content -->
+                    <div id="page-content" class="row">
+                        <div class="row" class="main">
+                        
+
+<div id="formDesigner">
+
+
 		
-		
+		<div data-role="include" src="modal" data-id="formCreator" data-role-hide="true"></div>
+		<form id="formMasterForm" name="form" item="master"  class="form-horizontal" role="form" append="#formCreator .modal-body">
+			<div class="form-group">
+			  <label class="col-xs-6 col-sm-4 control-label">ID формы</label>
+			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="name" value="" placeholder="ID формы" required ></div>
+			</div>
+
+			<div class="form-group">
+			  <label class="col-xs-6 col-sm-4 control-label">Имя формы</label>
+			   <div class="col-xs-6 col-sm-8"><input type="text" class="form-control" name="descr" value="" placeholder="Имя формы" required ></div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-xs-4 control-label">Добавить в список форм</label>
+				<div class="col-xs-4"><label class="switch switch-primary"><input type="checkbox" name="tolist" value="on" checked="checked"><span></span></label></div>
+			</div>
+		</form>
+
+
+			
+	
+
+
+
+<div id="formDesignerBlock">
+	<div class="panel viewer col-xs-9">
+
 		<div id="formDesignerEditor" class="tab-content form-horizontal" >
 			<div id="formDesignerToolBtn">
 				<a class="btn btn-sm btn-primary"><i class="fa fa-gear"></i></a>
 				<a class="btn btn-sm btn-primary"><i class="fa fa-copy"></i></a>
-				<a class="btn btn-sm btn-primary"><i class="fa fa-code"></i></a>
 				<a class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
 			</div>
 		</div>
 	</div>
+	<div data-role="include" src="source" data-id="designerSourceEditor" data-role-hide="true" data-class="col-xs-9 sourceModal"></div>
+
 </div>
+	
 </div>
 
-<script language="javascript">
-	App.sidebar('open-sidebar-alt');
-	$("#formDesignerEditor #formDesignerToolBtn").hide();
-	$("#formDesignerEditor").undelegate("*","mouseover");
-	$("#formDesignerEditor").delegate("*","mouseover",function(event){
-		$("#formDesignerEditor [data-hovered]").removeAttr("data-hovered");
-		if (!$(event.target).is("#formDesignerToolBtn") && !$(event.target).parents("#formDesignerToolBtn").length) {
-			$(event.target).attr("data-hovered",true);
-		}
-	});
-	
-	$("#formDesigner #formAdd").on("click",function(){
-		$("#formCreator .modal-header").html('<h4 class="modal-title">Создать новую форму</h4>');
-		$("#formCreator").modal("show");
-	});
-	
-	$(document).undelegate("#formDesigner #formName","change");
-	$(document).delegate("#formDesigner #formName","change",function(){
-		var that=this;
-		$("#formDesignerEditor .formDesignerEditor[data-path]").remove();
-		$.get("/engine/ajax.php?mode=listModes&form=form&name="+$(this).val(),function(data){
-			var data=$.parseJSON(data);
-			var forms=data.app;
-			var name=$(that).val();
-			var i=0;
-			$("#formDesigner #formList").html("");
-			$("#formDesigner #formDesignerEditor .formDesignerEditor").html("");
-			$.each(forms,function(i,form){
-				if (form.form==name && form.ext=="php" && form.mode>"") {
-					var formId=form.form+'_'+form.mode;
-					var formHref="#"+formId;
-					$("#formDesigner #formList").append(
-						'<li><a data-toggle="tab">'+
-						form.mode+
-						'<i class="fa fa-remove"></i></a></li>');
-						$("#formDesigner #formList > li:last a").attr("href",formHref);
-					$("#formDesignerEditor").append('<div class="tab-pane formDesignerEditor"></div>');
-					$("#formDesignerEditor > .formDesignerEditor:last").attr("id",formId);
-					$("#formDesignerEditor > .formDesignerEditor:last").attr("data-path",form.uri);
-					$.get("/engine/ajax.php?mode=getform&form=form&path="+form.uri,function(data){
-						data=str_replace("data-strip-role","data-role",data);
-						$("#formDesignerEditor #"+formId).html(data);
-					});
-				}
-			});
-			$("#formDesigner #formList").append('<a class="btn btn-primary" href="javascript:formDesignerAddMode();"><i class="fa fa-plus"></i></a>');
-			$("#formDesigner #formList > li:first").addClass("active");
-			$("#formDesignerEditor > .formDesignerEditor:first").addClass("active");
-		});
-	});
-	
-	$("#formDesigner").undelegate("#formSave","click");
-	$("#formDesigner").delegate("#formSave","click",function(){
-		$("#formDesignerEditor .formDesignerEditor[data-path]").each(function(){
-			var uri=$(this).attr("data-path");
-			var name=$(this).attr("id");
-			var data={content:$(this).html()};
-			$.ajax({
-				async: 		true,
-				url: "/engine/ajax.php?mode=putform&form=form&path="+uri,
-				method: "post",
-				data: data,
-				success: function(data){
-					growlMsg("Форма "+name+" сохранена");
-				},
-				error: function(){
-					growlMsg("Ошибка сохранения формы!","warning");
-					return false;
-				}
-			});
+                        
+                        
+                        </div>
+					</div>
+                    <!-- END Page Content -->
+                </div>
+                <!-- END Main Container -->
+            </div>
+            <!-- END Page Container -->
+        </div>
 
-		});
-		return false;
-	});
-	
-	
-	$("#formDesigner #sourceEditorToolbar").parent(".panel").css("margin-bottom","0px");
-
-	$("#formDesignerEditor #formDesignerToolBtn").undelegate(".btn","click");
-	$("#formDesignerEditor #formDesignerToolBtn").delegate(".btn","click",function(){
-		var btn=$(this).find(".fa");
-		if ($(btn).hasClass("fa-trash")) {
-			var that=$(".formDesignerEditor.active [data-current]");
-			var parent=that.parent();
-			$(".formDesignerEditor.active #formDesignerToolBtn").hide();
-			//$("#formDesigner header .toParent").trigger("click");
-			$(that).remove();
-			if ($(parent).html()=="") {$(parent).html("&nbsp;");}
-			parent.trigger("click");
-		}
-		if ($(btn).hasClass("fa-copy")) {
-			var that=$(".formDesignerEditor.active [data-current]");
-			var copy=$(that).clone();
-			$(that).after(copy);
-			copy.trigger("click");
-		}
-		if ($(btn).hasClass("fa-code")) {
-			if ($("#formDesigner #codeEditor").hasClass("visible")) {
-					$("#formDesigner #codeEditor").removeClass("visible");
-			} else {
-				var content=$(".formDesignerEditor.active [data-current]").prop('outerHTML');
-				content=str_replace('data-current="true"','',content);
-				editor.setValue(content);
-				editor.getSession().setMode("ace/mode/autohotkey");
-				$("#formDesigner #sourceEditor").modal("show");
-				$(".ace_editor").css("height",400);
-				editor.gotoLine(0,0);
-			}
-		}
-		return false;
-	});
-	
-	$("#formDesigner #sourceEditor [data-formsave]").on("click",function(){
-		var content=$("<div>"+editor.getValue()+"</div>");
-		$(content).find(":first").attr("data-current",true);
-		$(".formDesignerEditor.active [data-current]").replaceWith($(content).html());
-		$("#formDesigner #sourceEditor").modal("hide");
-	});
-
-	$("#formDesigner").undelegate("[data-hovered]","mouseleave");
-	$("#formDesigner").delegate("[data-hovered]","mouseleave",function(event){
-		$(event.target).removeAttr("data-hovered");
-	});
-	
-	// TO PARRENT
-	$("#formDesigner header .toParent").undelegate("a[href=#parent]","click");
-	$("#formDesigner header").delegate("a[href=#parent]","click",function(event){
-		if (!$(".formDesignerEditor.active [data-current]").parent().hasClass("formDesignerEditor")) {
-			$(".formDesignerEditor.active [data-current]").parent().trigger("click");
-		} else {
-			$(".formDesignerEditor.active [data-current]").removeAttr("data-current");
-			$("#formDesigner header .toParent").html("");
-			$("#formDesigner header .currentInfo").html("");
-		}
-	});
-
-	function formDesigner_clickElement(that) {
-		$("#formDesignerEditor .formDesignerEditor.active [data-current]").removeAttr("data-current");
-		$("#formDesignerEditor #formDesignerToolBtn").hide();
-		if (!$(that).is("#formDesignerToolBtn") && !$(that).parents("#formDesignerToolBtn").length) {
-			$(that).attr("data-current","true");
-			var x=$(that).offset().left;
-			var y=$(that).offset().top-24;
-			var tool=$("#formDesignerEditor #formDesignerToolBtn");
-			$(tool).css("left",x+"px").css("top",y+"px");
-			var tagName=that.tagName;
-			if ($(that).attr("id")>"") {tagName+="#"+$(that).attr("id");}
-			var className=that.className;
-				className=trim(str_replace(" ",".",className));
-			if (className>"") {className="."+className;}
-			var parent="";
-			parent='<a href="#parent"><i class="fa fa-arrow-left"></i></a>';
-			$("#formDesigner header .toParent").html(parent);
-			$("#formDesigner header .currentInfo").html(tagName+className);
-			$(tool).show();
-		}
-	}
-	
-	
-	$("#formDesignerEditor").undelegate(".formDesignerEditor.active *","click");
-	$("#formDesignerEditor").delegate(".formDesignerEditor.active *","click",function(event){
-		formDesigner_clickElement(event.target);
-	});
-
-	$(document).undelegate("*","click");
-	$(document).delegate("*","click",function(event){
-		
-		// здесь порылась собака с кнопкой back 
-		
-		if (	!$(event.target).parents(".formDesignerEditor").length
-			&&	!$(event.target).parents("#sourceEditor").length
-			&&	!$(event.target).parents("#sidebar-scroll-alt").length
-		) {
-			$("#formDesignerEditor #formDesignerToolBtn").hide();
-			$("#formDesignerEditor .formDesignerEditor [data-current]").removeAttr("data-current");
-		} else {
-			if ($(event.target).is("[data-ajax]")) {event.preventDefault(); return false;}
-		}
-	});
-	
-	$("#formDesigner").undelegate("#formList li a");
-	$("#formDesigner").delegate("#formList li a","click",function(){
-		var context=$("#formDesignerEditor .formDesignerEditor"+$(this).attr("href"));
-		var tree=childs(context);
-
-		$("#props").html(tree);
-		
-		function childs(that) {
-			var out=$("<ul></ul>");
-			$(that).find(">").each(function(){
-				$(out).append('<li>'+this.tagName+'</li>');
-				if ($(this).attr("id")>"") {
-					$(out).find("li:last").append("#"+$(this).attr("id"));
-				}
-				if ($(this).find(">").length) {
-					$(out).find("li:last").append(childs($(this)));
-				}
-			});
-			if ($(out).html()>"") {return out.prop('outerHTML');}
-			return "";
-		}
-	});
-	
-
-	$("#formDesigner a[href=#snippet]").on("click",function(){
-		var snippet=$(this).attr("data");
-		var load=$("<meta>");
-		var form=$("#formDesigner > .row #formName").val();
-		var target=".formDesignerEditor.active";
-		if ($(".formDesignerEditor.active [data-current]").length) {target=".formDesignerEditor.active [data-current]";}
-		$.get("/engine/ajax.php?mode=snippet&form=form&snippet="+snippet+"&formname="+form,function(data){
-			if ($(target).html()=="&nbsp;") {$(target).html("");}
-			data=str_replace("data-strip-role","data-role",data);
-			var data=$(data);
-			$(target).append(data);
-			if (!$(".formDesignerEditor.active [data-current]").length) {$(data).trigger("click");}
-		});
-	});
-	
-	$("#formDesigner").undelegate(".latin-only","keyup");
-	$("#formDesigner").delegate(".latin-only","keyup",function(){
-		$(this).val($(this).val().replace(/[^a-z0-9]/i, ""));
-	});
-	
-	$("#formDesigner #formCreator [data-formsave]").on("click",function(){
-		if (check_required("#formDesigner #formMasterForm")) {
-			var name=$("#formDesigner  #formMasterForm [name=name]").val();
-			var data=$("#formDesigner  #formMasterForm").serialize();
-			$.ajax({
-				url: "/engine/ajax.php?mode=create&form=form",
-				method: "post",
-				data: data,
-				success: function(data){
-					var data=JSON.parse(data); 
-					if (data.error==false) {
-						var type="success";
-						$("#formDesigner  #formCreator").modal("hide");
-						$(".sidebar-nav .formlist").append(data.append);
-						$("#formDesigner #formName").append('<option>'+name+'</option>');
-						$("#formDesigner #formName option:last").attr("value",name);
-					} else {var type="warning";}
-					growlMsg(data.status,type);
-					return data;
-				},
-				error: function(){return false;}
-			});
-		} else {
-			if (document.location.host=="digiport.loc") {
-				ajax_load($('<meta data-ajax="mode=designer&form=form" data-html="div.main">'));
-			}
-		}
-	});
-	
-	function formDesignerAddMode() {
-		var form=$("#formDesigner #formName").val();
-		var path=$("#formDesigner #formName option:selected").attr("data-path");
-		$("#formDesigner #formList .btn").before('<li><a data-toggle="tab" href="#formEditorAddMode"><input class="latin-only"></a></li>');
-		$("#formDesigner #formList a.active").removeClass("active");
-		$("#formDesigner #formList li:last").addClass("active");
-		$("#formDesigner #formList li:last input").focus();
-		$("#formDesigner #formList li:last .fa-times").on("click",function(){
-			$("#formDesigner #formList li:last").remove();
-			return false;
-		});
-		$("#formDesigner #formList li:last input").on("focusout",function(){
-			if ($(this).val()=="") {$("#formDesigner #formList li:last").remove();}
-		});
-		$("#formDesigner #formList li:last input").on("change",function(event){
-			var mode=$(this).val();
-			if (mode=="") {var error=true;} else {var error=false;}
-			$("#formDesigner #formList li:not(':last')").each(function(){
-				if ($(this).text()==mode) {error=true; $(this).find("a").trigger("click");}
-			});
-			if (error==true) {$("#formDesigner #formList li:last").remove();} else {
-				$("#formDesigner #formList li:last a").html(mode+'<i class="fa fa-remove"></i>');
-				$("#formDesigner #formList li:last a").attr("href","#"+form+"_"+mode);
-				$("#formDesignerEditor .formDesignerEditor").removeClass("active");
-				$("#formDesignerEditor").append('<div class="tab-pane formDesignerEditor active"></div>')
-				$("#formDesignerEditor .formDesignerEditor:last").attr("id",form+"_"+mode);
-				$("#formDesignerEditor .formDesignerEditor:last").attr("data-path",path+"/"+form+"_"+mode+".php");
-				console.log("строим дальше");
-			}
-		});
-
-	}
-	
-	
-</script>
+<script language="javascript" src="/engine/forms/form/form_designer.js?{{_new}}"></script></script>
 
 <style type="text/css" media="screen">
+body {overflow:hidden;}
 #formDesigner .formDesignerEditor {min-height:100px; background:#fff; border:3px #eee dashed; padding:5px;}
 #formDesignerEditor {padding:5px 0px;}
-#formDesignerEditor [data-current] {border: 1px #aaa dashed; background: rgba(217, 255, 228, 0.3); cursor:move;}
-#formDesignerEditor [data-hovered] { background: rgba(98, 122, 173, 0.25)!important;}
+#formDesignerEditor [data-current] {border: 1px #aaa dashed!important; background: rgba(217, 255, 228, 0.3)!important; cursor:move!important;}
+#formDesignerEditor [data-hovered] { background: rgba(98, 122, 173, 0.25)!important; transition-duration:0.3s;}
 #formDesignerToolBtn {position:fixed; display:inline-block; width:auto; z-index:100;}
-#formDesigner header .currentInfo a {color:#fff;}
+#formDesignerNav .currentInfo {width:200px; height:50px; overflow:hidden; text-align:center;}
 #formDesignerEditor .formDesignerEditor .row {background: rgba(92, 205, 222, 0.05);}
 #formDesignerEditor .formDesignerEditor .row > [class*="col-"]:nth-child(odd) {background: rgba(92, 105, 122, 0.05);}
 
 #formDesignerToolBtn .btn {border-radius: 100%;padding: 1px;height: 20px;width: 20px;font-size: 12px;line-height: 16px;}
 
+#formDesignerEditor .formDesignerEditor :empty {min-height:20px;}
 #formDesignerEditor .formDesignerEditor [data-role=include],
 #formDesignerEditor .formDesignerEditor [data-role=imageloader],
 #formDesignerEditor .formDesignerEditor [data-role=source],
@@ -467,4 +226,16 @@
     
 #sourceEditor .ace_editor {margin:0;}
 
+#formDesignerBlock .panel {height:40%; overflow-y:auto; overflow-x:hidden;}
+#formDesigner #designerSourceEditor {z-index:110;border:0;position:absolute;transition-duration:0.3s;overflow:hidden; top:calc(80%);height:calc(100%); display:none;}
+#formDesigner #designerSourceEditor:hover {top:calc(100%/2.5)!important;transition-duration:0.3s;}
+.round.btn { border-radius: 100%; height: 25px;  width: 25px; line-height: 24px; padding: 0; margin: 0;}
+
+.popover .row.preview {display:block;padding-right:40px; width:900px; zoom:30%;}
+
+.popover .row.preview > .row:only-of-type   {border:1px #777 solid; background:#AAA; height:100px; width:100%;}
+.popover .row.preview > .container:only-of-type  {border:1px #777 solid; background:#AAA; height:100px; width:100%;}
+.popover1 .row.preview > .row [class*=col-]:only-of-type {border:1px #fff solid; background:#AAA;  height:90px;}
+
+style="display:block;padding-right:40px; width:900px; zoom:30%;
 </style>

@@ -1090,9 +1090,13 @@ function aikiTreeSaveObjBranch($obj,$li) {
 	return $branch;
 }
 
-function aikiTreeReadObj($name) {
+function aikiTreeReadObj($name,$engine=false) {
 	$obj=aikiFromString("<tree></tree>");
-	$tree=aikiReadItem("tree",$name);
+	if ($engine==false) {
+		$tree=aikiReadItem("tree",$name);	
+	} else {
+		$tree=fileReadItem("/engine/contents/tree/",$name,true);
+	}
 	$obj->find("tree")	->append("<name>{$name}</name>")
 						->append("<descr>{$tree["descr"]}</descr>")
 						->append("<images></images>")
@@ -1154,6 +1158,7 @@ function aikiTreeFindData($branch,$field,$value) {
 }
 
 function aikiTreeGetPath($tree=array(),$id,$path=null) {
+	if (is_string($tree)) {$tree=aikiReadTree($tree); $tree=$tree["tree"];}
 	$res=aikiFindTreeData($tree,"id",$id);
 	if ($res["parent"]>"") {
 		$path="[\"children\"][0][{$res["idx"]}]".$path;
@@ -2231,6 +2236,7 @@ while (($file = readdir($dh)) !== false) {
 		$cont['name']=$file;
 		$cont['size']=filesize($dir.$ll.$file);
 		$cont['type']=filetype($dir.$ll.$file);
+		$cont['ext']=pathinfo($dir.$ll.$file, PATHINFO_EXTENSION);
 
 		if (($cont['type']=="dir" OR $cont['type']=="file") AND $file!=".." AND $file!=".") {
 			$result[]=$cont;

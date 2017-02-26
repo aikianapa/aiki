@@ -1777,7 +1777,8 @@ abstract class kiNode
 								}
 								if ($find=="" OR $size=="false" OR $size=="" OR ($find>"" && ($f>$page*$size-$size && $f<=$page*$size))) {$tmp;} else {$flag=false;}
 								if ($flag==true) {
-									$ndx++; 
+									$ndx++;
+									if ($index=="" OR ($index>"" AND $index==$ndx)) {
 										if ($step>0) { // если степ, то работаем с объектом
 											if ($stepcount==0) {
 												$t_step=$steptpl->clone();
@@ -1791,6 +1792,7 @@ abstract class kiNode
 										} else { // иначе строим строку
 											$inner.=clearValueTags($text->outerHtml());
 										}
+									}
 								} else {$n--;}
 								$text->remove();
 						}

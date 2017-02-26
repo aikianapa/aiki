@@ -23,16 +23,6 @@
 <br />
 	
 	<div class="form-group">
-	  <label class="col-sm-2 control-label">Meta-description</label>
-	   <div class="col-sm-10"><input type="text" class="form-control" name="meta_description" placeholder="Описание"></div>
-	</div>
-	<div class="form-group">
-	  <label class="col-sm-2 control-label">Meta-keywords</label>
-	   <div class="col-sm-10"><input type="text" class="form-control input-tags" name="meta_keywords" placeholder="Ключевые слова"></div>
-	</div>
-
-	
-	<div class="form-group">
 		<label class="col-sm-2 control-label">Активная</label>
 		<div class="col-sm-2 "><label class="switch switch-primary"><input type="checkbox" name="active" ><span></span></label></div>
 		<label data-allow="admin" class="col-sm-2 control-label">В лучшие</label>
@@ -51,6 +41,15 @@
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">Цена</label>
 	   <div class="col-sm-10"><input type="text" class="form-control" name="price" placeholder="Цена" required ></div>
+	</div>
+
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">Meta-description</label>
+	   <div class="col-sm-10"><input type="text" class="form-control" name="meta_description" placeholder="Описание"></div>
+	</div>
+	<div class="form-group">
+	  <label class="col-sm-2 control-label">Meta-keywords</label>
+	   <div class="col-sm-10"><input type="text" class="form-control input-tags" name="meta_keywords" placeholder="Ключевые слова"></div>
 	</div>
 
 </div>

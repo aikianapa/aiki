@@ -1234,7 +1234,7 @@ function active_tree() {
 					if ($(this).attr("type")=="datetimepicker") { mask="d.m.Y H:i";}
 					if ($(this).attr("date-oconv")>"") {mask=$(this).attr("date-iconv");}
 					if (mask>"") {$(this).val(date(mask,strtotime($(this).val())));}
-					var list=["call","dict","tree","enum"];
+					var list=["call","dict","tree","enum","snippet","tags"];
 					if (in_array($(this).attr("type"),list)) {
 						var parent=$(this).parent();
 						var param={};

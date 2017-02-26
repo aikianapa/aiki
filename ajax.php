@@ -6,12 +6,9 @@ aikiSettingsRead();
 aikiDatabaseConnect();
 aikiFormFunctions();
 aikiParseUri();
+if (is_file("{$_SESSION["root_path"]}/functions.php")) {include_once("{$_SESSION["root_path"]}/functions.php");}
 $req=(parse_url($_SERVER["REQUEST_URI"]));
 parse_str($req["query"]);
-
-if (is_file("{$_SESSION["root_path"]}/functions.php")) {
-	include_once("{$_SESSION["root_path"]}/functions.php");
-}
 
 if (isset($form)) {formCurrentInclude($form);} else {$form="";}
 $out=""; $res=0;

@@ -1,4 +1,4 @@
-<?
+<?php
 $aiki_projects=false;
 include(__DIR__."/engine/engine.php");
 $__page->contentSetData();

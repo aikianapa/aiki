@@ -44,6 +44,8 @@
 				<option value="enum">enum</option>
 				<option value="dict">dict</option>
 				<option value="tree">tree</option>
+				<option value="snippet">snippet</option>
+				<option value="tags">tags</option>
 				<option value="phone">phone</option>
 				<option value="mask">mask</option>
 				<option value="datepicker">datepicker</option>

@@ -101,7 +101,7 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 	$res=false;
 	switch($type) {
 		case "call":
-			$call=trim(explode(";",$param));
+			$call=explode(";",$param); $call=trim($call[0]);
 			if (is_callable($call)) {$res=$call($type,$label,$param,$value);}		
 			break;
 		case "dict":
@@ -121,6 +121,39 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 			$html->contentSetData();
 			$res=$html->outerHtml();
 			break;
+		case "snippet":
+			$snippets=aikiTreeReadObj("snippets",true);
+			$snip=aikiFromString("<select class='form-control' data-name='{$name}' placeholder='{$label}' value='{$value}'></select>");
+			$divs=$snippets->find("tree")->children("branch");
+			foreach($divs as $d) {
+				$dtpl=aikiFromString('');
+				$dtpl->append("<optgroup value='{$d->attr("data-id")}' label='{$d->find("name")->text()}'></optgroup>");
+				$livs=$d->find("branch");
+				foreach($livs as $li) {
+					$dtpl->find("optgroup")->append("<option value='{$li->attr("data-id")}'>{$li->find("name")->text()}</option>");
+				}
+				$snip->find("select")->append($dtpl);
+			}
+			$snip->find("option[value={$value}]")->attr("selected",true);
+			$res=$snip->outerHtml();
+			break;
+
+		case "tags":
+			$out=aikiFromString('<div class="form-group">
+					<label class="col-sm-2 control-label"></label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" name="name" placeholder="Наименование" value="">
+					</div>
+				</div>');
+			$out->find("label")->html($label);
+			$out->find("input")->attr("name",$name);
+			$out->find("input")->attr("placeholder",$param);
+			$out->find("input")->attr("value",$value);
+			$out->find("input")->addClass("input-tags");
+			$res=$out->outerHtml();
+			break;
+
+
 		case "tree":
 			// districts;{%parent}_distr;true;id;name
 			// [0] = districts - имя каталога
@@ -177,6 +210,19 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 			}
 			
 			$res=$html->outerHtml();
+			break;
+		default:
+			$out=aikiFromString('<div class="form-group">
+					<label class="col-sm-2 control-label"></label>
+					<div class="col-sm-10">
+						<input type="text" class="form-control" name="name" placeholder="Наименование" value="">
+					</div>
+				</div>');
+			$out->find("label")->html($label);
+			$out->find("input")->attr("name",$name);
+			$out->find("input")->attr("placeholder",$param);
+			$out->find("input")->attr("value",$value);
+			$res=$out->outerHtml();
 			break;
 	}
 	return $res;

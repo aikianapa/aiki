@@ -79,3 +79,4 @@ span.glyphicon.loader:before {opacity:0;}
 
 thead th[data-sort] {cursor:pointer;}
 .text-center {text-align: -webkit-center;}
+option[parent=true] {font-weight: bold; background: #666; color: #fff; margin-left: 50px;}

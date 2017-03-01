@@ -238,7 +238,13 @@ function active_plugins() {
 	});
 	
 	if ($('.input-tags').length) {
-		$('.input-tags').tagsInput({ width: 'auto', height: 'auto',  'defaultText':'новый'});
+		$('.input-tags').each(function(){
+			if ($(this).attr("placeholder")!==undefined) {var ph=$(this).attr("placeholder");} else {var ph='новый';}
+			if ($(this).attr("height")!==undefined) {var h=$(this).attr("height");} else {var h='auto';}
+			if ($(this).attr("width")!==undefined) {var w=$(this).attr("width");} else {var w='auto';}
+			$(this).tagsInput({ width: w, height: h,  'defaultText':ph});	
+		});
+		
 	}
 }
 
@@ -1036,6 +1042,8 @@ function active_pagination(pid) {
 				$(foreach).find("[data-template="+arr[1]+"]").html("");
 				$(foreach).find("[data-template="+arr[1]+"]").attr("data-sort",sort);
 				$(foreach).find("[data-template="+arr[1]+"]").removeAttr("data-desc");
+				var loader=$(foreach).find("[data-template="+arr[1]+"]").attr("data-loader");
+				var offset=$(foreach).find("[data-template="+arr[1]+"]").attr("data-offset"); if (offset==undefined) {offset=130;}
 				var foreach=$(foreach).html();
 				var param={tpl:tpl,tplid:arr[1],idx:idx,page:arr[2],size:size,cache:cache,foreach:foreach};
 				var url="/engine/ajax.php?mode=pagination";
@@ -1045,7 +1053,18 @@ function active_pagination(pid) {
 				if (find>"") {find=urldecode(find);}
 				param.find=find;
 				param.sort=sort;
-				$("[data-template="+arr[1]+"]").html(ajax_loader());
+				if (loader==undefined) {$("[data-template="+arr[1]+"]").html(ajax_loader());} else {
+					if (is_callable(loader)) {
+						var funcCall = loader + "('" + "[data-template="+arr[1]+"]" + "');";
+						var ret = eval(funcCall);
+					} else {
+						if (loader=="false") {
+							console.log("active_pagination(): loader is disabled");
+						} else {
+							console.log("active_pagination(): "+loader+" is not callable function");
+						}
+					}
+				}
 				$("body").addClass("cursor-wait");
 				$.ajax({
 					async: 		true,
@@ -1080,13 +1099,14 @@ function active_pagination(pid) {
 				$(this).parents("ul").find("li").removeClass("active");
 				$(this).parent("li").addClass("active");
 
-				var scrollTop=$("[data-template="+arr[1]+"]").offset().top-100;
+				var scrollTop=$("[data-template="+arr[1]+"]").offset().top-offset;
 				if (scrollTop<0) {scrollTop=0;}
 				$('body,html').animate({scrollTop: scrollTop}, 1000);
 				
 				//$(document).trigger("after_pagination_click",[id,page,arr[2]]);
-				event.preventDefault();
 		}
+		event.preventDefault();
+		return false;
 		});
 	});
 }
@@ -2296,6 +2316,48 @@ function is_null(mixed_var){return(mixed_var===null);}
 function is_numeric(mixed_var){return!isNaN(mixed_var*1);}
 function is_real(mixed_var){return is_float(mixed_var);}
 function is_scalar(mixed_var){return/boolean|number|string/.test(typeof mixed_var);}
+
+function is_callable (v, syntax_only, callable_name) {  
+    // Returns true if var is callable.    
+    //   
+    // version: 902.821  
+    // discuss at: http://phpjs.org/functions/is_callable  
+    // +   original by: Brett Zamir  
+    // %        note 1: The variable callable_name cannot work as a string variable passed by reference as in PHP (since JavaScript does not support passing strings by reference), but instead will take the name of a global variable and set that instead  
+    // %        note 2: When used on an object, depends on a constructor property being kept on the object prototype  
+    // *     example 1: is_callable('is_callable');  
+    // *     returns 1: true  
+    // *     example 2: is_callable('bogusFunction', true);  
+    // *     returns 2:true // gives true because does not do strict checking  
+    // *     example 3: function SomeClass () {}  
+    // *     example 3: SomeClass.prototype.someMethod = function(){};  
+    // *     example 3: var testObj = new SomeClass();  
+    // *     example 3: is_callable([testObj, 'someMethod'], true, 'myVar');  
+    // *     example 3: alert(myVar); // 'SomeClass::someMethod'  
+    var name='', obj={}, method='';  
+    if (typeof v === 'string') {  
+        obj = window;  
+        method = v;  
+        name = v;  
+    }  
+    else if (v instanceof Array && v.length === 2 && typeof v[0] === 'object' && typeof v[1] === 'string') {  
+        obj = v[0];  
+        method = v[1];  
+        name = (obj.constructor && obj.constructor.name)+'::'+method;  
+    }  
+    else {  
+        return false;  
+    }  
+    if (syntax_only || typeof obj[method] === 'function') {  
+        if (callable_name) {  
+        window[callable_name] = name;  
+        }  
+        return true;  
+    }  
+    return false;  
+}
+
+
 function is_string(mixed_var){return(typeof(mixed_var)=='string');}
 function join(glue,pieces){return implode(glue,pieces);}
 function json_decode(str_json){var cx=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;var j;var text=str_json;var walk=function(holder,key){var k,v,value=holder[key];if(value&&typeof value==='object'){for(k in value){if(Object.hasOwnProperty.call(value,k)){v=walk(value,k);if(v!==undefined){value[k]=v;}else{delete value[k];}}}}

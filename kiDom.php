@@ -1105,7 +1105,7 @@ abstract class kiNode
 	function contentCheckTag() {
 		$res=FALSE;
 		$tags=array(
-			"formdata","foreach", "dict", "tree","gallery",
+			"module","formdata","foreach", "dict", "tree","gallery",
 			"include","imageloader","thumbnail",
 			"multiinput","where","cart","variable"
 		);
@@ -1145,7 +1145,7 @@ abstract class kiNode
 	}
 
 	function excludeTextarea($Item=array()) {
-		$list=$this->find("textarea,pre,.noaiki");
+		$list=$this->find("textarea:not([data-not-exclude]),pre,.noaiki,[data-role=module]");
 		$_ENV["ta_save"]=array();
 		foreach ($list as $ta) {
 			$id=newIdRnd();
@@ -1159,7 +1159,7 @@ abstract class kiNode
 		}; unset($ta,$list);
 	}
 	function includeTextarea($Item=array()) { 
-		$list=$this->find("textarea[taid],pre[taid],.noaiki[taid]");
+		$list=$this->find("textarea[taid],pre[taid],.noaiki[taid],[data-role=module][taid]");
 		foreach ($list as $ta) {
 			$id=$ta->attr("taid"); $name=$ta->attr("name");
 			if (isset($_ENV["ta_save"][$id])) $ta->html($_ENV["ta_save"][$id]);
@@ -1438,7 +1438,8 @@ abstract class kiNode
 			if (!isset($branch)) {$branch=array();}
 			$_SESSION["tree_idx"]=0;
 			$_SESSION["tmp_srcTree"]=$Item;
-			$this->tagTree_step($tree["tree"],$html,$id,$nobranch,$Item);
+			$idx=0; $Item["_idx"]=$idx;
+			$this->tagTree_step($tree["tree"],$html,$id,$nobranch,$Item,$idx);
 			if ($_SESSION["tmp_tagTree"]==false) {
 				$tpl=aikiFromString($html);
 				$tpl->contentSetData($branch);
@@ -1455,10 +1456,12 @@ abstract class kiNode
 		}
 	}
 
-	function tagTree_step($branch=array(),$html="",$id="",$nobranch="",$Item=array()) {
+	function tagTree_step($branch=array(),$html="",$id="",$nobranch="",$Item=array(),$idx=0) {
 		$res=false; $i=0;
 		if (!is_array($branch)) {$branch=array();}
 		foreach($branch as $key => $val) {
+			$idx++;
+			$val["_idx"]=$idx;
 			if (!is_array($Item)) {$Item=array($Item);}
 			foreach($Item as $k => $v) {$val["%{$k}"]=contentSetValuesStr($v,$Item);}; unset($v);
 			$tpl=aikiFromString($html);
@@ -1472,7 +1475,7 @@ abstract class kiNode
 					if ($id=="" OR $id==$val["id"]) {$this->append($tpl);}
 					if ($nobranch!=="false") {
 						$_SESSION["tree_idx"]+=1;
-						$this->tagTree_step($val["children"][0],$html,$id,$val);
+						$this->tagTree_step($val["children"][0],$html,$id,$val,$idx);
 						$_SESSION["tree_idx"]-=1;
 					}
 				}
@@ -1496,6 +1499,7 @@ abstract class kiNode
 		$nobranch=$this->attr("branch"); 
 		$parent=$this->attr("parent"); if ($parent=="true" OR $parent=="1" OR $parent=="") {$parent=true;} else {$parent=false;}
 		$that=$this->clone();
+		$that->removeAttr("id");
 		$tree=aikiReadTree($name);
 		$html=$this->html();
 		$this->html("");
@@ -1838,6 +1842,34 @@ abstract class kiNode
 		unset($Item,$tpl);
 		gc_collect_cycles();
 	}
+	
+function tagModule() {
+	$src=$this->attr("src");
+	$module="/modules/{$src}/{$src}.php";
+	$Item=array();
+	$json=$this->attr("json"); 	if ($json>"") {$Item=json_decode($json,true);}
+	$vars=$this->attr("vars"); 	if ($vars>"") {$Item=attrAddData($vars,$Item);}
+	$flag=false;
+	if ($flag==false && is_file($src)) {$flag=true; $module=$src;}
+	if ($flag==false && is_file($_SESSION["app_path"].$module)) {$flag=true; $module=$_SESSION["app_path"].$module;}
+	if ($flag==false && is_file($_SESSION["engine_path"].$module)) {$flag=true; $module=$_SESSION["engine_path"].$module;}
+	include_once($module);
+	$call=pathinfo($module, PATHINFO_FILENAME)."_init";
+	if (is_callable($call)) {$out=aikiFromString(@$call());}
+	$js=explode(".",$module); $js[count($js)-1]="js"; $js=implode(".",$js);
+	if (is_file($js)) {
+		$js=str_replace($_SESSION["app_path"],"",$js);
+		$out->append("<script language='javascript' src='{$js}'></script>");
+	}
+	$css=explode(".",$module); $css[count($css)-1]="css"; $css=implode(".",$css);
+	if (is_file($css)) {
+		$css=str_replace($_SESSION["app_path"],"",$css);
+		$out->append("<link rel='stylesheet' src='{$css}'></script>");
+	}
+	$out->contentSetData($Item);
+	$this->replaceWith($out);
+	
+}
 
 function tagInclude($Item) {
 		$src=$ssrc=$this->attr("src"); $res=0;

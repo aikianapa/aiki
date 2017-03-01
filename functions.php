@@ -647,6 +647,25 @@ $list=array_sort($list);
 return $list;
 }
 
+function longDateRus($date=null,$time=false,$sec=false) {
+	if ($date==null) {$date=date("Y-m-d H:i:s");}
+	$mon=array("","января","февраля","марта","апреля","мая","июня","июля","августа","сентября","октября","ноября","декабря");
+	$y=date("Y",strtotime($date));
+	$m=date("n",strtotime($date));
+	$d=date("d",strtotime($date));
+	$h=date("H",strtotime($date));
+	$i=date("i",strtotime($date));
+	$s=date("s",strtotime($date));
+	$date="{$d} ".$mon[$m]." {$y}";
+	if ($time==true) {
+		$time="{$h}:{$i}";
+		if ($sec==true) {$lime.=":{$s}";}
+		$date.=" {$time}";
+	}
+	return $date;
+}
+
+
 function aikiListForms() {
 	$exclude=array("common","admin","source");
 	$list=array();
@@ -1764,6 +1783,7 @@ function fileSaveItem($form,$Item,$path=false,$func=true) {
 		$file=$_SESSION["app_path"]."/contents/".$form."/".$Item["id"];
 	}
 	$file=str_replace("//","/",$file);
+	echo $file;
 	$jsonItem=json_encode($Item, JSON_HEX_QUOT | JSON_HEX_APOS);
 	$res=file_put_contents($file,$jsonItem, LOCK_EX);
 	$after="_{$form}AfterSaveItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
@@ -2323,7 +2343,7 @@ function DeleteDir($dir) {
 	 return 0;
 }
 
-function sitemapGeneration() {
+function sitemapGeneration($forms=null) {
 	$host="http://{$_SESSION['HTTP_HOST']}";
 	$sitemap=ki::fromString('
 <?xml version="1.0" encoding="UTF-8"?>
@@ -2336,7 +2356,7 @@ function sitemapGeneration() {
 	</url>
 </urlset>
 	');
-	$forms=array("page","news");
+	if ($forms==null) {$forms=array("page","news");}
 	foreach($forms as $form) {
 		$list=aikiListItems($form);
 		sitemapGenerationUrl($sitemap,$form,$list);

@@ -303,6 +303,10 @@ function ajax_pagination() {
 	$fe->find("[data-template={$tplid}]")->attr("data-page",$page);
 	$fe->find("[data-template={$tplid}]",0)->append(urldecode($tpl));
 	$fe->find("[data-template={$tplid}]",0)->tagForeach();
+	$form=$fe->find("[data-template={$tplid}]",0)->attr("form");
+	$call=$form."BeforePaginationShow";
+	if (is_callable($call)) {$call($fe->find("[data-template={$tplid}]",0) );}
+	
 	$res["data"]=$fe->find("[data-template={$tplid}]",0)->innerHtml();
 	$fe->find("#ajax-{$tplid}")->attr("data-idx",$idx);
 	$res["pagr"]=$fe->find("#ajax-{$tplid}")->outerHtml();

@@ -1,5 +1,6 @@
 <section id="content">
-	<h3 class="col6">Обратная связь</h3>
+	<meta data-role="variable" var="header" value="Обратная связь">
+	<h3 data-role="where" data='"{{header}}">""'>{{header}}</h3>
 	<p>Вы можете задать вопрос или оставить свой отзыв.</p>
 	<hr>
 	<form id="contactForm" name="comments"  class="form-horizontal" item="_new">

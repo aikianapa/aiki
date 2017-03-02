@@ -1192,6 +1192,7 @@ abstract class kiNode
 			$list=$this->find("input,select");
 			foreach($list as $inp) {
 				$name=$inp->attr("name");	$def=$inp->attr("value");
+				if (substr($name,-2)=="[]") {$name=substr($name,0,-2);}
 				if (substr($def,0,3)=="{{_") {$def="";}
 				if (isset($Item[$name]) AND $def=="") {$inp->attr("value",$Item[$name]);}
 				$inp->contentDatePickerPrep();
@@ -1200,8 +1201,14 @@ abstract class kiNode
 				}
 				if ($inp->is("select") AND $inp->attr("value")>"") {
 					$value=$inp->attr("value");
-					if (is_array($value)) $value=$value[0];
-					$inp->find("option[value=".$value."]")->selected="selected";
+					if (is_array($value)) {
+						foreach($value as $val) {
+							$inp->find("option[value=".$val."]")->selected="selected";
+						}
+						$value=$value[0];
+					} else {
+						$inp->find("option[value=".$value."]")->selected="selected";
+					}
 				}
 				$inp->contentSetMultiValue($Item);
 			}; unset($inp,$list);

@@ -1882,7 +1882,7 @@ function tagInclude($Item) {
 		$dfs=$this->attr("data-formsave");
 		$class=$this->attr("data-class");
 		$name=$this->attr("data-name");
-		if ($src=="comments") 	{$src="/engine/forms/comments/comments_widget.php"; }
+		if ($src=="comments") 	{$src="/engine/ajax.php?form=comments&mode=widget"; }
 		if ($src=="modal") 		{$src="/engine/forms/form_comModal.php"; }
 		if ($src=="imgviewer") 	{$src="/engine/js/imgviewer.php";}
 		if ($src=="uploader")	{$src="/engine/js/uploader.php";}

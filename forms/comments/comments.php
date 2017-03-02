@@ -45,16 +45,16 @@ function _commentsBeforeShowItem($Item,$mode=NULL) {
 	if ($mode==NULL) {$mode=$_GET["mode"];}
 	switch($mode) {
 		case "edit" :
-			if (!isset($Item["date"]) OR $Item["date"]=="") {$Item["date"]=date("Y-m-d"); } else {	$Item["date"]=date("Y-m-d",strtotime($Item["date"])); }
+			if (!isset($Item["date"]) OR $Item["date"]=="") {$Item["date"]=date("Y-m-d"); } else {	$Item["date"]=date("Y-m-d H:i:s",strtotime($Item["date"])); }
 			break;
 		case "list"	:
-			$Item["date"]=date("d.m.Y",strtotime($Item["date"]));
+			$Item["date"]=date("d.m.Y H:i",strtotime($Item["date"]));
 			$Item["text"]=getWords(strip_tags($Item["text"]),50);
 			$Item["smalltext"]=getWords(strip_tags($Item["text"]),10);
 			if ($_SESSION["User"]!="Admin" && (!$Item["show"]==1 OR !$Item["show"]=="on") ) {$Item=NULL;}
 			break;
 		default		:
-			$Item["date"]=date("d.m.Y",strtotime($Item["date"]));
+			$Item["date"]=date("d.m.Y H:i",strtotime($Item["date"]));
 			$Item["header"]="";
 			break;
 	}

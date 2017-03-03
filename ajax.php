@@ -279,8 +279,14 @@ function ajax_cart() {
 	return $order_id;
 }
 
+function ajax_module() {
+	$out=aikiFromString("<div data-role='module' src='{$_GET["src"]}'></div>");
+	$out->contentSetData();
+	if (!isset($_REQUEST["ajax"])) return $out->outerHtml();
+}
+
 function ajax_sitemap_generation() {
-	return sitemapGeneration();
+	if (isset($_POST["forms"])) {return sitemapGeneration($_POST["forms"]);}
 }
 
 function ajax_content_set_data() {

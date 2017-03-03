@@ -1001,6 +1001,10 @@ abstract class kiNode
 //======================================================================//
 //======================================================================//
 
+	public function beautyHtml($step=0) {
+		return $this->aikiHtmlFormat($step);
+	}
+
 	public function aikiHtmlFormat($step=0) {
 		$this->children()->after("{{_line_}}");
 		$this->children()->before("{{_line_}}".str_repeat("{{_tab_}}",$step));
@@ -1850,7 +1854,7 @@ abstract class kiNode
 		gc_collect_cycles();
 	}
 	
-function tagModule() {
+function tagModule($Item=array()) {
 	$src=$this->attr("src");
 	$module="/modules/{$src}/{$src}.php";
 	$Item=array();
@@ -1861,21 +1865,30 @@ function tagModule() {
 	if ($flag==false && is_file($_SESSION["app_path"].$module)) {$flag=true; $module=$_SESSION["app_path"].$module;}
 	if ($flag==false && is_file($_SESSION["engine_path"].$module)) {$flag=true; $module=$_SESSION["engine_path"].$module;}
 	include_once($module);
-	$call=pathinfo($module, PATHINFO_FILENAME)."_init";
-	if (is_callable($call)) {$out=aikiFromString(@$call());}
-	$js=explode(".",$module); $js[count($js)-1]="js"; $js=implode(".",$js);
-	if (is_file($js)) {
-		$js=str_replace($_SESSION["app_path"],"",$js);
-		$out->append("<script language='javascript' src='{$js}'></script>");
-	}
-	$css=explode(".",$module); $css[count($css)-1]="css"; $css=implode(".",$css);
-	if (is_file($css)) {
-		$css=str_replace($_SESSION["app_path"],"",$css);
-		$out->append("<link rel='stylesheet' src='{$css}'></script>");
-	}
-	$out->contentSetData($Item);
-	$this->replaceWith($out);
+	if (isset($_REQUEST["ajax"])) {
+		$call=pathinfo($module, PATHINFO_FILENAME)."_ajax";
+		if (is_callable($call)) {$out=@$call();} else {
+			echo "Отсутствует процедура инициализации {$call}"; die;
+		}				
+	} else {
+		$call=pathinfo($module, PATHINFO_FILENAME)."_init";
+		if (is_callable($call)) {$out=aikiFromString(@$call());} else {
+			echo "Отсутствует процедура инициализации {$call}"; die;
+		}
 	
+		$js=explode(".",$module); $js[count($js)-1]="js"; $js=implode(".",$js);
+		if (is_file($js)) {
+			$js=str_replace($_SESSION["app_path"],"",$js);
+			$out->append("<script language='javascript' src='{$js}'></script>");
+		}
+		$css=explode(".",$module); $css[count($css)-1]="css"; $css=implode(".",$css);
+		if (is_file($css)) {
+			$css=str_replace($_SESSION["app_path"],"",$css);
+			$out->append("<link rel='stylesheet' src='{$css}'></script>");
+		}
+		$out->contentSetData($Item);
+		$this->replaceWith($out);
+	} 
 }
 
 function tagInclude($Item) {

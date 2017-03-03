@@ -2356,14 +2356,15 @@ function sitemapGeneration($forms=null) {
 	</url>
 </urlset>
 	');
+
 	if ($forms==null) {$forms=array("page","news");}
 	foreach($forms as $form) {
 		$list=aikiListItems($form);
 		sitemapGenerationUrl($sitemap,$form,$list);
 	}; unset($form);
-
-	fileSaveItem("{$_SESSION['prj_path']}/sitemap.xml",$sitemap,true);
-	return true;
+	$sitemap=$sitemap->beautyHtml();
+	$res=file_put_contents("{$_SESSION['app_path']}/sitemap.xml",$sitemap);
+	return $res;
 }
 
 function sitemapGenerationUrl($sitemap,$form,$list) {
@@ -2371,7 +2372,7 @@ function sitemapGenerationUrl($sitemap,$form,$list) {
 	foreach($list as $item) {
 		$flag=true;
 		if ($form=="page" AND $item["template"]=="") {$flag=false;}
-		if ($form=="page") {$path="/";} else {$path="/".$form."/";}
+		if ($form=="page") {$path="/";} else {$path="/".$form."/show/";}
 		if ($flag==true) {
 			$url='
 <url>

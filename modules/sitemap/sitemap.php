@@ -31,7 +31,8 @@ function sitemap_generate($href=null) {
 	if ($href==null) {$href="/";}
 		$l=parse_url($href);
 		if (!isset($l["host"]) OR $l["host"]==$_SERVER["HTTP_HOST"]) {
-			if (!isset($l["host"])) {$link="{$_SERVER["REQUEST_SCHEME"]}://{$_SERVER["HTTP_HOST"]}{$l["path"]}";} else {$link=$href;}
+			$scheme=$_SERVER["REQUEST_SCHEME"]; if ($scheme=="") {$scheme="http";}
+			if (!isset($l["host"])) {$link="{$scheme}://{$_SERVER["HTTP_HOST"]}{$l["path"]}";} else {$link=$href;}
 			if (!in_array($link,$_SESSION["moduleSitemap"]["ready"])) {
 				$count++;
 				sitemap_node($link,$out);
@@ -43,7 +44,7 @@ function sitemap_generate($href=null) {
 					foreach($oLinks as $oLink) {
 						$href=$oLink->attr("href");
 						$l=parse_url($href);
-						if (!isset($l["host"])) {$link="{$_SERVER["REQUEST_SCHEME"]}://{$_SERVER["HTTP_HOST"]}{$l["path"]}";} else {$link=$href;}
+						if (!isset($l["host"])) {$link="{$scheme}://{$_SERVER["HTTP_HOST"]}{$l["path"]}";} else {$link=$href;}
 						if (!in_array($link,$_SESSION["moduleSitemap"]["ready"])) {
 							$_SESSION["moduleSitemap"]["level"]++;
 							sitemap_generate($link);

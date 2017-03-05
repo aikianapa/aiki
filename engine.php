@@ -1,5 +1,5 @@
 <?php
-ini_set('display_errors', 1	);
+ini_set('display_errors', 0	);
 include_once(__DIR__."/functions.php");
 comSession();
 comPathCheck();

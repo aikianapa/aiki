@@ -1,9 +1,7 @@
 <?php
 ini_set('display_errors', 0);
 include_once("{$_SERVER["DOCUMENT_ROOT"]}/engine/kiDom.php");
-// ============================================================
-// куски от tags_parser
-// ============================================================
+
 function contentControls($set="") {
 	$res="*";
 	$controls="[data-role]";
@@ -1350,8 +1348,8 @@ function aikiSaveItem($form,$Item,$func=true) {
 	} else {
 		$res=$save($form,$Item,$func);
 	}
-	$cache=$_SERVER["DOCUMENT_ROOT"].$_SESSION["prj_path"]."/contents/{$form}/_cache/{$Item["id"]}";
-	if (is_file($cache)) {unlink($cache);}
+	$cachename=aikiGetCacheName($form,$Item["id"]);
+	if (is_file($cachename)) {unlink($cachename);}
 	return $res;
 }
 
@@ -1570,16 +1568,16 @@ function aikiCheckCache($__page) {
 	if ($__page->find("meta[name=cache]")->length) {
 		$timeout=$__page->find("meta[name=cache]")->attr("content");
 		if ($timeout>0  OR $timeout=="*") {
-			$dir=$_SERVER["DOCUMENT_ROOT"].$_SESSION["prj_path"]."/contents/{$_GET["form"]}/_cache";
-			if (!is_dir($dir)) { mkdir($dir);}
-			if (is_file($dir."/{$_GET["id"]}")) {
-				$cache=ki::fromFile($dir."/{$_GET["id"]}");
-				$expired=$cache->find("meta[name=cache_expired]")->attr("content");
+			$cachename=aikiGetCacheName();
+			if (is_file($cachename)) {
+				$cache=ki::fromFile($cachename);
+				$expired=$cache->find("meta[name=cache]")->attr("expired");
 				if (time()<$expired OR $timeout=="*") {
 					$__page->find("head")->remove();
 					$__page->find("body")->before($cache->find("head")->outerHtml());
 					$__page->find("body")->remove();
 					$__page->find("head")->after($cache->find("body")->outerHtml());
+					//$__page->replaceWith($cache->outerHtml());
 					$res=$_SESSION["cache"]=1;
 				} else {$res=$_SESSION["cache"]=2;}
 			} else {$res=$_SESSION["cache"]=2;}
@@ -1588,14 +1586,19 @@ function aikiCheckCache($__page) {
 	return $res;
 }
 
+function aikiGetCacheName($form=null,$item=null) {
+	if ($form==null) {$form=$_GET["form"];}
+	if ($item==null) {$item=$_GET["id"];}
+	if (!isset($_SESSION["lang"])) {$lang="ru";} else {$lang=$_SESSION["lang"];}
+	$name=md5("{$form}_{$item}_{$lang}");
+	$dir=$_SERVER["DOCUMENT_ROOT"].$_SESSION["prj_path"]."/contents/_cache/";
+	if (!is_dir($dir)) { mkdir($dir);}	
+	return $dir.$name;
+}
+
 function aikiSaveCache($__page) {
 	if ($_SESSION["cache"]==2) {
-		$__page->find("meta[name=cache_expired]")->remove();
-		$file=$_SERVER["DOCUMENT_ROOT"].$_SESSION["prj_path"]."/contents/{$_GET["form"]}/_cache/{$_GET["id"]}";
-		$expired=$__page->find("meta[name=cache]")->attr("content")+time();
-		$__page->find("meta[name=cache]")->after('<meta name="cache_expired" content="'.$expired.'">');
-		$content=$__page->outerHtml();
-		$res=file_put_contents($file,$content, LOCK_EX);
+		$__page->saveCache();
 		$_SESSION["cache"]=1;
 	}
 }
@@ -1685,7 +1688,7 @@ function fileListItems($form,$where=NULL,$engine=FALSE) {
         }; unset($file,$data);
         closedir($dh);
    	}}
-	if ($where!=NULL) {$result=aikiWhere($result,$where);}
+	if ($where!==NULL) {$result=aikiWhere($result,$where);}
 		$after="_".$form."AfterGetListItems"; if (is_callable($after)) {$array=$after($result);}
 		$after=$form."AfterGetListItems"; if (is_callable($after)) {$array=$after($result);}
 	if (!is_array($result)) $result=array();
@@ -1783,7 +1786,6 @@ function fileSaveItem($form,$Item,$path=false,$func=true) {
 		$file=$_SESSION["app_path"]."/contents/".$form."/".$Item["id"];
 	}
 	$file=str_replace("//","/",$file);
-	echo $file;
 	$jsonItem=json_encode($Item, JSON_HEX_QUOT | JSON_HEX_APOS);
 	$res=file_put_contents($file,$jsonItem, LOCK_EX);
 	$after="_{$form}AfterSaveItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
@@ -2110,6 +2112,12 @@ function formPathCheck($form="page",$id="_new",$uplflds=array("images")) {
 }
 
 function comSession() {
+	if (class_exists('Memcached')) {
+		$cache = new Memcached();
+		$cache->addServer('127.0.0.1', 11211);
+		$session = new MemcachedSessionHandler($cache);
+	}
+	
 	if (!isset($_SESSION["SESSID"])) {session_start(); $_SESSION["SESSID"]=session_id();} else {session_id($_SESSION["SESSID"]);}
 	comBasePath();
 	if (!isset($_SESSION["User"])) {$_SESSION["User"]="User";}
@@ -2119,6 +2127,8 @@ function comSession() {
 		if (!is_dir($_SESSION["app_path"]."/contents/dict/)")) {mkdir($_SESSION["app_path"]."/contents/dict/");}
 		copy("{$_SESSION["engine_path"]}/uploads/__contents/dict/user_role",$_SESSION["app_path"]."/contents/dict/user_role");
 	}
+	if (isset($_SERVER["SCHEME"]) && $_SERVER["SCHEME"]>"") {$scheme=$_SERVER["SCHEME"];} else {$scheme="http";}
+	$_SESSION["HOST"]=$scheme."://".$_SERVER["HTTP_HOST"];
 }
 
 function comBasePath() {

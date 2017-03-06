@@ -16,13 +16,16 @@
                             <ul class="sidebar-nav">
 								<li>
 									<div class="form-horizontal">
-										<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-vcard sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Формы (mode)</span></a>
+										<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span>
+										<i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+										<i class="fa fa-list sidebar-nav-icon"></i>
+										<span class="sidebar-nav-mini-hide">Формы (mode)</span></a>
 										<ul id="formList"></ul>
 									</div>
 								</li>
-								<li>
+								<li class="formDesignerSnippets">
                                     <a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-rocket sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Шаблоны</span></a>
-										<ul id="formDesignerSnippets">
+										<ul >
 											<li><a href="#snippet" data="container">container</a></li>
 											<li><a href="#snippet" data="row">row</a></li>
 											<li><a href="#snippet" data="col">col</a></li>
@@ -35,27 +38,26 @@
 											<li><a href="#snippet" data="button">button</a></li>
 											<li><a href="#snippet" data="panel">панель</a></li>
 										</ul>
-										<div id="formDesignerSnippetsPrompt" style="display:none;">
-											<div>Вставить шаблон</div>
-											<a href="#" class="round btn btn-sm btn-default btn-primary sBefore" title="перед элементом"><i class="fa fa-arrow-left"></i></a>
-											<a href="#" class="round btn btn-sm btn-default btn-warning sPrepend"  title="перед контентом"><i class="fa fa-chevron-left"></i></a>
-											<a href="#" class="round btn btn-sm btn-default btn-warning sAppend" title="после контента"><i class="fa fa-chevron-right"></i></a>
-											<a href="#" class="round btn btn-sm btn-default btn-primary sAfter" title="после элемента"><i class="fa fa-arrow-right"></i></a>
-										</div>
                                 </li>
                                 <li>
 									<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span><i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i><i class="fa fa-gear sidebar-nav-icon"></i><span class="sidebar-nav-mini-hide">Свойства</span></a>
                                     <ul>
 										<li><a href="#" >
 											null
-											<!--span class="pull-right glyphicon glyphicon-plus-sign add-item" data-ajax="mode=add&amp;form=masterform&amp;id=_new" data-toggle="modal" data-target="#prodEdit" data-html="#prodEdit .modal-body"> </span--></a>
+											</a>
 										</li>
 
                                     </ul>
 								</li>
                             </ul>
                             <!-- END Sidebar Navigation -->
-
+							<div id="formDesignerSnippetsPrompt" style="display:none;">
+								<div>Вставить шаблон</div>
+								<a href="#" class="round btn btn-sm btn-default btn-primary sBefore" title="перед элементом"><i class="fa fa-arrow-left"></i></a>
+								<a href="#" class="round btn btn-sm btn-default btn-warning sPrepend"  title="перед контентом"><i class="fa fa-chevron-left"></i></a>
+								<a href="#" class="round btn btn-sm btn-default btn-warning sAppend" title="после контента"><i class="fa fa-chevron-right"></i></a>
+								<a href="#" class="round btn btn-sm btn-default btn-primary sAfter" title="после элемента"><i class="fa fa-arrow-right"></i></a>
+							</div>
 
                         </div>
                         <!-- END Sidebar Content -->
@@ -153,7 +155,7 @@
 
 
 <div id="formDesignerBlock">
-	<div class="panel viewer col-xs-9">
+	<div class="viewer col-xs-12">
 
 		<div id="formDesignerEditor" class="tab-content form-horizontal" >
 			<div id="formDesignerToolBtn">
@@ -163,7 +165,7 @@
 			</div>
 		</div>
 	</div>
-	<div data-role="include" src="source" data-id="designerSourceEditor" data-role-hide="true" data-class="col-xs-9 sourceModal"></div>
+	<div data-role="include" src="source" data-id="designerSourceEditor" data-role-hide="true" data-class="row sourceModal"></div>
 
 </div>
 	
@@ -226,7 +228,7 @@ body {overflow:hidden;}
     
 #sourceEditor .ace_editor {margin:0;}
 
-#formDesignerBlock .panel {height:40%; overflow-y:auto; overflow-x:hidden;}
+#formDesignerBlock .viewer {height:40%; overflow-y:auto; overflow-x:hidden;}
 #formDesigner #designerSourceEditor {z-index:110;border:0;position:absolute;transition-duration:0.3s;overflow:hidden; top:calc(80%);height:calc(100%); display:none;}
 #formDesigner #designerSourceEditor:hover {top:calc(100%/2.5)!important;transition-duration:0.3s;}
 .round.btn { border-radius: 100%; height: 25px;  width: 25px; line-height: 24px; padding: 0; margin: 0;}
@@ -236,6 +238,4 @@ body {overflow:hidden;}
 .popover .row.preview > .row:only-of-type   {border:1px #777 solid; background:#AAA; height:100px; width:100%;}
 .popover .row.preview > .container:only-of-type  {border:1px #777 solid; background:#AAA; height:100px; width:100%;}
 .popover1 .row.preview > .row [class*=col-]:only-of-type {border:1px #fff solid; background:#AAA;  height:90px;}
-
-style="display:block;padding-right:40px; width:900px; zoom:30%;
 </style>

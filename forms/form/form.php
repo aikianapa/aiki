@@ -57,8 +57,6 @@ function form_putform() {
 	}
 }
 
-
-
 function form_designer() {
 	$formlist=aikiListFormsFull(); $formlist=$formlist["app"];
 	$out=aikiGetForm();
@@ -66,10 +64,89 @@ function form_designer() {
 	foreach($formlist as $form) {
 		if (!isset($forms[$form["form"]]) && $form["mode"]=="") {$forms[$form["form"]]=array("form"=>$form["form"],"dir"=>$form["dir"]);}
 	}
+	$sDir="/engine/forms/form/snippets";
+	$snippets=aikiTreeReadObj("snippets",true);
+	$snip=aikiFromString("");
+	$tpl=aikiFromString('<li class="formDesignerSnippets">
+	<a href="#" class="sidebar-nav-menu"><span class="sidebar-nav-ripple animate"></span>
+	<i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+	<i class="{{icon}} sidebar-nav-icon"></i>
+	<span class="sidebar-nav-mini-hide">{{name}}</span></a>
+	<ul data-type="{{type}}"></ul>
+	</li>');
+	$divs=$snippets->find("tree")->children("branch");
+	foreach($divs as $d) {
+		$dtpl=$tpl->clone();
+		$item=array();
+		$item["name"]=$d->find("name")->text();
+		$item["type"]=$d->attr("data-id");
+		$item["icon"]=$d->find("data icon");
+		$dtpl->contentSetValues($item);
+		$livs=$d->find("branch");
+		foreach($livs as $li) {
+			$dtpl->find("ul")->append("<li><a href='#snippet' data='{$li->attr("data-id")}'>{$li->find("name")->text()}</a></li>");
+		}
+		
+		$snip->append($dtpl);
+	}
+	unset($dtpl,$item,$tpl,$d);
+	$out->find(".formDesignerSnippets")->html($snip);
 	$Item=array("forms"=>$forms);
 	$out->contentSetData($Item);
 	return $out->outerHtml();
 }
+
+function form_snippets() {
+	$out=aikiTreeReadObj("snippets",true);
+	return $out->outerHtml();
+}
+
+function form_designer1() {
+	$formlist=aikiListFormsFull(); $formlist=$formlist["app"];
+	$out=aikiGetForm();
+	$forms=array();
+	foreach($formlist as $form) {
+		if (!isset($forms[$form["form"]]) && $form["mode"]=="") {$forms[$form["form"]]=array("form"=>$form["form"],"dir"=>$form["dir"]);}
+	}
+	$sDir="/engine/forms/form/snippets";
+	$snippets=filesList($sDir);
+	$snip=aikiFromString("");
+	$menu=aikiFromFile($_SERVER["DOCUMENT_ROOT"].$sDir."/snippets.menu.htm");
+	$divs=$menu->find("meta");
+	foreach($divs as $d) {
+		$dtpl=$menu->find("li.formDesignerSnippets",0)->clone();
+		$item=array();
+		$item["name"]=$d->attr("name");
+		$item["type"]=$d->attr("type");
+		$item["icon"]=$d->attr("icon");
+		$dtpl->contentSetValues($item);
+		$snip->append($dtpl);
+	}
+	unset($dtpl,$item,$divs,$menu);
+	
+	foreach($snippets as $s) {
+		$sName=str_replace(".".$s["ext"],"",$s["name"]);
+		if ($sName!=="snippets.menu") {
+			$tmp=aikiFromFile($_SESSION["app_path"].$sDir."/".$s["name"]);
+			$tmp=$tmp->find("meta[name=formDesigner]");
+			if (is_object($tmp)) {
+				$name=$tmp->attr("data-name");
+				if ($name=="") {$name=$sName;}
+				if ($snip->find("ul[data-type=".$tmp->attr("data-type")."]")->length) {
+					$snip->find("ul[data-type=".$tmp->attr("data-type")."]")->append("<li><a href='#snippet' data='{$sName}'>{$name}</a></li>");
+				} else {
+					$snip->find("ul[data-type=other]")->append("<li><a href='#snippet' data='{$sName}'>{$name}</a></li>");
+				}
+					$snip->find("li:last a")->attr("data-zoom",$tmp->attr("data-zoom"));
+			}
+		}
+	}
+	$out->find(".formDesignerSnippets")->html($snip);
+	$Item=array("forms"=>$forms);
+	$out->contentSetData($Item);
+	return $out->outerHtml();
+}
+
 
 function form_listModes() {
 		$Item=aikiListFormsFull();

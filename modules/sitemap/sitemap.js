@@ -50,6 +50,7 @@ function moduleSitemapGeneratorAjax(url) {
 				} else {
 					if (url!=="__finish__") {
 						moduleSitemapGeneratorAjax("__finish__");
+						$("#sitemapGenerator .progress .current").html("Финиш");
 						$("#sitemapGenerator").data("ready","");
 						$("#sitemapGenerator").data("stack","");
 					}

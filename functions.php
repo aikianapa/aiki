@@ -610,7 +610,7 @@ function aikiFromFile($str="") {
 function aikiInString($string,$find) {
 	$res = false;
 	$find = preg_replace('/([^\pL\pN\pP\pS\pZ])|([\xC2\xA0])/u', '', $find);
-	$find=explode(" ",trim(mb_strtolower($find)); $count=count($find);
+	$find=explode(" ",trim(mb_strtolower($find))); $count=count($find);
 	$pattern = '/('.implode("|",$find).')/i'; 
 	preg_match_all($pattern, mb_strtolower($string), $matches);
 	if (in_array($find,$matches)) {$res=true;}

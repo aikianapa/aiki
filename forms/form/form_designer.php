@@ -115,7 +115,11 @@
 							<li><a id="formSave" ><i class="fa fa-save"></i></a></li>
 							
 							<li class="toPrev"><a href="#prev"><i class="fa fa-arrow-left"></i></a></li>
-                            <li class="currentInfo"><a href="#"><strong></strong></a></li>
+                            <li class="currentInfo dropdown" id="currentInfo">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><strong></strong></a>
+                            <ul id="tagsTree" role="menu" class="dropdown-menu" aria-labelledby="currentInfo">
+							</ul>
+                            </li>
                             <li class="toNext"><a href="#next"><i class="fa fa-arrow-right"></i></a></li>
 						</ul>
                     </header>
@@ -188,7 +192,7 @@
 body {overflow:hidden;}
 #formDesigner .formDesignerEditor {min-height:100px; background:#fff; border:3px #eee dashed; padding:5px;}
 #formDesignerEditor {padding:5px 0px;}
-#formDesignerEditor [data-current] {border: 1px #aaa dashed!important; background: rgba(217, 255, 228, 0.3)!important; cursor:move!important;}
+#formDesignerEditor [data-current] {border: 1px #aaa dashed!important; color:#333!important; background: rgba(217, 255, 228, 0.3)!important; cursor:move!important;}
 #formDesignerEditor [data-hovered] { background: rgba(98, 122, 173, 0.25)!important; transition-duration:0.3s;}
 #formDesignerToolBtn {position:fixed; display:inline-block; width:auto; z-index:100;}
 #formDesignerNav .currentInfo {width:200px; height:50px; overflow:hidden; text-align:center;}

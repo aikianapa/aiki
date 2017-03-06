@@ -14,6 +14,7 @@ $(document).ready(function(){
 		formDesigner_resize();
 		formDesigner_Events();
 		formDesigner_Editor();
+		formDesigner_Tree();
 	});
 });	
 
@@ -22,6 +23,8 @@ $(document).ready(function(){
 		$("#formDesigner #sourceEditorToolbar .btn").each(function(){
 			$(this).removeClass("btn-default");
 		});
+		
+		$("#formDesigner #sourceEditorToolbar .btnFullScr").remove();
 		$("#formDesigner #sourceEditorToolbar .btnSave").remove();
 		$("#formDesigner #sourceEditorToolbar .btn").css({"padding":"1px","height":"23px","width":"23px","font-size":"12px","line-height":"16px","border-radius":"100%"});
 		$("#formDesigner #sourceEditorToolbar").removeClass("panel-heading");
@@ -96,6 +99,32 @@ $(document).ready(function(){
 			$(tool).css("left",x+"px").css("top",y+"px");
 			return tool;		
 		}
+	}
+	
+	function formDesigner_Tree() {
+		$("#formDesignerHeader").undelegate(".currentInfo","click");
+		$("#formDesignerHeader").delegate(".currentInfo","click",function(){
+			formDesigner_TreeBranch($("#formDesignerEditor .formDesignerEditor.active"));
+		});
+	}
+	
+	function formDesigner_TreeBranch(from) {
+		var list="";
+		$(from).find(">").each(function(){
+				var tagName=this.tagName;
+				if ($(this).attr("id")>"") {tagName+="#"+$(this).attr("id");}
+				var className=this.className;
+					className=trim(str_replace(" ",".",className));
+				if (className>"") {className="."+className;}
+				if ($(this).children().length) {
+					formDesigner_TreeBranch(this);
+				}
+				var name=tagName+className;
+				list+='<li>'+name+'</li>';
+				//$("#formDesignerNav #tagsTree");
+				console.log(name);
+		});
+		if (list>"") {$("#formDesignerNav #tagsTree").append(list);}
 	}
 	
 	function formDesigner_ToolBtn_click() {

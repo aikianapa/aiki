@@ -2128,6 +2128,7 @@ function comSession() {
 		copy("{$_SESSION["engine_path"]}/uploads/__contents/dict/user_role",$_SESSION["app_path"]."/contents/dict/user_role");
 	}
 	if (isset($_SERVER["SCHEME"]) && $_SERVER["SCHEME"]>"") {$scheme=$_SERVER["SCHEME"];} else {$scheme="http";}
+	$_SESSION["SCHEME"]=$scheme;
 	$_SESSION["HOST"]=$scheme."://".$_SERVER["HTTP_HOST"];
 }
 

@@ -1,13 +1,23 @@
 <?php
 function sitemap_init() {
+	comSession();
 	$out=aikiFromFile(__DIR__."/sitemap_show.php");
 	echo $out->outerHtml();
 //	echo sitemap_generate();
 }
 
 function sitemap_ajax() {
-	set_time_limit(0);
-	echo sitemap_generate();
+	comSession();
+	if (isset($_POST["link"])) {
+		if ($_POST["link"]=="__finish__") {
+			sitemap_generate_finish();
+		} else {
+			echo sitemap_generate($_POST["link"]);
+		}
+	} else {
+		echo sitemap_generate();
+	}
+	
 }
 
 function sitemap_check_show($form) {
@@ -31,12 +41,11 @@ function sitemap_generate($href=null) {
 	if ($href==null) {$href="/";}
 		$l=parse_url($href);
 		if (!isset($l["host"]) OR $l["host"]==$_SERVER["HTTP_HOST"]) {
-			$scheme=$_SERVER["REQUEST_SCHEME"]; if ($scheme=="") {$scheme="http";}
-			if (!isset($l["host"])) {$link="{$scheme}://{$_SERVER["HTTP_HOST"]}{$l["path"]}";} else {$link=$href;}
-			if (!in_array($link,$_SESSION["moduleSitemap"]["ready"])) {
+			if (!isset($l["host"])) {$link="{$_SESSION["HOST"]}{$l["path"]}";$l["host"]=$_SESSION["HTTP_HOST"];} else {$link=$href;}
+
+			if (!in_array($link,$_SESSION["moduleSitemap"]["ready"]) && $l["host"]==$_SESSION["HTTP_HOST"] && $l["path"]!=="void(0)") {
 				$count++;
-				sitemap_node($link,$out);
-				$_SESSION["moduleSitemap"]["ready"][]=$link;
+				sitemap_node($link);
 				$content=file_get_contents($link);
 				if ($content) {
 					$out=aikiFromString($content);
@@ -44,11 +53,9 @@ function sitemap_generate($href=null) {
 					foreach($oLinks as $oLink) {
 						$href=$oLink->attr("href");
 						$l=parse_url($href);
-						if (!isset($l["host"])) {$link="{$scheme}://{$_SERVER["HTTP_HOST"]}{$l["path"]}";} else {$link=$href;}
-						if (!in_array($link,$_SESSION["moduleSitemap"]["ready"])) {
-							$_SESSION["moduleSitemap"]["level"]++;
-							sitemap_generate($link);
-							$_SESSION["moduleSitemap"]["level"]--;
+						if (!isset($l["host"])) {$link="{$_SESSION["HOST"]}{$l["path"]}";$l["host"]=$_SESSION["HTTP_HOST"];} else {$link=$href;}
+						if (!in_array($link,$_SESSION["moduleSitemap"]["ready"]) && $l["host"]==$_SESSION["HTTP_HOST"] && $l["path"]!=="void(0)") {
+							$list[]=$link;
 						}
 					}
 				}
@@ -56,23 +63,27 @@ function sitemap_generate($href=null) {
 		}
 
 	//echo $out->outerHtml();
-	if ($_SESSION["moduleSitemap"]["level"]==0) {
+	if (count($list)==0) {
 
-		if (count($_SESSION["moduleSitemap"]["ready"])>2000 OR $_SESSION["moduleSitemap"]["level"]==0) {
-			$sitemap='<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-'.file_get_contents("{$_SESSION['app_path']}/sitemap.xml").'
-</urlset>';
-			file_put_contents("{$_SESSION['app_path']}/sitemap.xml",$sitemap);
-			unset($_SESSION["moduleSitemap"]);
-			die("Готово");
-			die;
-		}	
+		return json_encode(false);
+		
+	} else {
+		return json_encode($list);
 	}
 }
 
+function sitemap_generate_finish() {
+$sitemap='<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+'.$_SESSION["moduleSitemap"]["sitemap"].'
+</urlset>';
+file_put_contents("{$_SESSION['app_path']}/sitemap.xml",$sitemap);
+unset($_SESSION["moduleSitemap"]);
+return json_encode(false);
+}
 
-function sitemap_node($link,$out) {
+
+function sitemap_node($link) {
 $date=date("Y-m-d H:i:s");
 $node='<url>
 	<loc>'.$link.'</loc>
@@ -80,7 +91,8 @@ $node='<url>
 	<changefreq>dayly</changefreq>
 </url>
 ';
-file_put_contents("{$_SESSION['app_path']}/sitemap.xml",$node,FILE_APPEND);
+$_SESSION["moduleSitemap"]["sitemap"].=$node;
+$_SESSION["moduleSitemap"]["ready"][]=$link;
 }
 
 ?>

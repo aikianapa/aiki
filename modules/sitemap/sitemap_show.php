@@ -11,6 +11,7 @@
 
 			<div class="progress progress-striped active hidden">
 			  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+				   <span class="current"></span>
 			  </div>
 			</div>
 			<div class="alert alert-success hidden">Генерация sitemap.xls выполнена успешно!</div>

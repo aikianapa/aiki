@@ -11,16 +11,19 @@
 				(target_form = "comments"))'>
 			<div class="row">
 					<div class="col-sm-2" data-role="formdata" form="users" item="{{user_id}}">
+						<div class="text-center"><small><i class="glyphicon glyphicon-calendar"></i> {{date_short}}</small></div>
 						<img data-role="thumbnail" size="100px;100px" src="0" noimg="/engine/uploads/__system/person.svg" class="img-responsive" alt="">
 						<div class="text-center"><input type="hidden" readonly class="rating" value="{{rating}}"></div>
 					</div>
 					<div class="col-sm-10">
-						<p><i class="glyphicon glyphicon-calendar"> </i> <strong>{{date}}</strong> &nbsp;&nbsp;&nbsp;&nbsp;
+						<p>
 						<i class="glyphicon glyphicon-user"> </i> <strong>{{name}}</strong></p>
 						<p>{{text}}</p>
 						<div data-role="where" data=" reply > '' ">
-							<span><strong>Админ</strong> <i class="glyphicon glyphicon-comment"></i> </span>
-							{{reply}}
+							<p>
+							<i class="glyphicon glyphicon-comment"></i> <strong>Админ</strong>
+							</p>
+							<p>{{reply}}</p>
 						</div>
 					</div>
 				</div>

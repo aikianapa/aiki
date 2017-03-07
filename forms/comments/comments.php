@@ -54,6 +54,7 @@ function _commentsBeforeShowItem($Item,$mode=NULL) {
 			if ($_SESSION["User"]!="Admin" && (!$Item["show"]==1 OR !$Item["show"]=="on") ) {$Item=NULL;}
 			break;
 		default		:
+			$Item["date_short"]=date("d.m.y H:i",strtotime($Item["date"]));
 			$Item["date"]=date("d.m.Y H:i",strtotime($Item["date"]));
 			$Item["header"]="";
 			break;

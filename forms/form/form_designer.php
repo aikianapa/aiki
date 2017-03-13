@@ -71,6 +71,23 @@
                         </div>
                     </div>
                     <!-- END Sidebar Extra Info -->
+                <div id="sidebar-tree" tabindex="-1" aria-hidden="true">
+                    <!-- Toggle Alternative Sidebar Button (visible only in static layout) -->
+                   
+
+                    <!-- Wrapper for scrolling functionality -->
+                    <div id="sidebar-scroll-alt">
+                        <!-- Sidebar Content -->
+                        <div class="sidebar-content">
+							<div class="sidebar-section">
+								<ul id="tagsTree"></ul>
+							</div>
+                        </div>
+                        <!-- END Sidebar Content -->
+                    </div>
+                    <!-- END Wrapper for scrolling functionality -->
+                </div>
+                    
                 </div>
                 <!-- END Main Sidebar -->
 
@@ -103,7 +120,7 @@
                         <!-- Right Header Navigation -->
                         
 
-                        <ul class="nav navbar-nav-custom" id="formDesignerNav">
+                        <ul class="nav navbar-nav-custom formDesignerNav">
 							<li><a href="#" data-ajax="mode=designer&amp;form=form" data-html="#page-container"><i class="fa fa-refresh"></i></a></li>
 							
 							<li><a>
@@ -113,12 +130,11 @@
 							</a></li>
 							<li><a id="formAdd" ><i class="fa fa-plus"></i></a></li>
 							<li><a id="formSave" ><i class="fa fa-save"></i></a></li>
-							
+						</ul>
+						<ul class="nav navbar-nav-custom pull-right formDesignerNav">
 							<li class="toPrev"><a href="#prev"><i class="fa fa-arrow-left"></i></a></li>
-                            <li class="currentInfo dropdown" id="currentInfo">
-								<a href="#" class="dropdown-toggle" data-toggle="dropdown"><strong></strong></a>
-                            <ul id="tagsTree" role="menu" class="dropdown-menu" aria-labelledby="currentInfo">
-							</ul>
+                            <li class="currentInfo" id="currentInfo">
+								<a href="#"><strong><i class="fa fa-home"></i> ROOT</strong></a>
                             </li>
                             <li class="toNext"><a href="#next"><i class="fa fa-arrow-right"></i></a></li>
 						</ul>
@@ -195,7 +211,7 @@ body {overflow:hidden;}
 #formDesignerEditor [data-current] {border: 1px #aaa dashed!important; color:#333!important; background: rgba(217, 255, 228, 0.3)!important; cursor:move!important;}
 #formDesignerEditor [data-hovered] { background: rgba(98, 122, 173, 0.25)!important; transition-duration:0.3s;}
 #formDesignerToolBtn {position:fixed; display:inline-block; width:auto; z-index:100;}
-#formDesignerNav .currentInfo {width:200px; height:50px; overflow:hidden; text-align:center;}
+.formDesignerNav .currentInfo {width:200px; height:50px; overflow:hidden; text-align:center;}
 #formDesignerEditor .formDesignerEditor .row {background: rgba(92, 205, 222, 0.05);}
 #formDesignerEditor .formDesignerEditor .row > [class*="col-"]:nth-child(odd) {background: rgba(92, 105, 122, 0.05);}
 
@@ -242,4 +258,14 @@ body {overflow:hidden;}
 .popover .row.preview > .row:only-of-type   {border:1px #777 solid; background:#AAA; height:100px; width:100%;}
 .popover .row.preview > .container:only-of-type  {border:1px #777 solid; background:#AAA; height:100px; width:100%;}
 .popover1 .row.preview > .row [class*=col-]:only-of-type {border:1px #fff solid; background:#AAA;  height:90px;}
+
+#sidebar-scroll-alt .sidebar-content {width:100%;}
+#sidebar-tree {position: fixed; top: 50px; right: calc(-50%); bottom: 0; width: calc(50% - 100px); transition-duration:0.3s;
+	-webkit-transform: translateZ(0); transform: translateZ(0);background: rgba(69, 78, 89, .9);}
+#sidebar-tree.visible {right:0;transition-duration:0.3s;}
+#tagsTree {padding:0; font-size:13px;line-height:16px;}
+#tagsTree ul {padding-left:20px;}
+#tagsTree li {list-style:none;}
+#tagsTree li span {color:#fff;}
+
 </style>

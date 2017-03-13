@@ -243,7 +243,7 @@ $(document).ready(function(){
 			$(tool).show();
 			var content=$(".formDesignerEditor.active [data-current]").clone();
 			content.removeAttr("data-current data-hovered contenteditable");
-			editor.setValue(content.prop('outerHTML'));
+			editor.setValue(html_beautify(content.prop('outerHTML')));
 			editor.getSession().setUndoManager(new ace.UndoManager());
 			editor.getSession().setMode("ace/mode/autohotkey");
 			editor.gotoLine(0,0);

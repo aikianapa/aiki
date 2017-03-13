@@ -202,7 +202,8 @@
             <!-- END Page Container -->
         </div>
 
-<script language="javascript" src="/engine/forms/form/form_designer.js?{{_new}}"></script></script>
+<script language="javascript" src="/engine/js/beautify-html.js"></script>
+<script language="javascript" src="/engine/forms/form/form_designer.js?{{_new}}"></script>
 
 <style type="text/css" media="screen">
 body {overflow:hidden;}

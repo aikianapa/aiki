@@ -1254,7 +1254,7 @@ function active_tree() {
 					if ($(this).attr("type")=="datetimepicker") { mask="d.m.Y H:i";}
 					if ($(this).attr("date-oconv")>"") {mask=$(this).attr("date-iconv");}
 					if (mask>"") {$(this).val(date(mask,strtotime($(this).val())));}
-					var list=["call","dict","tree","enum","snippet","tags"];
+					var list=["call","dict","tree","enum","snippet","tags","checkbox","switch"];
 					if (in_array($(this).attr("type"),list)) {
 						var parent=$(this).parent();
 						var param={};
@@ -1302,6 +1302,9 @@ function active_tree() {
 			var data={};
 			$("#treeEditForm div[name=data]").find("input,select,textarea").each(function(i){
 				if (!$(this).is("textarea.tpl")) {
+					if ($(this).attr("type")=="checkbox") {
+						if ($(this).prop("checked")) {$(this).val("on");} else {$(this).val("");}
+					}
 					var fldname=$(this).attr("data-name");
 					var value=$(this).val();
 					data[fldname]=value;

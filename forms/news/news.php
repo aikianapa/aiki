@@ -7,7 +7,10 @@ function news__show() {
 	return $out->htmlOuter();
 }
 
-
+function _newsAfterReadItem($Item) {
+	$Item["datesort"]=date("Y-m-d",strtotime($Item["date"]));
+	return $Item;
+}
 
 function _newsBeforeShowItem($Item,$mode=NULL) {
 	if ($mode==NULL) {$mode=$_GET["mode"];}

@@ -102,6 +102,28 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 			$call=explode(";",$param); $call=trim($call[0]);
 			if (is_callable($call)) {$res=$call($type,$label,$param,$value);}		
 			break;
+		case "checkbox":
+			$out=aikiFromString('<div class="col-sm-2">
+						<input type="checkbox" class="form-control" value="">
+				</div>');
+			//$out->find("label")->html($label);
+			$out->find("input")->attr("data-name",$name);
+			$out->find("input")->attr("value",$value);
+			$out->find("input")->attr("checked",true);
+			if ($value=="") {$out->find("input")->removeAttr("checked");}
+			$res=$out->outerHtml();
+			break;
+		case "switch":
+			$out=aikiFromString('<div class="col-sm-2">
+						<label class="switch switch-primary"><input type="checkbox" value="" ><span></span></label>
+					</div>');
+			//$out->find("label")->html($label);
+			$out->find("input")->attr("data-name",$name);
+			$out->find("input")->attr("value",$value);
+			$out->find("input")->attr("checked",true);
+			if ($value!=="on") {$out->find("input")->removeAttr("checked");}
+			$res=$out->outerHtml();
+			break;
 		case "dict":
 			// city;id;name
 			// [0] = city - имя справочника
@@ -137,12 +159,10 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 			break;
 
 		case "tags":
-			$out=aikiFromString('<div class="form-group">
-					<label class="col-sm-2 control-label"></label>
+			$out=aikiFromString('
 					<div class="col-sm-10">
-						<input type="text" class="form-control" name="name" placeholder="Наименование" value="">
-					</div>
-				</div>');
+						<input type="text" class="form-control" name="" placeholder="" value="">
+					</div>');
 			$out->find("label")->html($label);
 			$out->find("input")->attr("name",$name);
 			$out->find("input")->attr("placeholder",$param);

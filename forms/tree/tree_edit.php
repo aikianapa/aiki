@@ -36,10 +36,12 @@
 				<option value="string">string</option>
 				<option value="text">text</option>
 				<option value="number">number</option>
+				<option value="checkbox">checkbox</option>
 				<option disabled>--== Плагины ==--</option>
 				<option value="editor">editor</option>
 				<option value="image">image</option>
 				<option value="multiinput">multiinput</option>
+				<option value="switch">switch</option>
 				<option value="call">call</option>
 				<option value="enum">enum</option>
 				<option value="dict">dict</option>

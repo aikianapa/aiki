@@ -307,6 +307,7 @@ $(document).ready(function(){
 				data=str_replace("data-strip-role","data-role",data);
 				var data=$("<div>"+data+"</div>");
 				data.find("meta[name=formDesigner]").remove();
+				data=formDesigner_SnippetPrep(data,form,"");
 				if ($(that).hasClass("sAppend")) {$(target).append(data.html());}
 				if ($(that).hasClass("sPrepend")) {$(target).prepend(data.html());}
 				if ($(that).hasClass("sAfter")) {$(target).after(data.html());}
@@ -318,6 +319,16 @@ $(document).ready(function(){
 
 		});
 	}
+	
+	function formDesigner_SnippetPrep(data,form,mode) {
+		if ($(data).find("form").length) {
+			$(data).find("form").attr("item","{{id}}");
+			$(data).find("form").attr("id",form+"EditForm");
+		}
+		return data;
+	}
+	
+	
 	
 	function formDesigner_selectForm() {
 		$(document).undelegate(".formDesignerNav #formName","change");

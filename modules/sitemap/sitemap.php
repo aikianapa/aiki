@@ -88,7 +88,7 @@ $date=date("Y-m-d H:i:s");
 $node='<url>
 	<loc>'.$link.'</loc>
 	<lastmod>'.$date.'</lastmod>
-	<changefreq>dayly</changefreq>
+	<changefreq>daily</changefreq>
 </url>
 ';
 $_SESSION["moduleSitemap"]["sitemap"].=$node;

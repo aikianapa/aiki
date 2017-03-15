@@ -1,4 +1,5 @@
 <?php
+include_once($_SERVER["DOCUMENT_ROOT"]."/engine/functions.php");
 if ($_GET["mode"]=="ajax") {echo source__ajax();}
 
 function source__list() {
@@ -11,7 +12,7 @@ return $out->outerHtml();
 }
 
 function source__ajax() {
-	session_start();
+	comSession();
 	if ($_SESSION["user_role"]=="admin") {
 		$result=false;
 		switch($_GET["action"]) {

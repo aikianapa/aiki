@@ -19,7 +19,7 @@
 			<div class="col-sm-12">
 				<div class="row">
 					<div class="col-sm-12">
-						<input class="form-control input-lg" name="email" type="text" placeholder="Введите ваш Email" required>
+						<input class="form-control input-lg" name="email" type="email" placeholder="Введите ваш Email" required>
 						<small>Ваш адрес электронной почты</small>
 					</div>
 				</div>

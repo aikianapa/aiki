@@ -22,7 +22,10 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 	
 		//if ($_SERVER["REQUEST_URI"]=="/" && $mode=="show" && $form=="page") {$item="home";}
 		if (isset($form) && isset($item)) {
-			$Item=$_SESSION["Item"]=aikiReadItem($form,$item);
+			$tmpItem=aikiReadItem($form,$item);
+			if (isset($Item)) {$Item=array_merge($Item,$tmpItem);}
+			$_SESSION["Item"]=$Item;
+			
 			if ($_SESSION["error"]=="noitem") {$error="noitem";} else {
 				if (isset($Item["template"])) {$tpl=$Item["template"];} 
 			}

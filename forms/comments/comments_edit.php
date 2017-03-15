@@ -9,11 +9,11 @@
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">Эл.почта</label>
-	   <div class="col-sm-10"><input type="text" class="form-control" name="email" placeholder="Электронная почта" required value="{{_COOK[person_phone]}}"></div>
+	   <div class="col-sm-10"><input type="email" class="form-control" name="email" placeholder="Электронная почта" required value="{{_COOK[person_email]}}"></div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">Телефон</label>
-	   <div class="col-sm-10"><input type="phone" class="form-control" name="phone" placeholder="Контактный телефон" value="{{_COOK[person_email]}}"></div>
+	   <div class="col-sm-10"><input type="phone" class="form-control" name="phone" placeholder="Контактный телефон" value="{{_COOK[person_phone]}}"></div>
 	</div>
 	<div class="form-group">
 	  <label class="col-sm-2 control-label">Ваш отзыв</label>

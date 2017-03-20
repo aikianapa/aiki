@@ -248,7 +248,7 @@ function comImagesAddToList(name,vis) {
 	var thumb="<img data-role='thumbnail' size='250px;130px;bkg' src='"+path+name+"'/>";
 	var url="/engine/ajax.php?mode=content_set_data";
 	$.ajax({
-		async: 		false,
+		async: 		true,
 		type:		'POST',
 		data:		{html:thumb},
 		url: 		url,

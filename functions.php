@@ -1,6 +1,6 @@
 <?php
 ini_set('display_errors', 0);
-include_once("{$_SERVER["DOCUMENT_ROOT"]}/engine/kiDom.php");
+include(__DIR__."/kiDom.php");
 
 function contentControls($set="") {
 	$res="*";
@@ -1253,8 +1253,8 @@ function aikiTreeGetPath($tree=array(),$id,$path=null) {
 	$res=aikiFindTreeData($tree,"id",$id);
 	if ($res["parent"]>"") {
 		$path="[\"children\"][0][{$res["idx"]}]".$path;
-		$path=aikiTreeGetPath($tree,$res["parent"],$path)["path"];
-		$res=$path;
+		$path=aikiTreeGetPath($tree,$res["parent"],$path);
+		$res=$path["path"];
 	} else {
 		$path="[{$res["idx"]}]".$path;
 	}
@@ -1310,7 +1310,7 @@ function aikiTreeRemoveBranch($tree=array(),$id=null) {
 }
 
 function aikiFindTreeData($branch,$field,$value,$parent=null) {
-	if (is_string($branch)) {$branch=aikiReadTree($branch)["tree"];}
+	if (is_string($branch)) {$branch=aikiReadTree($branch); $branch=$branch["tree"];}
 	$res=false;
 	foreach($branch as $key => $val) {
 		$val["parent"]=$parent;

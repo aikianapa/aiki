@@ -1273,9 +1273,10 @@ abstract class kiNode
 	}
 
 	function tagVariable($Item) {
+		if (!isset($_SESSION["var"])) {$_SESSION["var"]=array();}
 		$this->contentSetAttributes($Item);
 		$var=$this->attr("var");
-		$var=contentSetValuesStr($var,$Item);
+		$var=$_SESSION["var"][$var]=contentSetValuesStr($var,$Item);
 		$where=$this->attr("where");
 		if (aikiWhereItem($Item,$where)) {
 			if ($var>"") $Item[$var]=$_SESSION["var"][$var]=contentSetValuesStr($this->attr("value"),$Item);

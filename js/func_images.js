@@ -53,9 +53,10 @@ function commonImageUpload() {
 				});
 				uploader.start();
 			},
-			FileUploaded: function(up, file) {
+			FileUploaded: function(up, file, res) {
+				var res=$.parseJSON(res.response);
 				$("#filelist #"+file.id).remove();
-				var name=file.name.toLowerCase();
+				var name=res.id.toLowerCase();
 				comImagesAddToList(name);
 				$("#comImagesAll ul.gallery li:last").trigger("click");
 			},

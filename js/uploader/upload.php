@@ -22,6 +22,10 @@ header("Cache-Control: no-store, no-cache, must-revalidate");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
+include_once(__DIR__ . "/../../functions.php");
+
+
+
 /* 
 // Support CORS
 header("Access-Control-Allow-Origin: *");
@@ -71,7 +75,8 @@ if (isset($_REQUEST["name"])) {
 	$fileName = uniqid("file_");
 }
 
-$fileName=strtolower($fileName);
+$fileName=str_replace(array(" ",":",";"),array("_","_","_"),mb_strtolower(aikiTranslit(trim($fileName))));
+
 $filePath = $targetDir . DIRECTORY_SEPARATOR . $fileName;
 
 // Chunking might be enabled
@@ -135,10 +140,10 @@ if (!$chunks || $chunk == $chunks - 1) {
 	rename("{$filePath}.part", $filePath);
 }
 
-fileResize($targetDir,$fileName);
+//fileResize($targetDir,$fileName);
 
 // Return Success JSON-RPC response
-die('{"jsonrpc" : "2.0", "result" : null, "id" : "id"}');
+die('{"jsonrpc" : "2.0", "result" : null, "id" : "'.$fileName.'"}');
 
 function fileResize($path,$file) {
 	$W=1600; $Q=90;
@@ -156,3 +161,4 @@ function fileResize($path,$file) {
 		imagedestroy($img);
 	}
 }
+?>

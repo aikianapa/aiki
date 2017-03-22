@@ -84,7 +84,7 @@ return json_encode(false);
 
 
 function sitemap_node($link) {
-$date=date("Y-m-d H:i:s");
+$date=date('c',time()); 
 $node='<url>
 	<loc>'.$link.'</loc>
 	<lastmod>'.$date.'</lastmod>

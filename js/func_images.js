@@ -9,6 +9,7 @@ $(document).on("data-ajax-done",function(event,target,ajax){
 
 function commonImageUpload() {
 		$("div.imageloader .moxie-shim").remove();
+		$("#comImagesUpl #uploadfiles").hide();
 		var  store=$("div.imageloader input[data-role=imagestore]");
 		var path=$("div.imageloader").attr("path");
 		var max=store.attr("data-max"); if (max==undefined) {max=10;}
@@ -50,6 +51,7 @@ function commonImageUpload() {
 				plupload.each(files, function(file) {
 					$("#filelist").append('<div class="list-group-item" id="' + file.id + '"><span class="glyphicon glyphicon-upload"></span>&nbsp;<b>' + file.name + '</b>  <span class="badge">' + plupload.formatSize(file.size) + '</span></div>');
 				});
+				uploader.start();
 			},
 			FileUploaded: function(up, file) {
 				$("#filelist #"+file.id).remove();
@@ -254,11 +256,12 @@ function comImagesAddToList(name,vis) {
 		url: 		url,
 		success: 	function(data){
 			var thumbnail=$(data).html();
-			if ($("#comImagesAll ul.gallery li[data-name='"+name+"']").length) {$("#comImagesAll ul.gallery li[data-name='"+name+"']").remove();}
-			$("#comImagesAll ul.gallery").append('<li class="thumbnail" data-name="'+name+'" title="'+title+'" alt="'+alt+'" ></li>');
-			$("#comImagesAll ul.gallery li:last").append(thumbnail);
-			$("#comImagesAll ul.gallery li:last").append('<a href="#" class="btn btn-default btn-xs delete dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-remove-sign"></span></a>');
-			$("#comImagesAll ul.gallery li:last").append('<a href="#" class="btn btn-default btn-xs info"><span class="glyphicon glyphicon-info-sign"></span></a>');
+			if (!$("#comImagesAll ul.gallery li[data-name='"+name+"']").length) {
+				$("#comImagesAll ul.gallery").append('<li class="thumbnail" data-name="'+name+'" title="'+title+'" alt="'+alt+'" ></li>');
+				$("#comImagesAll ul.gallery li:last").append(thumbnail);
+				$("#comImagesAll ul.gallery li:last").append('<a href="#" class="btn btn-default btn-xs delete dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-remove-sign"></span></a>');
+				$("#comImagesAll ul.gallery li:last").append('<a href="#" class="btn btn-default btn-xs info"><span class="glyphicon glyphicon-info-sign"></span></a>');			
+			}
 			//$("#comImagesAll ul.gallery li:last").trigger("click");
 		}
 	});

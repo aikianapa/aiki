@@ -12,7 +12,15 @@ function contentControls($set="") {
 	return $res;
 }
 
-function aikiParseUri() {
+function aikiRouterAdd($route, $destination=null) {
+	aikiRouter::addRoute($route,$destination);
+}
+
+function aikiRouterGet($requestedUrl = null) {
+	return aikiRouter::getRoute($requestedUrl);
+}
+
+function aikiParseUri() { // Depricated
 	$tmp=explode("?",$_SERVER["REQUEST_URI"]);
 	if (isset($tmp[1])) {parse_str($tmp[1],$get); $_GET=(array)$_GET+(array)$get; unset($tmp,$get);}
 	return $_GET;
@@ -288,7 +296,8 @@ function tagTree_find($branch=array(),$id="",$parent=null) {
 
 function aikiLibsAdd($__page) {contentAppends($__page);}
 function contentAppends($__page) {
-	if ($_SERVER["SCRIPT_NAME"]=="/engine/index.php" AND $_SESSION["user_role"]=="admin") {$engine=true;} else {$engine=false;}
+	if ((   $_SERVER["SCRIPT_NAME"]=="/engine/index.php" AND $_SESSION["user_role"]=="admin")
+		OR ($_ENV["route"]["controller"]=="engine" AND $_ENV["route"]["mode"]=="admin")) {$engine=true;} else {$engine=false;}
 	if ($engine==true OR $_SESSION["settings"]["editload"]=="on") {
 			$__page->append('<div data-role="include" src="/engine/js/editor.php"></div>');}
 	if ($engine==true OR $_SESSION["settings"]["upldload"]=="on") {
@@ -699,6 +708,23 @@ function longDateRus($date=null,$time=false,$sec=false) {
 	return $date;
 }
 
+function aikiLoadController() {
+	$path="/controllers/".$_ENV["route"]["controller"].".php";
+	if (is_file($_SESSION["app_path"] . $path)) {
+		include_once($_SESSION["app_path"] . $path);
+		$call=$_ENV["route"]["controller"]."_controller"; 
+		return @$call(array($__page,$Item));
+	} else {
+		if (is_file(__DIR__ . $path)) {
+			include_once(__DIR__ . $path);
+			$call=$_ENV["route"]["controller"]."__controller"; 
+			return @$call();
+		} else {
+			echo "Ошибка загрузки контроллера: {$_ENV["route"]["controller"]}";
+			die;
+		}
+	}
+}
 
 function aikiListForms() {
 	$exclude=array("common","admin","source");
@@ -1359,6 +1385,7 @@ function ReadItem($form,$id,$datatype="file") {
 }
 
 function aikiReadItem($form=null,$id=null,$func=true) {
+		$_ENV["error"][__FUNCTION__]="";
 		if (!isset($_ENV["cache"]["_readitem"][$form])) {$_ENV["cache"]["_readitem"][$form]=array();}
 		if (!isset($_ENV["cache"]["_readitem"][$form][$id]) && $id!=="_new") {
 			$Item=array();
@@ -1371,6 +1398,7 @@ function aikiReadItem($form=null,$id=null,$func=true) {
 			} else {
 				if ($form!==null && $id!==null) $Item=$read($form,$id,$func);
 			}
+			$_ENV["error"][__FUNCTION__]=$_ENV["error"][$read];
 			if (!isset($Item["id"]) OR $Item["id"]=="_new") {$Item["id"]=newIdRnd();}
 			$_ENV["cache"]["_readitem"][$form][$id]=$Item;
 		} else {
@@ -1485,15 +1513,6 @@ function aikiLogin() {
 		}
 	}
 
-	if (isset($_GET["form"]) && ( $_GET["form"]=="logout" OR $_GET["form"]=="page") && $_GET["id"]=="logout") {
-		$_SESSION["User"]=$_SESSION["user"]=$_SESSION["user-role"]=$_SESSION["user_role"]=$_SESSION["user-id"]=$_SESSION["user_id"]="";
-		setcookie("user_id","",time()-3600,"/"); unset($_COOKIE["user_id"]);
-		$_GET["mode"]="home";
-		header("Refresh: 0; URL=http://{$_SERVER["HTTP_HOST"]}");
-		echo "Выход из системы, ждите...";
-		die;
-	}
-
 	if (isset($_COOKIE["user_id"]) && $_COOKIE["user_id"]>"") {
 		if ($_SESSION["user_id"]>"") {setcookie("user_id",$_SESSION["user_id"],time()+60*60*24*30,"/");} // запоминаем на месяц
 		$user=aikiReadItem("users",$_COOKIE["user_id"]);
@@ -1506,12 +1525,32 @@ function aikiLogin() {
 }
 
 function aikiGetForm($form=NULL,$mode=NULL,$engine=false) {
+	$_ENV["error"][__FUNCTION__]="";
 	if ($form==NULL) {$form=$_GET["form"];}
 	if ($mode==NULL) {$mode=$_GET["mode"];}
-	return formGetForm($form,$mode,$engine);
+	$current=""; $flag=false;
+	$path=array("/forms/{$form}_{$mode}.php","/forms/{$form}/{$form}_{$mode}.php","/forms/{$form}/{$mode}.php");
+	foreach($path as $form) {
+		if ($flag==false) {
+			if (is_file($_SESSION["engine_path"].$form)) {$current=$_SESSION["engine_path"].$form; $flag=$engine;}
+			if (is_file($_SESSION["root_path"].$form) && $flag==false) {$current=$_SESSION["root_path"].$form; $flag=true;}
+			if (is_file($_SESSION["app_path"].$form) && $flag==false) {$current=$_SESSION["app_path"].$form; $flag=true;}
+		}
+	}; unset($form);
+	if ($current=="") {
+		$common="{$_SESSION["engine_path"]}/forms/common/common_{$mode}.php";
+		if (is_file($common)) {
+			$out=aikifromFile($common);
+		} else {
+			$out="Error! Form not found.";
+			$_SESSION["error"]="noform"; // deprecated
+			$_ENV["error"][__FUNCTION__]="noform";
+		}
+	} else {$out=aikifromFile($current);}
+	return $out;
 }
 
-function formGetForm($form,$mode,$engine=false) {
+function formGetForm($form,$mode,$engine=false) { // deprecated
 	$current=""; $flag=false;
 	$path=array("/forms/{$form}_{$mode}.php","/forms/{$form}/{$form}_{$mode}.php","/forms/{$form}/{$mode}.php");
 	foreach($path as $form) {
@@ -1527,7 +1566,7 @@ function formGetForm($form,$mode,$engine=false) {
 		if (is_file($common)) {
 			$out=ki::fromFile($common);
 		} else {
-			$out="Error! Form not found.";
+			$out="[formGetForm] Error! Form not found.";
 			$_SESSION["error"]="noform";
 		}
 	}
@@ -1535,6 +1574,7 @@ function formGetForm($form,$mode,$engine=false) {
 }
 
 function aikiGetTpl($tpl=NULL,$path=FALSE) {
+	$_ENV["error"][__FUNCTION__]="";
 	$__page="";
 	if ($tpl==NULL && isset($_SESSION["engine_tpl"])) {$tpl=$_SESSION["engine_tpl"];}
 	if (!isset($_GET["mode"])) {
@@ -1545,6 +1585,7 @@ function aikiGetTpl($tpl=NULL,$path=FALSE) {
 		if ($tpl==NULL) {$tpl="{$_GET["form"]}_{$_GET["mode"]}.php";}
 	}
 	if ($_GET["mode"]=="show" && $_GET["form"]=="login") {$tpl="login.php";}
+	if ($_ENV["route"]["controller"]=="tpl") {$tpl=$_ENV["params"]["name"];}
 	if ($path==FALSE) {
 		$tpl="/tpl/".$tpl; $current=""; $res=false;
 		if ($res==false && is_file($_SESSION["prj_path"]."/forms/{$_GET["form"]}_{$_GET["mode"]}.php")) {$current=$_SESSION["prj_path"]."/forms/{$_GET["form"]}_{$_GET["mode"]}.php"; $res=true;}
@@ -1579,7 +1620,7 @@ function aikiGetTpl($tpl=NULL,$path=FALSE) {
 				unset($_SESSION["getTpl"]);
 			}
 			if (!is_object($__page) && $current>"") $__page=ki::fromFile("{$_SERVER["DOCUMENT_ROOT"]}{$current}");
-			if (!is_object($__page) && $current=="") $__page=ki::fromString("");
+			if (!is_object($__page) && $current=="") {$__page=ki::fromString(""); }
 	} else {
 		if (!is_file($tpl)) {$tpl=normalizePath("{$_SERVER["DOCUMENT_ROOT"]}/{$tpl}");}
 		$__page=ki::fromFile($tpl);
@@ -1672,7 +1713,7 @@ function getTemplate($tpl=NULL,$path=FALSE) { // устаревшая функц
 			if (isset($_GET["form"]) && $_GET["form"]>"") {$form=$_GET["form"];}
 			if (isset($_GET["mode"]) && $_GET["mode"]>"") {$mode=$_GET["mode"];}
 
-			if (!isset($_SESSION["getTpl"])) { // нужно, чтобы небыло зацикливания
+			if (!isset($_SESSION["getTpl"]) AND isset($_GET["form"])) { // нужно, чтобы небыло зацикливания
 				$inc=array(
 					"{$_SESSION["root_path"]}/forms/{$_GET["form"]}.php", "{$_SESSION["root_path"]}/forms/{$_GET["form"]}/{$_GET["form"]}.php",
 					"{$_SESSION["engine_path"]}/forms/{$_GET["form"]}.php", "{$_SESSION["engine_path"]}/forms/{$_GET["form"]}/{$_GET["form"]}.php"
@@ -1802,7 +1843,10 @@ function fileReadItem($form,$id,$path=false,$func=true) {
 		$cKeys=$_ENV["cache"]["_fields"][$form];
 		$_ENV["cache"]["_fields"][$form]=array_merge  ($iKeys, $cKeys);
 
-	} else {$_SESSION["error"]="noitem";}
+	} else {
+		$_SESSION["error"]="noitem"; //Depricated
+		$_ENV["error"][__FUNCTION__]="noitem";
+	}
 	
 	//if (is_file($file)) {$Item=json_decode(file($file)[0],TRUE);} else {$_SESSION["error"]="noitem";}
 	$after="_".$form."AfterReadItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
@@ -1959,6 +2003,8 @@ function jdbReadItem($form,$id,$func=true) {
 		$Item=$result->fetch_array(MYSQLI_ASSOC);
 		$Item=json_decode($Item["json"],true);
 		mysqli_free_result($result);
+	} else {
+		$_ENV["error"][__FUNCTION__]="noitem";
 	}
 	$after="_{$form}AfterReadItem"; if (is_callable ($after) && $func=true) { $Item =$after($Item) ; }
 	$after="{$form}AfterReadItem";	if (is_callable ($after) && $func=true) { $Item =$after($Item) ; }
@@ -2024,20 +2070,24 @@ return $out;
 }
 
 function mysqlReadItem($form,$id,$func=true) {
-	$_SESSION["error"]="";
+	$_SESSION["error"]=""; //deprecated
+	$_ENV["error"][__FUNCTION__]="";
 	$Item=FALSE;
 	$before="_{$form}BeforeReadItem";	if (is_callable ($before) && $func==true) { $Item =$before($Item) ; }
 	$before="{$form}BeforeReadItem";	if (is_callable ($before) && $func==true) { $Item =$before($Item) ; }
 
 	if (mysqlCheckTable($form)) {
 		$result = $_SESSION["mysql"]->query("SELECT * FROM {$form} WHERE id = '{$id}' LIMIT 1;");
-		if ($result) { $Item=$result->fetch_array(MYSQLI_ASSOC); mysqli_free_result($result);} else {$_SESSION["error"]="noitem";}
+		if ($result) { $Item=$result->fetch_array(MYSQLI_ASSOC); mysqli_free_result($result);} else {
+			$_SESSION["error"]=$_ENV["error"][__FUNCTION__]="noitem";
+		}
 		$jItem=jdbReadItem($form,$id);
 		$Item=(array)$jItem+(array)$Item;
 		$after="_".$form."AfterReadItem"; if (is_callable ($after) && $func=true) { $Item =$after($Item) ; }
 		$after=$form."AfterReadItem";	if (is_callable ($after) && $func=true) { $Item =$after($Item) ; }
 	} else {
 		$Item=jdbReadItem($form,$id);
+		if ($_ENV["error"]["jdbReadItem"]=="") {$_ENV["error"][__FUNCTION__]="";}
 	}
 	//$Item["firstImg"]=aikiGetItemImg($Item);
 	return $Item;

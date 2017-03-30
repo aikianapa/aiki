@@ -12,8 +12,150 @@
  * @license MIT
  */
 
-// Basic lexer functionality
 
+// Steart Router Class
+
+final class aikiRouter {
+
+/*
+$routes = array(
+  // 'url' => 'контроллер/действие/параметр1/параметр2/параметр3'
+  '/' => 'MainController/index', // главная страница
+  '/(p1:str)(p2:num)unit(p3:any).htm' => '/show/page/$1/$2/$3', // главная страница
+  '/contacts' => 'MainController/contacts', // страница контактов
+  '/blog' => 'BlogController/index', // список постов блога
+  '/blog/(:num)' => 'BlogController/viewPost/$1', // просмотр отдельного поста, например, /blog/123
+  '/blog/(:any)/(:num)' => 'BlogController/$1/$2', // действия над постом, например, /blog/edit/123 или /blog/dеlete/123
+  '/(:any)' => 'MainController/anyAction' // все остальные запросы обрабатываются здесь
+);
+
+// добавляем все маршруты за раз
+aikiRouter::addRoute($routes);
+
+// а можно добавлять по одному
+aikiRouter::addRoute('/about', 'MainController/about');
+echo "<br><br>";
+// непосредственно запуск обработки
+print_r(aikiRouter::getRoute());
+*/
+
+  public static $routes = array();
+  private static $params = array();
+  private static $names = array();
+  public static $requestedUrl = '';
+  
+
+   // Добавить маршрут
+  public static function addRoute($route, $destination=null) {
+    if ($destination != null && !is_array($route)) {
+      $route = array($route => $destination);
+    }
+    self::$routes = array_merge(self::$routes, $route);
+  }
+
+   // Разделить переданный URL на компоненты
+  public static function splitUrl($url) {
+    return preg_split('/\//', $url, -1, PREG_SPLIT_NO_EMPTY);
+  }
+  
+   // Текущий обработанный URL
+  public static function getCurrentUrl() {
+    return (self::$requestedUrl?:'/');
+  }
+
+   // Обработка переданного URL
+  public static function getRoute($requestedUrl = null) {
+		// Если URL не передан, берем его из REQUEST_URI
+		if ($requestedUrl === null) {
+			$request=explode('?', $_SERVER["REQUEST_URI"]);
+			$uri = reset($request);
+			$requestedUrl = urldecode(rtrim($uri, '/'));
+		}
+		self::$requestedUrl = $requestedUrl;
+
+      // если URL и маршрут полностью совпадают
+      if (isset(self::$routes[$requestedUrl])) {
+        self::$params = self::splitUrl(self::$routes[$requestedUrl]);
+        self::$names[] = "";
+        return self::returnRoute();
+      }
+      foreach (self::$routes as $route => $uri) {
+        // Заменяем wildcards на рег. выражения
+        $name=null;		self::$names=array();
+        $route=str_replace(" ","",$route);
+        if (strpos($route, ':') !== false) {
+			// Именование параметров
+			preg_match_all("'\((\w+):(\w+)\)'",$route,$matches);
+			if (isset($matches[1])) {
+				foreach($matches[1] as $name) {
+					$route=str_replace("(".$name.":","(:",$route);
+					self::$names[] = $name;
+				}
+			}
+			$route = str_replace('(:any)', '(.+)', str_replace('(:num)', '([0-9]+)', str_replace('(:str)', '(.[a-zA-Z]+)', $route)));
+        }
+        if (preg_match('#^'.$route.'$#', $requestedUrl)) {
+          if (strpos($uri, '$') !== false && strpos($route, '(') !== false) {
+            $uri = preg_replace('#^'.$route.'$#', $uri, $requestedUrl);
+          }
+          self::$params = self::splitUrl($uri);
+          break; // URL обработан!
+        }
+      } 
+      return self::returnRoute();
+  } 
+
+	// Сборка ответа
+  public static function returnRoute() {
+	$_GET=array();
+    $controller="form"; $action="mode";
+    $form = isset(self::$params[0]) ? self::$params[0]: 'default_form';
+    $mode = isset(self::$params[1]) ? self::$params[1]: 'default_mode';
+
+	if (strpos($form, ':') !== false) {
+		$tmp=explode(":",$form); $form=$tmp[1]; $controller=$tmp[0];
+	}
+	if (strpos($mode, ':') !== false) {
+		$tmp=explode(":",$mode); $mode=$tmp[1]; $action=$tmp[0];
+	}
+
+    $params = array_slice(self::$params, 2);
+	if (isset($params[null])) {$params[]=$params[null];}
+    $names=self::$names;
+    foreach($params as $i => $param) {
+		if (strpos($param, ':') !== false) {
+			$tmp=explode(":",$param);
+			$params[$tmp[0]]=$tmp[1];
+			unset($params[$i]);
+		}
+		if (isset($names[$i])) {
+			if ($names[$i]!==$i) {$params[$names[$i]]=$param; unset($params[$i]);}
+		}
+	}
+	if (isset($params[null]) AND $params[null]>"") $params[0]=$params[null];
+	unset($params[null]);
+	$tmp=explode("?",$_SERVER["REQUEST_URI"]);
+	if (isset($tmp[1])) {parse_str($tmp[1],$get); $params=(array)$params+(array)$get;}
+	$_GET=array_merge($_GET,$params);
+	$_GET[$controller]=$form; $_GET[$action]=$mode;
+	if (isset($_GET["engine"]) && $_GET["engine"]=="true") {$_SERVER["SCRIPT_NAME"]="/engine".$_SERVER["SCRIPT_NAME"];}
+    $_ENV["route"]=array("controller"=>$controller,$controller=>$form, $action=>$mode , "params"=>$params);
+    
+    if ($form=='default_form' && $mode='default_mode' && $_SERVER["QUERY_STRING"]>"") {
+		parse_str($_SERVER["QUERY_STRING"],$_GET);
+		$_ENV["route"]=array("controller"=>$controller,$controller=>$_GET["form"], $action=>$_GET["mode"] , "params"=>$_GET);
+	}
+    
+    
+    return $_ENV["route"];
+  }
+
+}
+
+// End Router Class
+
+
+// Basic lexer functionality
 abstract class CLexer
 {
 	const CHARSET = 'UTF-8';
@@ -1038,7 +1180,7 @@ abstract class kiNode
 		aikiBaseHref($this);
 		return $this;
 	}
-
+	
 	function contentSetData($Item=array()) {
 			if (!isset($_ENV["ta_save"])) {$_ENV["ta_save"]=array();}
 			$this->contentSetAttributes($Item);

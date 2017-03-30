@@ -37,6 +37,8 @@ if (strpos($_GET['src'],"@2x.")) {
 
 if (substr($_GET['src'],0,5)!=="http:") $_GET['src']="/".$_GET['src'];
 
+
+
 function SendSaveAsFileHeaderIfNeeded() {
 	if (headers_sent()) {
 		return false;

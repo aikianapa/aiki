@@ -3,7 +3,8 @@ ini_set('display_errors', 0	);
 session_start();
 $_SESSION["app_path"]=$_SERVER["DOCUMENT_ROOT"];
 $_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
-include_once("{$_SESSION["engine_path"]}/engine.php");
+include_once(__DIR__ ."/functions.php");
+
 if (is_file("{$_SERVER['DOCUMENT_ROOT']}/contents/admin/settings")) {
 	header("Refresh: 0; URL=http://{$_SERVER["HTTP_HOST"]}/login.htm");
 	die;
@@ -37,6 +38,9 @@ $__page->find("head")->append("<script src='/engine/js/functions.js'></script>")
 $__page->find("head")->append("<script src='/engine/appUI/js/plugins.js'></script>");
 $__page->find("body")->html("<div class='col-sm-2'></div><div id='engine__setup' class='col-sm-8'>{$form}</div><div class='col-sm-2'></div>");
 $__page->find("body")->prepend("<div class='jumbotron col-sm-12'><div class='col-sm-2'></div><div class='col-sm-8'><h1>AiKi :: 合気</h1></div><div class='col-sm-2'></div></div>");
+$__page->find("#adminCommon")->append("<p class='alert alert-info'>Поддержка и вопросы: <a href='https://vk.com/aikiengine' target='_blank'>https://vk.com/aikiengine</a></p>");
+$__page->find("button")->appendTo("#adminCommon");
+
 $__page->find("#admin_btn_update")->remove();
 
 if (!is_file("{$_SERVER['DOCUMENT_ROOT']}/tpl/default.php")) {

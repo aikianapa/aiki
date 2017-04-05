@@ -113,6 +113,7 @@ function comImagesEvents() {
 				}
 				comImagesToField();
 			});
+			return false;
 		});
 
 		$("#comImagesAll").delegate("ul li input, ul li textarea","click",function(){
@@ -124,6 +125,7 @@ function comImagesEvents() {
 
 		$("#comImagesAll").delegate(".imagesAttr .close","click",function(){
 			$(this).parents("#comImagesAll").prepend($(this).parents(".imagesAttr"));
+			return false;
 		});
 
 		$("#comImagesAll").off("click","ul li a.info");

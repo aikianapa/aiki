@@ -34,5 +34,4 @@ if (is_callable("aikiCustomEngine")) {$_ENV["DOM"]=aikiCustomEngine();} else {ai
 if (is_callable("aikiAfterEngine")) {$_ENV["ITEM"]=aikiAfterEngine($_ENV["DOM"],$_ENV["ITEM"]);}
 $Item=$_ENV["ITEM"];
 $__page=$_ENV["DOM"];
-
 ?>

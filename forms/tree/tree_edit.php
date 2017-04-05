@@ -154,6 +154,7 @@ $(function(){
 			newline.attr("data-id",newid).removeClass("dd-new");
 			$(".dd").nestable();
 			dd_setData();
+			return false;
 		});
 
 		$("#treeEditForm").undelegate(".dd .dd-copy","click");
@@ -169,7 +170,7 @@ $(function(){
 				$(this).attr("data-id",newid);
 			});
 			$(this).parents(".dd-item.active").after(copy);
-
+			return false;
 		});
 
 		$("#treeEditForm").undelegate(".dd .dd-edit","click");
@@ -177,6 +178,7 @@ $(function(){
 			$("#{{form}}EditForm #dd3active").data("offset",$("#treeEditForm #dd3active").offset().top);
 			$("#{{form}}EditForm a[href=#treeData]").parent("li").removeClass("hidden");
 			$("#{{form}}EditForm a[href=#treeData]").trigger("click");
+			return false;
 		});
 
 		$("#treeEditForm").undelegate(".dd .dd-flds","click");
@@ -223,6 +225,7 @@ $(function(){
 				$("#{{form}}EditForm .dd-item.active").attr("data-fldchild",JSON.stringify(child));
 				dd_setData();
 			});
+			return false;
 		});
 
 
@@ -235,6 +238,7 @@ $(function(){
 				$(this).parents(".dd-item.active").remove();
 			}
 			dd_setData();
+			return false;
 		});
 
 		$("#treeEditForm").undelegate(".dd3-content","click");

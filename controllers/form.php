@@ -27,8 +27,7 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 			if (is_file($_SESSION["app_path"]."/tpl/home.php")) {$_ENV["DOM"]=aikiGetTpl("home.php");} else {
 			if (is_file($_SESSION["app_path"]."/tpl/default.php")) $_ENV["DOM"]=aikiGetTpl("default.php");}
 		} else {
-			if ($tpl>"") {$_ENV["DOM"]=aikiGetTpl($tpl);} else {
-				if ($error==null OR $empty==1) {
+				if ($tpl=="" AND ($error==null OR $empty==1)) {
 					$__form=aikiGetForm();
 					if (($_ENV["error"]["aikiGetForm"]=="noform" && !is_callable($form."_".$mode)) ) {
 						if (is_file($_SESSION["app_path"]."/tpl/404.php")) {$_ENV["DOM"]=aikiGetTpl("404.php");} else {
@@ -39,9 +38,8 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 							$__form=ki::fromString("[Ошибка 404] Страница отсутствует");
 					}
 				}
-			}
 		}
-
+		
 		if ($_SESSION["cache"]!==1) {
 			if (is_object($_ENV["DOM"]) AND $_ENV["DOM"]->outerHtml()=="") { // в темплейтах не нашли, ищем в обработчиках
 				$call="{$form}_{$mode}"; if ($res==false && is_callable($call)) {  $_ENV["DOM"]=$call(); $res=true;} // в проектах

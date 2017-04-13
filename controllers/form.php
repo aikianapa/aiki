@@ -63,8 +63,8 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 				}
 			} else {
 					if (!is_object($_ENV["DOM"])) {$_ENV["DOM"]=ki::fromString($_ENV["DOM"]); }
-					$call="_{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=@$call($Item);}
-					$call="{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=@$call($Item);}
+					$call="_{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=$call($Item);}
+					$call="{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=$call($Item);}
 					$_ENV["DOM"]->contentSetData($Item);
 					$call=$form."ChangeHtml"; if (is_callable($call)) {$call($_ENV["DOM"],$Item);}
 					$_ENV["DOM"]->contentTargeter($Item);

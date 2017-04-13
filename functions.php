@@ -12,7 +12,32 @@ function contentControls($set="") {
 	return $res;
 }
 
-function aikiRouterAdd($route, $destination=null) {
+function aikiRouterAdd($route=null, $destination=null) {
+	if ($route==null) { // Роутинг по-умолчанию
+		$route=array(
+		// Формы
+			'' 								=> '/page/show/id:home/',
+			'/contents(:any)' 				=> '/',
+			'/engine/(:any).php' 			=> '/controller:engine/$1/',
+			'/login.htm' 					=> '/controller:engine/login/',
+			'/logout.htm' 					=> '/controller:engine/logout/',
+			'/admin.htm' 					=> '/controller:engine/admin/',
+			'/(:any)/(:any)/(id:any).htm'	=> '/$1/$2/$3',
+			'/(:any)/(id:any).htm' 			=> '/$1/show/$2',
+			'/(id:any).htm' 				=> '/page/show/$1/',
+
+		// Миниатюры
+
+			'/thumb/(:num)x(:num)/src/(src:any)'	=> '/controller:thumbnails/zc:1/w:$1/h:$2/src:$3',
+			'/thumbc/(:num)x(:num)/src/(src:any)'	=> '/controller:thumbnails/zc:0/w:$1/h:$2/src:$3',
+			'/thumb/(:num)x(:num)/(src:any)'		=> '/controller:thumbnails/zc:1/w:$1/h:$2/src:uploads/$3/$4/$5',
+			'/thumbc/(:num)x(:num)/(src:any)'		=> '/controller:thumbnails/zc:0/w:$1/h:$2/src:uploads/$3/$4/$5',
+		);
+		foreach(array($_ENV["pathEngine"],$_ENV["pathRoot"],$_ENV["pathApp"]) as $path) {
+			
+		}
+	}
+	
 	aikiRouter::addRoute($route,$destination);
 }
 
@@ -2222,21 +2247,24 @@ function comSession() {
 	$_SESSION["HOST"]=$scheme."://".$_SERVER["HTTP_HOST"];
 }
 
+function aikiEnviroment() {
+	aikiRouterAdd();
+	aikiRouterGet();
+}
+
+
 function comBasePath() {
 	$syssettings=json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT']."/contents/admin/settings"),true);
 	if (isset($syssettings["projects"])) {$_SESSION["projects"]=$syssettings["projects"];} else {$_SESSION["projects"]="";$_SESSION["project"]="";}
-	$_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
-	$_SESSION["app_path"]="{$_SERVER['DOCUMENT_ROOT']}";
-	$_SESSION["root_path"]="{$_SERVER['DOCUMENT_ROOT']}";
+	$_ENV["pathEngine"]=$_SESSION["engine_path"]="{$_SERVER['DOCUMENT_ROOT']}/engine";
+	$_ENV["pathApp"]=$_SESSION["app_path"]="{$_SERVER['DOCUMENT_ROOT']}";
+	$_ENV["pathRoot"]=$_SESSION["root_path"]="{$_SERVER['DOCUMENT_ROOT']}";
 	$_SESSION["HTTP_HOST"]=$_SERVER['HTTP_HOST'];
 	$domain=explode(".",str_replace("www.","",strtolower($_SERVER["HTTP_HOST"])));
 	if (count($domain)==3 AND isset($_SESSION["projects"]) AND $_SESSION["projects"]=="on") {
 		if ($domain[0]!=="www") {
 			$_SESSION["project"]=$domain[0];
-			$_SESSION["app_path"].="/projects/".$domain[0];
-			if (!is_dir($_SESSION["app_path"])) {
-				//if (!is_dir($_SESSION["app_path"])) {mkdir($_SESSION["app_path"]);}
-			}
+			$_ENV["pathApp"]=$_SESSION["app_path"].="/projects/".$domain[0];
 		}
 	} else {
 		$_SESSION["project"]="";

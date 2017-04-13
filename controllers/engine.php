@@ -29,6 +29,12 @@ function engine__controller__logout() {
 		die;
 }
 
+function engine__controller__include() {
+	echo 235235;
+	include_once($_ENV["pathRoot"].$_SERVER["SCRIPT_NAME"]);
+	die;
+}
+
 function engine__controller__setup() {
 		include("../setup.php");
 		die;

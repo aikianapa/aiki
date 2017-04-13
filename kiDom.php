@@ -101,8 +101,8 @@ print_r(aikiRouter::getRoute());
           self::$params = self::splitUrl($uri);
           break; // URL обработан!
         }
-      } 
-      return self::returnRoute();
+      }
+		return self::returnRoute();
   } 
 
 	// Сборка ответа
@@ -139,14 +139,13 @@ print_r(aikiRouter::getRoute());
 	$_GET=array_merge($_GET,$params);
 	$_GET[$controller]=$form; $_GET[$action]=$mode;
 	if (isset($_GET["engine"]) && $_GET["engine"]=="true") {$_SERVER["SCRIPT_NAME"]="/engine".$_SERVER["SCRIPT_NAME"];}
-    $_ENV["route"]=array("controller"=>$controller,$controller=>$form, $action=>$mode , "params"=>$params);
-    
+	if (isset($_SERVER["SCHEME"]) && $_SERVER["SCHEME"]>"") {$scheme=$_SERVER["SCHEME"];} else {$scheme="http";}
+    $_ENV["route"]=array("scheme"=>$scheme,"host"=>$_SERVER["HTTP_HOST"],"controller"=>$controller,$controller=>$form, $action=>$mode , "params"=>$params);
+        
     if ($form=='default_form' && $mode='default_mode' && $_SERVER["QUERY_STRING"]>"") {
 		parse_str($_SERVER["QUERY_STRING"],$_GET);
-		$_ENV["route"]=array("controller"=>$controller,$controller=>$_GET["form"], $action=>$_GET["mode"] , "params"=>$_GET);
+		$_ENV["route"]=array("scheme"=>$scheme,"host"=>$_SERVER["HTTP_HOST"],"controller"=>$controller,$controller=>$_GET["form"], $action=>$_GET["mode"] , "params"=>$_GET);
 	}
-    
-    
     return $_ENV["route"];
   }
 

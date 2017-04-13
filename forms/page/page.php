@@ -17,8 +17,7 @@ function page__show($out=null,$Item=null) {
 	if ($out==null) {
 		if (isset($Item["template"]) && $Item["template"]>"") {$out=aikiGetTpl($Item["template"]);} else {$out=aikiGetForm();}
 	}
-	$out->contentSetData($Item);
-	return $out->outerHtml();
+	return common__show($Item);
 }
 
 function page__edit() {

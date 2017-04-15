@@ -1,6 +1,7 @@
 <?php
 function form__controller() {
 $Item=$_ENV["ITEM"]; $form=""; $mode=""; $id=""; $error=null; $tpl="";
+
 if ($_ENV["route"]["form"]=="default_form" && $_ENV["route"]["mode"] == "default_mode" ) {
 	if (is_file($_SESSION["app_path"]."/tpl/404.php")) {$_ENV["DOM"]=aikiGetTpl($_SESSION["app_path"]."/tpl/404.php");} else {
 	if (is_file($_SESSION["engine_path"]."/tpl/404.php")) {$_ENV["DOM"]=aikiGetTpl($_SESSION["engine_path"]."/tpl/404.php");} else {
@@ -41,7 +42,7 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 		}
 		
 		if ($_SESSION["cache"]!==1) {
-			if (is_object($_ENV["DOM"]) AND $_ENV["DOM"]->outerHtml()=="") { // в темплейтах не нашли, ищем в обработчиках
+			if (is_object($_ENV["DOM"]) AND $_ENV["DOM"]->outerHtml()=="" AND $tpl=="") { // в темплейтах не нашли, ищем в обработчиках
 				$call="{$form}_{$mode}"; if ($res==false && is_callable($call)) {  $_ENV["DOM"]=$call(); $res=true;} // в проектах
 				$call="{$form}__{$mode}"; if ($res==false && is_callable($call)) {$_ENV["DOM"]=$call(); $res=true;} // в engine
 				$call="common__{$mode}"; if ($res==false && is_callable($call)) {$_ENV["DOM"]=$call(); $res=true;} // в общем случае
@@ -52,7 +53,9 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 				if ($form=="page" && $mode=="show" && $item=="home" && $tpl=="") {
 					if (is_file($_SESSION["app_path"]."/tpl/home.php")) {$_ENV["DOM"]=aikiGetTpl("home.php");} else {
 					if (is_file($_SESSION["app_path"]."/tpl/default.php")) $_ENV["DOM"]=aikiGetTpl("default.php");}
-				}	
+				} else {
+					$_ENV["DOM"]=aikiGetTpl($tpl);
+				}
 			}
 			if (($_ENV["DOM"]->text()=="") && $empty==1) {
 				$file=$_SESSION["app_path"]."/tpl/{$_GET["id"]}.php";

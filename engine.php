@@ -9,7 +9,7 @@ aikiDatabaseConnect();
 aikiLogin();
 aikiFormFunctions();
 
-if ($_ENV["route"]["form"]!=="default_form") {
+if (!isset($_ENV["route"]["form"]) OR $_ENV["route"]["form"]!=="default_form") {
 $_ENV["DOM"]=aikiFromString(""); $_ENV["ITEM"]=array();
 if (is_callable("aikiBeforeEngine")) {$_ENV["ITEM"] = aikiBeforeEngine($_ENV["DOM"],$_ENV["Item"]);}
 if (is_callable("aikiCustomEngine")) {$_ENV["DOM"]  = aikiCustomEngine();} else {aikiLoadController();}

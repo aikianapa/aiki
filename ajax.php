@@ -43,6 +43,7 @@ if ($res==true) {
 	unset($out,$Item,$call,$form,$mode);
 } else {echo "No function: ".$mode;}
 
+
 aikiClearMemory();
 
 

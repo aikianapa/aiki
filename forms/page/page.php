@@ -37,10 +37,14 @@ function page__edit() {
 }
 
 function page__getajax() {
-	$out=aikiGetForm($_GET["form"],$_GET["mode"]);
-	if (!is_object($out)) {$out=aikiGetForm($_GET["form"],"show");}
 	$Item=aikiReadItem($_GET["form"],$_GET["item"]);
-	$out=aikiFromString(page__show($out,$Item));
+	$out=aikiGetForm($_GET["form"],$_GET["mode"]);
+	if (!is_object($out)) {
+		$out=aikiGetForm($_GET["form"],"show");
+		$out->contentSetData($Item);
+	} else {
+		$out=aikiFromString(page__show($out,$Item));		
+	}
 	if (is_callable("pageChangeHtml")) {pageChangeHtml($out,$Item);}
 	return $out->outerHtml();
 }

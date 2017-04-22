@@ -348,6 +348,7 @@ class ki extends CLexer
 		'a'        	 => true,
 		'span'       => true,
 		'div'        => true,
+		'section'    => true,
 		'label'      => true,
 		'code'       => true,
 		'fieldset'   => true,
@@ -1184,7 +1185,8 @@ abstract class kiNode
 			if (!isset($_ENV["ta_save"])) {$_ENV["ta_save"]=array();}
 			$this->contentSetAttributes($Item);
 			$this->contentUserAllow();
-			foreach($this->find("*") as $inc) {
+			$nodes=$this->find("*");
+			foreach($nodes as $inc) {
 				$inc->contentUserAllow();
 				$tag=$inc->contentCheckTag();
 				if (!$tag==FALSE && !$inc->hasClass("loaded")) {
@@ -1903,7 +1905,8 @@ abstract class kiNode
 		
 			$ndx=0; $n=0; $f=0;
 			$tmptpl=aikiFromString($tpl);
-			foreach($Item as $key => $val) {
+			$object = new ArrayObject($Item);
+			foreach($object as $key => $val) {
 				if (!isset($val["id"])) {$lid=$key;} else {$lid=$val["id"];}
 				if ($dList==false OR in_array($lid,$dList)) {
 				$n++;

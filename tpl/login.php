@@ -35,7 +35,8 @@
         <!-- END Stylesheets -->
 
         <!-- Modernizr (browser feature detection library) -->
-        <script src="/engine/appUI/js//vendor/modernizr-2.8.3.min.js"></script>
+		<script src="/engine/js/jquery.min.js"></script>
+        <script src="/engine/appUI/js/vendor/modernizr-2.8.3.min.js"></script>
     </head>
     <body>
         <!-- Full Background -->

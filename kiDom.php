@@ -1300,7 +1300,7 @@ abstract class kiNode
 	}
 
 	function excludeTextarea($Item=array()) {
-		$list=$this->find("textarea:not([data-not-exclude]),pre,.noaiki,[data-role=module]");
+		$list=$this->find("textarea:not([data-not-exclude]),pre,.noaiki,[data-role=module],script[type=template]");
 		$_ENV["ta_save"]=array();
 		foreach ($list as $ta) {
 			$id=newIdRnd();
@@ -1314,7 +1314,7 @@ abstract class kiNode
 		}; unset($ta,$list);
 	}
 	function includeTextarea($Item=array()) { 
-		$list=$this->find("textarea[taid],pre[taid],.noaiki[taid],[data-role=module][taid]");
+		$list=$this->find("textarea[taid],pre[taid],.noaiki[taid],[data-role=module][taid],script[type=template]");
 		foreach ($list as $ta) {
 			$id=$ta->attr("taid"); $name=$ta->attr("name");
 			if (isset($_ENV["ta_save"][$id])) $ta->html($_ENV["ta_save"][$id]);

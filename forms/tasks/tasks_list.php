@@ -8,6 +8,8 @@
 	
 	.task-list [contenteditable] {cursor:text;}
 	.task-list .checkbox-inline {padding-right: 20px;}
+	
+	.task-list .bg- {background:#fff;}
 </style>
 
                 <div id="sidebar-alt" tabindex="-1" aria-hidden="true">
@@ -24,7 +26,7 @@
 									<h2 class="text-light">Задача</h2>
 									<form method="post" id="taskForm" name="tasks" class="form-control-borderless" onsubmit="return false;">
 										<div class="form-group">
-											<textarea name="task" class="form-control"></textarea>
+											<textarea name="task" rows="5" class="form-control"></textarea>
 										</div>
 										<div class="form-group">
 											<label>Время</label>
@@ -32,14 +34,22 @@
 										</div>
 										<div class="form-group">
 											<label for="side-profile-password">Категория</label>
-											<select name="category" class="form-control">
-												<option value="id">{{name}}</option>
+											<select name="category" class="form-control" data-role="foreach" data-form="users" item="{{_SESS[user_id]}}" field="tasks_categories">
+												<option value="{{id}}">{{category}}</option>
 											</select>
-											<option prepend="select[name=category]" value="id">{{name}}</option>
+											<option prepend="select[name=category]" value="unsorted">Неразобранные</option>
 										</div>
-										<div class="form-group">
+										<div class="form-group status">
 											<label>Статус</label>
-											<input type="text" name="status" class="form-control">
+											<input type="hidden" name="status" class="form-control">
+											<div class="form-control">
+											<button class="btn btn-xs btn-default" data="default">&nbsp;&nbsp;&nbsp;</button>
+											<button class="btn btn-xs btn-primary" data="primary">&nbsp;&nbsp;&nbsp;</button>
+											<button class="btn btn-xs btn-success" data="success">&nbsp;&nbsp;&nbsp;</button>
+											<button class="btn btn-xs btn-info" data="info">&nbsp;&nbsp;&nbsp;</button>
+											<button class="btn btn-xs btn-warning" data="warning">&nbsp;&nbsp;&nbsp;</button>
+											<button class="btn btn-xs btn-danger" data="danger">&nbsp;&nbsp;&nbsp;</button>
+											</div>
 										</div>
 										
 										<div class="form-group">
@@ -75,20 +85,21 @@
                             <div id="todo-options" class="collapse navbar-collapse remove-padding">
                                 <!-- Lists -->
                                 <h4 class="inner-sidebar-header">
-									<a href="#" data-ajax="mode=edit&amp;form=tree&amp;id=tasks" 
-												class="btn btn-xs btn-default pull-right" 
-												data-toggle="modal" data-target="#treeEdit" data-html="#treeEdit .modal-body">
-												<i class="fa fa-gear"></i>
+									<a href="javascript:void(0)" class="btn btn-xs btn-default pull-right">
+										<i class="fa fa-plus"></i>
 									</a>
                                     Категории
                                 </h4>
                                 <div class="block-section">
-									
-                                    <ul class="nav nav-pills nav-stacked" id="tasksCatalog" data-role="tree" from="tasks" data-build-tree="true" data-add="true">
-                                        <li data-id="{{id}}">
+									<form id="add-category-form" class="push">
+										<input name="category" class="form-control" id="add-category">
+									</form>
+                                    <ul class="nav nav-pills nav-stacked" id="tasksCatalog" 
+										data-role="foreach" form="users" item="{{_SESS[user_id]}}" field="tasks_categories">
+                                        <li data-id="{{id}}" item="{{id}}">
                                             <a href="javascript:void(0)">
                                                 <span class="badge pull-right">16</span>
-                                                <i class="fa fa-briefcase fa-fw icon-push"></i> <strong>{{name}}</strong>
+                                                <i class="fa fa-briefcase fa-fw icon-push"></i> <strong>{{category}}</strong>
                                             </a>
                                         </li>
                                     </ul>
@@ -110,14 +121,15 @@
                         <!-- Tasks List -->
                         <!-- Add new task functionality (initialized in js/pages/readyTasks.js) -->
                         <div class="row">
-                            <div class="col-md-10 col-md-offset-1 col-lg-6 col-lg-offset-3">
+                            <div class="col-md-10">
                                 <form id="add-task-form" class="push">
                                     <input type="text" id="add-task" name="add-task" class="form-control input-lg" placeholder="Введите задачу..">
                                 </form>
                                 <ul class="task-list" data-role="foreach" form="tasks" data-sort="time:d">
-									<meta data-role="variable" var="class" value="task-done" where='done<>""'>
-                                    <li item="{{id}}" data-id="{{id}}" class="{{class}}" 
+									<meta data-role="variable" var="class" value="task-done" where='done<>""' data-hide="*">
+                                    <li item="{{id}}" data-id="{{id}}" class="{{class}} btn-{{status}}" 
 										data-category="{{category}}"
+										data-status="{{status}}"
 										data-time="{{time}}">
                                         <a href="javascript:void(0)" class="task-menu text-primary"><i class="fa fa-bars"></i></a>
                                         <a href="javascript:void(0)" class="task-edit text-success"><i class="fa fa-edit"></i></a>
@@ -133,9 +145,7 @@
                         <!-- END Task List -->
                     </div>
                     
-					<div data-role="include" src="modal" data-id="treeEdit" data-formsave="#treeEditForm" data-add="false" data-header="Категории" class="loaded"><div class="modal fade" id="treeEdit" data-keyboard="false" data-backdrop="static" role="dialog" aria-labelledby="comModalLabel" aria-hidden="true"> <div class="modal-dialog modal-lg"> <div class="modal-content"> <div class="modal-header"> <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> <h4 class="modal-title" id="comModalLabel">Категории</h4> </div> <div class="modal-body"> </div> <div class="modal-footer"> <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Закрыть</button> <button type="button" class="btn btn-primary" data-formsave="#treeEditForm" data-add="false"><span class="glyphicon glyphicon-ok"></span> Сохранить изменения</button> </div> </div> </div> </div></div>
                     
-                    
-					<script src="/engine/forms/tasks/js/tasks.js"></script>
+					<script src="/engine/forms/tasks/js/tasks.js?{{_SESS[_new]}}"></script>
 					<script>$(function(){ CompTodo.init(); });</script>
 

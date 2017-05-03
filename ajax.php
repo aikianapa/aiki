@@ -293,6 +293,11 @@ function ajax_sitemap_generation() {
 function ajax_content_set_data() {
 	if (!isset($_POST["html"])) {$_POST["html"]="";}
 	if (!isset($_POST["data"])) {$_POST["data"]="";}
+	if (isset($_GET["form"])) {
+		$call=$_GET["form"]."AfterReadItem"; if (is_callable($call)) {$_POST["data"]=$call($_POST["data"]);}
+		$call=$_GET["form"]."BeforeShowItem"; if (is_callable($call)) {$_POST["data"]=$call($_POST["data"]);}
+	}
+	
 	$html=aikiFromString("<div>".$_POST["html"]."</div>");
 	$html->contentSetData($_POST["data"]);
 	return clearValueTags($html->innerHtml());

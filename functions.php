@@ -2342,8 +2342,11 @@ function data_json_decode($data) {
 }
 
 function clearValueTags($out) {
-	$out=preg_replace("|\{\{([^\}]+?)\}\}|","",$out);
-	return $out;
+	if (!is_object($out)) {$out=aikiFromString($out);}
+	$out->excludeTextarea();
+	$out=aikiFromString(preg_replace("|\{\{([^\}]+?)\}\}|","",$out->outerHtml()));
+	$out->includeTextarea();
+	return $out->outerHtml();;
 }
 
 function aikiDatePickerOconv($out) {

@@ -10,12 +10,18 @@ var CompTodo = function() {
         init: function() {
             var taskList        = $('.task-list');
             var taskInput       = $('#add-task');
+            var taskOptions     = $('#todo-options');
+            var taskAddCatry    = $('#add-category');
             var taskInputVal    = '';
-            var taskCategory	= $('#tasksCatalog li.active').attr("data-id");
-
+            var taskCatryVal    = '';
+            var taskCatalog		= $('#tasksCatalog');
+            var taskForm		= $('#task-form');
+			taskAddCatry.hide();
             /* On page load, check the checkbox if the class 'task-done' was added to a task */
             $('.task-done input:checkbox').prop('checked', true);
-
+            
+			taskList.find("li:not([data-category=unsorted])").hide();
+			countTodo();
             /* Toggle task state */
             taskList.on('click', 'input:checkbox', function(){
 				if ($(this).parents('li').find("[contenteditable=true]").length) {
@@ -45,6 +51,14 @@ var CompTodo = function() {
 			});
 
 
+			taskOptions.on('click','.fa-plus',function(){
+				taskAddCatry.toggle().focus();
+			});
+			
+			taskForm.on('click','button.btn[data]',function(){
+				taskForm.find("input[name=status]").val($(this).attr("data"));
+			});
+
             taskList.on('click', '.task-menu', function(){
 				App.sidebar('open-sidebar-alt');
                 var id=$(this).parents("li").attr("data-id");
@@ -53,7 +67,8 @@ var CompTodo = function() {
 				data.id=$(this).parents("li").attr("data-id");
 				data.category=$(this).parents("li").attr("data-category");
 				data.time=$(this).parents("li").attr("data-time");
-				data.done=$(this).parents("li").find("input:checkbox").prop('checked');
+				data.status=$(this).parents("li").attr("data-status");
+				data.done=$(this).parents("li").hasClass("task-done");
 				var res=content_set_data("script#task-tpl",data,true);
                 $("#task-form section").html($(res.responseText).find("#task-tpl").html());
                 $("#task-form section form").attr("item",data.id);
@@ -88,11 +103,47 @@ var CompTodo = function() {
 					$(this).find("span[contenteditable=true]").removeAttr("contenteditable");
 					var data={};
 					data.id=$(this).parents("li").attr("data-id");
-					data.task=$(this).text();
+					data.task=$(this).find("span").text();
 					updTodo(data);
 					return false;
             });
             
+            taskCatalog.on('click','li',function(){
+				var cid=$(this).attr("data-id");
+				taskList.find("li:not([data-category="+cid+"])").slideUp(100);
+				taskList.find("li[data-category="+cid+"]").slideDown(100);
+			});
+
+			$(document).on("tasks_after_formsave",function(event,name,item,form){
+				setTimeout(function(){
+					taskCatalog.find("li.active a").trigger("click");
+					var cid=taskCatalog.find("li.active").attr("data-id");
+					var tid=taskList.find("li[data-id="+item+"]").attr("data-id");
+					if (cid!==tid) {taskCatalog.find("li[data-id="+item+"]").slideDown(200);}
+					countTodo();
+				},300);
+			});
+
+            /* Add a new task category to the list */
+            $('#add-category-form').on('submit', function(){
+                taskCatryVal = taskAddCatry.prop('value');
+                if ( taskCatryVal ) {
+                    var data={};
+                    data.category=taskCatryVal;
+                    data.id=addTodoCategory(data);
+                    if (data.id!==false) {
+						var uns=$("#tasksCatalog li[data-id=unsorted]").clone();
+						var ret=content_set_data("#tasksCatalog",data,true);
+						$("#tasksCatalog").html($(ret.responseText).find("#tasksCatalog").html());
+						$("#tasksCatalog").prepend(uns);
+						taskAddCatry.prop('value', '').focus();
+						taskAddCatry.hide();
+					}
+
+                }
+                return false;
+            });
+
 
             /* Add a new task to the list */
             $('#add-task-form').on('submit', function(){
@@ -100,82 +151,99 @@ var CompTodo = function() {
                 if ( taskInputVal ) {
                     var data={};
                     data.task=taskInputVal;
-                    data.category=taskCategory;
+                    data.category=$('#tasksCatalog li.active').attr("data-id");
                     data.done="";
+                    data.status="default";
                     var id=addTodo(data);
                     if (id!==false) {
 						var data=getTodo(id);
 						var ret=template_set_data(".task-list",data,true);
-						console.log(ret);
-						taskList
-							.prepend('<li class="animation-slideDown" data-id="'+id+'">' +
-								'<a href="javascript:void(0)" class="task-close text-danger"><i class="fa fa-times"></i></a>' +
-								'<label class="checkbox-inline">' +
-								'<input type="checkbox">' +
-								$('<span />').text(taskInputVal).html() +
-								'</label>' +
-								'</li>');
+						taskList.prepend($(ret.responseText).html());
 						taskInput.prop('value', '').focus();
+						countTodo();
 					}
 
                 }
                 return false;
             });
+            
+            
+			function addTodo(data) {
+				var res=false;
+				$.ajax({
+					url: "/engine/ajax.php?mode=ajax&form=tasks&action=add",
+					async:false, method: "post", data: data,
+					success: function(data){
+						data=JSON.parse(data);
+						if (data.id!==undefined) {res=data.id;}
+					}
+				});
+				return res;
+			}
+
+			function addTodoCategory(data) {
+				var res=false;
+				$.ajax({
+					url: "/engine/ajax.php?mode=ajax&form=tasks&action=addcategory",
+					async:false, method: "post", data: data,
+					success: function(data){
+						data=JSON.parse(data);
+						if (data.id!==undefined) {res=data.id;}
+					}
+				});
+				return res;
+			}
+			
+			function delTodo(data) {
+				var err=false
+				if (data.category==undefined || data.category=="") {data.category="unsorted";}
+				$.ajax({
+					url: "/engine/ajax.php?mode=ajax&form=tasks&action=del",
+					async: false, method: "post", data: data,
+					success: function(data){
+								data=JSON.parse(data);
+								err=data;
+					}
+				});
+				return err;
+			}
+			
+			function getTodo(id) {
+				var res=false;
+				var ajax= "/engine/ajax.php?mode=ajax&form=tasks&action=getitem";
+				$.ajax({
+					url:ajax,
+					async: false, method: "post", data: {id:id},
+					success: function(data){
+								data=JSON.parse(data);
+								res=data;
+					}
+				});
+				return res;
+			}
+			
+			function updTodo(data) {
+				$.ajax({
+					url: "/engine/ajax.php?mode=ajax&form=tasks&action=upd",
+					async: false, method: "post", data: data,
+					success: function(data){
+								data=JSON.parse(data);
+								err=data;
+					}
+				});		
+			}
+			
+			function countTodo() {
+				taskCatalog.find("li").each(function(i){
+					var c=taskList.find("li[data-category="+$(this).attr("data-id")+"]").length;
+					$(this).find(".badge").html(c);
+				});
+			}           
+					
         }
     };
     
-    function addTodo(data) {
-		var res=false;
-		$.ajax({
-			url: "/engine/ajax.php?mode=ajax&form=tasks&action=add",
-			async:false, method: "post", data: data,
-			success: function(data){
-				data=JSON.parse(data);
-				if (data.id!==undefined) {res=data.id; console.log(res);}
-			}
-		});
-		return res;
-	}
-	
-	function delTodo(data) {
-		var err=false
-		if (data.category==undefined || data.category=="") {data.category="unsorted";}
-		$.ajax({
-			url: "/engine/ajax.php?mode=ajax&form=tasks&action=del",
-			async: false, method: "post", data: data,
-			success: function(data){
-						data=JSON.parse(data);
-						err=data;
-			}
-		});
-		return err;
-	}
-	
-	function getTodo(id) {
-		var res=false;
-		var ajax= "/engine/ajax.php?mode=ajax&form=tasks&action=getitem";
-		$.ajax({
-			url:ajax,
-			async: false, method: "post", data: {id:id},
-			success: function(data){
-						data=JSON.parse(data);
-						res=data;
-			}
-		});
-		return res;
-	}
-	
-	function updTodo(data) {
-		$.ajax({
-			url: "/engine/ajax.php?mode=ajax&form=tasks&action=upd",
-			async: false, method: "post", data: data,
-			success: function(data){
-						data=JSON.parse(data);
-						err=data;
-			}
-		});		
-	}
-    
+
     
 }();
 

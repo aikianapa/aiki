@@ -1113,12 +1113,15 @@ function active_pagination(pid) {
 
 function template_set_data(selector,data,ret) {
 	var tpl_id=$(selector).attr("data-template");
+	var form=""; 
+		if ($(selector).is("[form]")) {form="&form="+$(selector).attr("form");}
+		if ($(selector).is("[data-form]")) {form="&form="+$(selector).attr("data-form");}
 	if (tpl_id!==undefined) {var html= urldecode($("#"+tpl_id).html());}
 	if (data==undefined) {var data={};}
 	if (selector==undefined) {var selector="body";}
 		var param={html:html,data:data};
-		var url="/engine/ajax.php?mode=content_set_data";
-		$.ajax({
+		var url="/engine/ajax.php?mode=content_set_data"+form;
+		var diff=$.ajax({
 			async: 		false,
 			type:		'POST',
 			data:		param,
@@ -1128,11 +1131,15 @@ function template_set_data(selector,data,ret) {
 					$(selector).after(data).remove();
 				} else {return data;}
 			}
-		});	
+		});
+		return diff;
 }
 
 function content_set_data(selector,data,ret) {
 	var tpl_id=$(selector).attr("data-template");
+	var form=""; 
+		if ($(selector).is("[form]")) {form="&form="+$(selector).attr("form");}
+		if ($(selector).is("[data-form]")) {form="&form="+$(selector).attr("data-form");}
 	$(selector).removeClass("loaded");
 	if (tpl_id!==undefined) {$(selector).html(urldecode($("#"+tpl_id).html()));}
 	$(selector).wrap("<div>");
@@ -1140,7 +1147,7 @@ function content_set_data(selector,data,ret) {
 	if (data==undefined) {var data={};}
 	if (selector==undefined) {var selector="body";}
 		var param={html:html,data:data};
-		var url="/engine/ajax.php?mode=content_set_data";
+		var url="/engine/ajax.php?mode=content_set_data"+form;
 		var diff=$.ajax({
 			async: 		false,
 			type:		'POST',

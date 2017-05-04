@@ -5,10 +5,8 @@
  */
 
 var CompTodo = function() {
-
     return {
         init: function() {
-            var taskList        = $('.task-list');
             var taskInput       = $('#add-task');
             var taskOptions     = $('#todo-options');
             var taskAddCatry    = $('#add-category');
@@ -19,11 +17,9 @@ var CompTodo = function() {
 			taskAddCatry.hide();
             /* On page load, check the checkbox if the class 'task-done' was added to a task */
             $('.task-done input:checkbox').prop('checked', true);
-            
-			taskList.find("li:not([data-category=unsorted])").hide();
 			countTodo();
             /* Toggle task state */
-            taskList.on('click', 'input:checkbox', function(){
+            $('.task-list').on('click', 'input:checkbox', function(){
 				if ($(this).parents('li').find("[contenteditable=true]").length) {
 					return false;
 				} else {
@@ -37,7 +33,7 @@ var CompTodo = function() {
             });
 
             /* Remove a task from the list */
-            taskList.on('click', '.task-close', function(){
+            $('.task-list').on('click', '.task-close', function(){
                 $(this).parents('li').slideUp(200);
                     var data={};
                     data.id=$(this).parents("li").attr("data-id");
@@ -59,7 +55,7 @@ var CompTodo = function() {
 				taskForm.find("input[name=status]").val($(this).attr("data"));
 			});
 
-            taskList.on('click', '.task-menu', function(){
+            $('.task-list').on('click', '.task-menu', function(){
 				App.sidebar('open-sidebar-alt');
                 var id=$(this).parents("li").attr("data-id");
 				data={};
@@ -72,18 +68,18 @@ var CompTodo = function() {
 				var res=content_set_data("script#task-tpl",data,true);
                 $("#task-form section").html($(res.responseText).find("#task-tpl").html());
                 $("#task-form section form").attr("item",data.id);
-                $("#task-form section form").attr("parent-template",taskList.attr("data-template")).attr("data-add","true");
+                $("#task-form section form").attr("parent-template",$('.task-list').attr("data-template")).attr("data-add","true");
                 $("#sidebar-alt").trigger('focus');
                 if (data.done==true) {$("#task-form [name=done]").trigger("click");}
                 active_plugins();
                 return false;
             });
             
-            taskList.on('click', '[contenteditable]', function(){
+            $('.task-list').on('click', '[contenteditable]', function(){
 				return false;
             });
             
-            taskList.on('keydown', '[contenteditable]', function(e){
+            $('.task-list').on('keydown', '[contenteditable]', function(e){
 				var code = e.which;
 				if(code==13) {
 					$(this).parents('label').trigger('focusout');
@@ -91,7 +87,7 @@ var CompTodo = function() {
 				}
             });            
 
-            taskList.on('click', '.task-edit', function(){
+            $('.task-list').on('click', '.task-edit', function(){
 					$(this).parents("li").find("label span").text($(this).parents("li").find("label span").text());
 					$(this).parents("li").find("label span").attr("contenteditable",true).focus();
                     var data={};
@@ -99,7 +95,7 @@ var CompTodo = function() {
                     
             });
             
-			taskList.on('focusout', 'label', function(){
+			$('.task-list').on('focusout', 'label', function(){
 					$(this).find("span[contenteditable=true]").removeAttr("contenteditable");
 					var data={};
 					data.id=$(this).parents("li").attr("data-id");
@@ -110,16 +106,17 @@ var CompTodo = function() {
             
             taskCatalog.on('click','li',function(){
 				var cid=$(this).attr("data-id");
-				taskList.find("li:not([data-category="+cid+"])").slideUp(100);
-				taskList.find("li[data-category="+cid+"]").slideDown(100);
+				$('.task-list').find("li:not([data-category="+cid+"])").slideUp(100);
+				$('.task-list').find("li[data-category="+cid+"]").slideDown(100);
 			});
 
+			$(document).off("tasks_after_formsave");
 			$(document).on("tasks_after_formsave",function(event,name,item,form){
 				setTimeout(function(){
-					taskCatalog.find("li.active a").trigger("click");
+					//taskCatalog.find("li.active a").trigger("click");
 					var cid=taskCatalog.find("li.active").attr("data-id");
-					var tid=taskList.find("li[data-id="+item+"]").attr("data-id");
-					if (cid!==tid) {taskCatalog.find("li[data-id="+item+"]").slideDown(200);}
+					var tid=$('.task-list').find("li[data-id="+item+"]").attr("data-category");
+					if (cid!==tid) {$('.task-list').find("li[data-id="+item+"]").slideUp(200);}
 					countTodo();
 				},300);
 			});
@@ -133,9 +130,10 @@ var CompTodo = function() {
                     data.id=addTodoCategory(data);
                     if (data.id!==false) {
 						var uns=$("#tasksCatalog li[data-id=unsorted]").clone();
+						var arc=$("#tasksCatalog li[data-id=arc]").clone();
 						var ret=content_set_data("#tasksCatalog",data,true);
 						$("#tasksCatalog").html($(ret.responseText).find("#tasksCatalog").html());
-						$("#tasksCatalog").prepend(uns);
+						$("#tasksCatalog").prepend(uns).append(arc);
 						taskAddCatry.prop('value', '').focus();
 						taskAddCatry.hide();
 					}
@@ -158,7 +156,7 @@ var CompTodo = function() {
                     if (id!==false) {
 						var data=getTodo(id);
 						var ret=template_set_data(".task-list",data,true);
-						taskList.prepend($(ret.responseText).html());
+						$('.task-list').prepend($(ret.responseText).html());
 						taskInput.prop('value', '').focus();
 						countTodo();
 					}
@@ -234,16 +232,21 @@ var CompTodo = function() {
 			}
 			
 			function countTodo() {
-				taskCatalog.find("li").each(function(i){
-					var c=taskList.find("li[data-category="+$(this).attr("data-id")+"]").length;
-					$(this).find(".badge").html(c);
-				});
+				
+				$.ajax({
+					url: "/engine/ajax.php?mode=ajax&form=tasks&action=counter",
+					async: false, method: "post", 
+					success: function(data){
+								data=JSON.parse(data);
+								$.each(data,function(c){
+									taskCatalog.find("li[data-id="+c+"] .badge").html(data[c]);
+								});
+					}
+				});	
 			}           
-					
         }
-    };
-    
-
-    
+    };   
 }();
+
+
 

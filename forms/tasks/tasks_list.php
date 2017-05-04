@@ -37,7 +37,8 @@
 											<select name="category" class="form-control" data-role="foreach" data-form="users" item="{{_SESS[user_id]}}" field="tasks_categories">
 												<option value="{{id}}">{{category}}</option>
 											</select>
-											<option prepend="select[name=category]" value="unsorted">Неразобранные</option>
+											<option prepend="select[name=category]" value="unsorted">Общие</option>
+											<option append="select[name=category]" value="arc">Архив</option>
 										</div>
 										<div class="form-group status">
 											<label>Статус</label>
@@ -94,23 +95,37 @@
 									<form id="add-category-form" class="push">
 										<input name="category" class="form-control" id="add-category">
 									</form>
-                                    <ul class="nav nav-pills nav-stacked" id="tasksCatalog" 
+                                    <ul class="nav nav-pills nav-stacked" id="tasksCatalog"
 										data-role="foreach" form="users" item="{{_SESS[user_id]}}" field="tasks_categories">
                                         <li data-id="{{id}}" item="{{id}}">
-                                            <a href="javascript:void(0)">
-                                                <span class="badge pull-right">16</span>
+                                            <a href="javascript:void(0)" 
+													data-ajax="mode=ajax&form=tasks&action=getlist&category={{id}}" 
+													data-replace=".task-list"
+													data-loader="loaderTodo">
+                                                <span class="badge pull-right">0</span>
                                                 <i class="fa fa-briefcase fa-fw icon-push"></i> <strong>{{category}}</strong>
                                             </a>
                                         </li>
                                     </ul>
                                     
 									<li class="active" prepend="#tasksCatalog" data-id="unsorted">
-										<a href="javascript:void(0)">
+										<a href="javascript:void(0)" 
+												data-ajax="mode=ajax&form=tasks&action=getlist&category=unsorted" 
+												data-replace=".task-list"
+												data-loader="loaderTodo">
 											<span class="badge pull-right">0</span>
-											<i class="fa fa-briefcase fa-fw icon-push"></i> <strong>Неразобранные</strong>
+											<i class="fa fa-briefcase fa-fw icon-push"></i> <strong>Общие</strong>
 										</a>
 									</li>
-                                    
+									<li class="" append="#tasksCatalog" data-id="arc">
+										<a href="javascript:void(0)" 
+												data-ajax="mode=ajax&form=tasks&action=getlist&category=arc" 
+												data-replace=".task-list"
+												data-loader="loaderTodo">
+											<span class="badge pull-right">0</span>
+											<i class="fa fa-archive fa-fw icon-push"></i> <strong>Архив</strong>
+										</a>
+									</li>
                                 </div>
                                 <!-- END Lists -->
                             </div>
@@ -123,9 +138,11 @@
                         <div class="row">
                             <div class="col-md-10">
                                 <form id="add-task-form" class="push">
-                                    <input type="text" id="add-task" name="add-task" class="form-control input-lg" placeholder="Введите задачу..">
+                                    <input type="text" id="add-task" name="add-task" class="form-control" placeholder="Введите задачу..">
                                 </form>
-                                <ul class="task-list" data-role="foreach" form="tasks" data-sort="time:d">
+                                <ul class="task-list" 
+											data-role="foreach" form="tasks" data-sort="task time:d" data-loader="loaderTodo"
+											data-size="20" where='user = "{{_SESS[user_id]}}" AND category="unsorted"'>
 									<meta data-role="variable" var="class" value="task-done" where='done<>""' data-hide="*">
                                     <li item="{{id}}" data-id="{{id}}" class="{{class}} btn-{{status}}" 
 										data-category="{{category}}"
@@ -147,5 +164,24 @@
                     
                     
 					<script src="/engine/forms/tasks/js/tasks.js?{{_SESS[_new]}}"></script>
-					<script>$(function(){ CompTodo.init(); });</script>
+					<script>
+						$(document).ready(function(){
+							CompTodo.init();
+					
+							$(document).on("data-ajax-done", function( event, target , ajax, data ) {
+								CompTodo.init(); 
+							});	
+						});
+						function loaderTodo(type) {
+							if (type==true) {
+								$(".preloader").css("background-color","rgba(255, 255, 255, 0.40)");
+								$(".preloader").show();
+							} else {
+								$(".preloader").hide();
+								$(".preloader").css("background-color","rgba(255, 255, 255, 1)");
+							}
+						}
+
+
+					</script>
 

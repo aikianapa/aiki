@@ -18,6 +18,7 @@ function engine__controller__login() {
 function engine__controller__admin() {
 	$role=dict_filter_value("user_role","code",$_SESSION["user-role"]);
 	$_ENV["DOM"]=getTemplate($role["tpl"]);
+	$_ENV["roletpl"]=$role["tpl"];
 	return $_ENV["DOM"];
 }
 

@@ -321,6 +321,7 @@ function tagTree_find($branch=array(),$id="",$parent=null) {
 
 function aikiLibsAdd($__page) {contentAppends($__page);}
 function contentAppends($__page) {
+	if ($_ENV["roletpl"]=="admin.php") {
 	if ((   $_SERVER["SCRIPT_NAME"]=="/engine/index.php" AND $_SESSION["user_role"]=="admin")
 		OR ($_ENV["route"]["controller"]=="engine" AND $_ENV["route"]["mode"]=="admin")) {$engine=true;} else {$engine=false;}
 	if ($engine==true OR $_SESSION["settings"]["editload"]=="on") {
@@ -354,7 +355,7 @@ function contentAppends($__page) {
 	if ($engine==true OR $_SESSION["settings"]["appuiplugins"]=="on") {
 			$__page->find("head")->append('<link rel="stylesheet" href="/engine/appUI/css/plugins.css">');
 			$__page->find("body")->append('<script src="/engine/appUI/js/plugins.js" data="appUIplugins"></script>');}
-
+}
 	if (isset($Item["meta_keywords"])) {
 		$__page->find("head meta[name=keywords]")->remove();
 		$__page->find("head")->prepend("<meta name='keywords' content='{$Item["meta_keywords"]}'>");
@@ -363,6 +364,7 @@ function contentAppends($__page) {
 		$__page->find("head meta[name=description]")->remove();
 		$__page->find("head")->prepend("<meta name='description' content='{$Item["meta_description"]}'>");
 	}
+
 	$__page->find("head")->prepend("<meta name='generator' content='AiKi :: Engine (http://www.digiport.ru)'>");
 }
 

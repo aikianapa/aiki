@@ -24,7 +24,7 @@
 <link rel="stylesheet" href="css/styles/app.min.css">
 <link rel="stylesheet" href="css/styles/font.css" type="text/css">
 <script src="/engine/js/jquery.min.js"></script>
-
+<script src="/engine/js/functions.js"></script>
 
 </head>
 <body>
@@ -45,15 +45,15 @@
 <span class="text-xs">Main</span>
 </li>
 <li>
-<a href="{{_SRV[REQUEST_URI]}}#" data-wb-ajax="/admin/ui/list_forms/" data-wb-remove="#aFormList" data-wb-after="#tFormList" data-wb-tpl="#tFormList" class="b-danger">
+<a href="javascript:void(0);" data-ajax="form=todo&mode=list" data-replace="#content" data-tpl="#tFormList" class="b-danger">
 <span class="nav-icon text-white no-fade">
 <i class="ion-document-text">
 </i>
-</span> <span class="nav-text">Формы</span>
+</span> <span class="nav-text">Задачи</span>
 </a>
 </li>
 <li>
-<a href="{{_SRV[REQUEST_URI]}}#" data-wb-ajax="/admin/ui/list_tables/" data-wb-remove="#aFormList" data-wb-after="#tFormList" data-wb-tpl="#tFormList" class="b-success">
+<a href="javascript:void(0);" data-wb-ajax="/admin/ui/list_tables/" data-wb-remove="#aFormList" data-wb-after="#tFormList" data-wb-tpl="#tFormList" class="b-success">
 <span class="nav-icon text-white no-fade">
 <i class="ion-android-apps">
 </i>

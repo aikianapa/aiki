@@ -16,7 +16,6 @@ function aikiRouterAdd($route=null, $destination=null) {
 	if ($route==null) { // Роутинг по-умолчанию
 			$route=aikiRouterRead();
 	}
-	
 	aikiRouter::addRoute($route,$destination);
 }
 
@@ -322,7 +321,7 @@ function tagTree_find($branch=array(),$id="",$parent=null) {
 
 function aikiLibsAdd($__page) {contentAppends($__page);}
 function contentAppends($__page) {
-	if ($_ENV["roletpl"]=="admin.php") {
+	if (!isset($_ENV["roletpl"]) OR $_ENV["roletpl"]=="admin.php") {
 	if ((   $_SERVER["SCRIPT_NAME"]=="/engine/index.php" AND $_SESSION["user_role"]=="admin")
 		OR ($_ENV["route"]["controller"]=="engine" AND $_ENV["route"]["mode"]=="admin")) {$engine=true;} else {$engine=false;}
 	if ($engine==true OR $_SESSION["settings"]["editload"]=="on") {
@@ -1426,7 +1425,7 @@ function aikiReadItem($form=null,$id=null,$func=true) {
 			} else {
 				if ($form!==null && $id!==null) $Item=$read($form,$id,$func);
 			}
-			$_ENV["error"][__FUNCTION__]=$_ENV["error"][$read];
+			if (isset($_ENV["error"][$read])) $_ENV["error"][__FUNCTION__]=$_ENV["error"][$read];
 			if (!isset($Item["id"]) OR $Item["id"]=="_new") {$Item["id"]=newIdRnd();}
 			$_ENV["cache"]["_readitem"][$form][$id]=$Item;
 		} else {
@@ -1542,7 +1541,7 @@ function aikiLogin() {
 	}
 
 	if (isset($_COOKIE["user_id"]) && $_COOKIE["user_id"]>"") {
-		if ($_SESSION["user_id"]>"") {setcookie("user_id",$_SESSION["user_id"],time()+60*60*24*30,"/");} // запоминаем на месяц
+		if (isset($_SESSION["user_id"]) AND $_SESSION["user_id"]>"") {setcookie("user_id",$_SESSION["user_id"],time()+60*60*24*30,"/");} // запоминаем на месяц
 		$user=aikiReadItem("users",$_COOKIE["user_id"]);
 		$_SESSION["User"]=$_SESSION["user"]=$user[$_SESSION['settings']['elogin']];
 		$_SESSION["user-id"]=$_SESSION["user_id"]=$user["id"];
@@ -2253,6 +2252,7 @@ function comSession() {
 function aikiEnviroment() {
 	aikiRouterAdd();
 	aikiRouterGet();
+	$_ENV["error"]=array();
 }
 
 

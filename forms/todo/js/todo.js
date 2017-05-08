@@ -9,166 +9,200 @@ var CompTodo = function() {
         init: function() {
             var todoInput       = $('#add-todo');
             var todoOptions     = $('#todo-options');
-            var todoAddCatry    = $('#add-category');
             var todoInputVal    = '';
-            var todoCatryVal    = '';
-            var todoCatalog		= $('#todoCatalog');
             var todoForm		= $('#todo-form');
             var todoEdit		= $('.item-title');
-			todoAddCatry.hide();
-            /* On page load, check the checkbox if the class 'todo-done' was added to a todo */
+            var todoNav			= $('#list .navbar-nav');
+
             $('.todo-done input:checkbox').prop('checked', true);
+            $('.todo-list .list-item').each(function(){
+                var status=$(this).attr("data-status");
+                $('.todo-list [data-block='+status+']').append($(this));
+            });
+            $('.todo-list .list-item').removeClass("hide");
+            $('.todo-list [data-block=muted]').removeClass("hide").slideUp(0);
+
+
+			$(".xdsoft_datetimepicker").remove();
+			console.log("WARNING!!! datetimepicker removed in todo.js");
+
 			countTodo();
-            /* Toggle todo state */
-            $('.todo-list').on('click', 'input:checkbox', function(){
-				if ($(this).parents('li').find("[contenteditable=true]").length) {
+			eventsTodo();
+
+			function eventsTodo() {
+				var todoInput       = $('#add-todo');
+				var todoOptions     = $('#todo-options');
+				var todoInputVal    = '';
+				var todoForm		= $('#todo-form');
+				var todoEdit		= $('.item-title');
+				var todoNav			= $('#list .navbar-nav');
+
+
+				todoNav.off('click','a[data-status]');
+				todoNav.on('click','a[data-status]',function(){
+          if ($(this).find(".fa-circle-o").length) {
+            $(this).find(".fa-circle-o").removeClass("fa-circle-o").addClass("fa-dot-circle-o");
+            $('.todo-list [data-block='+$(this).attr('data-status')+']').slideDown(200);
+          } else {
+            $(this).find(".fa-dot-circle-o").removeClass("fa-dot-circle-o").addClass("fa-circle-o");
+            $('.todo-list [data-block='+$(this).attr('data-status')+']').slideUp(200);
+          }
+          countTodo(true);
+				});
+
+				/* Toggle todo state */
+				$('.todo-list').off('click', 'input:checkbox');
+				$('.todo-list').on('click', 'input:checkbox', function(){
+						$(this).parents('[data-id]').toggleClass('todo-done');
+						var data={};
+						data.done="";
+						data.id=$(this).parents('[data-id]').attr("data-id");
+						var status=$(".nav .dropdown-menu.status a:last").attr("data-status");
+						if ($(this).parents('[data-id]').hasClass('todo-done')) {
+							data.done=1;
+							data.status=status;
+							$(this).parents('[data-id]').find('.list-body div, input').addClass("text-"+status);
+						} else {
+							$(this).parents('[data-id]').find('.list-body div, input').removeClass("text-"+status);
+						}
+						updTodo(data);
+				});
+
+				$('.todo-list').off('change', 'input[name=time]');
+				$('.todo-list').on('change', 'input[name=time]', function(){
+						var data={};
+						data.id=$(this).parents('[data-id]').attr("data-id");
+						data.time=$(this).val();
+						updTodo(data);
+				});
+
+
+				todoEdit.off('click');
+				todoEdit.on('click',function(){
+					$(this).attr("contenteditable",true);
+					$(this).focus();
+				});
+
+
+				$('.todo-list').off('click', '.todo-close');
+				$('.todo-list').on('click', '.todo-close', function(){
+						// Удаление записи
+            var that=$(this);
+						that.parents('[data-id]').slideUp(200);
+						var data={};
+						data.id=that.parents("[data-id]").attr("data-id");
+            setTimeout(function(){that.parents("[data-id]").remove();},200)
+						delTodo(data);
+				});
+
+
+				$('.todo-list').off('click', '[contenteditable]');
+				$('.todo-list').on('click', '[contenteditable]', function(){
 					return false;
-				} else {
-					$(this).parents('li').toggleClass('todo-done');
-					var data={};
-					data.id=$(this).parents("li").attr("data-id");
-					data.done="";
-					if ($(this).parents('li').hasClass('todo-done')) {data.done=1;}
-					updTodo(data);
-				}
-            });
+				});
 
-			todoEdit.on('click',function(){
-				$(this).attr("contenteditable",true);
-				$(this).focus();
-			});
-
-            /* Remove a todo from the list */
-            $('.todo-list').on('click', '.todo-close', function(){
-                $(this).parents('li').slideUp(200);
-                    var data={};
-                    data.id=$(this).parents("li").attr("data-id");
-                    delTodo(data);
-            });
-            
-            $("#sidebar-alt").on('focusout', function(e){
-				if (!$(e.relatedTarget).hasClass("todo-menu") && !$(e.relatedTarget).parents("#sidebar-alt").length && !$(e.relatedTarget).is("#sidebar-alt")) {
-					App.sidebar('close-sidebar-alt');
-				}
-			});
-
-
-			
-			todoForm.on('click','button.btn[data]',function(){
-				todoForm.find("input[name=status]").val($(this).attr("data"));
-			});
-
-            $('.todo-list').on('click', '.todo-menu', function(){
-				App.sidebar('open-sidebar-alt');
-                var id=$(this).parents("li").attr("data-id");
-				data={};
-				data.task=$(this).parents("li").find("label span").text();
-				data.id=$(this).parents("li").attr("data-id");
-				data.category=$(this).parents("li").attr("data-category");
-				data.time=$(this).parents("li").attr("data-time");
-				data.status=$(this).parents("li").attr("data-status");
-				data.done=$(this).parents("li").hasClass("todo-done");
-				var res=content_set_data("script#todo-tpl",data,true);
-                $("#todo-form section").html($(res.responseText).find("#todo-tpl").html());
-                $("#todo-form section form").attr("item",data.id);
-                $("#todo-form section form").attr("parent-template",$('.todo-list').attr("data-template")).attr("data-add","true");
-                $("#sidebar-alt").trigger('focus');
-                if (data.done==true) {$("#todo-form [name=done]").trigger("click");}
-                active_plugins();
-                return false;
-            });
-            
-            $('.todo-list').on('click', '[contenteditable]', function(){
-				return false;
-            });
-            
-            $('.todo-list').on('keydown', '[contenteditable]', function(e){
-				var code = e.which;
-				if(code==13) {
-					$(this).parents('label').trigger('focusout');
-					return false;
-				}
-            });            
-
-            $('.todo-list').on('click', '.todo-edit', function(){
-					$(this).parents("li").find("label span").text($(this).parents("li").find("label span").text());
-					$(this).parents("li").find("label span").attr("contenteditable",true).focus();
-                    var data={};
-                    data.id=$(this).parents("li").attr("data-id");
-                    
-            });
-            
-			$('.todo-list').on('focusout', '.item-title', function(){
-					$(this).find("span[contenteditable=true]").removeAttr("contenteditable");
-					var data={};
-					data.id=$(this).parents("li").attr("data-id");
-					data.task=$(this).find("span").text();
-					updTodo(data);
-					return false;
-            });
-            
-            todoCatalog.on('click','li',function(){
-				var cid=$(this).attr("data-id");
-				$('.todo-list').find("li:not([data-category="+cid+"])").slideUp(100);
-				$('.todo-list').find("li[data-category="+cid+"]").slideDown(100);
-			});
-
-			$(document).off("todo_after_formsave");
-			$(document).on("todo_after_formsave",function(event,name,item,form){
-				setTimeout(function(){
-					//todoCatalog.find("li.active a").trigger("click");
-					var cid=todoCatalog.find("li.active").attr("data-id");
-					var tid=$('.todo-list').find("li[data-id="+item+"]").attr("data-category");
-					if (cid!==tid) {$('.todo-list').find("li[data-id="+item+"]").slideUp(200);}
-					countTodo();
-				},300);
-			});
-
-            /* Add a new todo category to the list */
-            $('#add-category-form').on('submit', function(){
-                todoCatryVal = todoAddCatry.prop('value');
-                if ( todoCatryVal ) {
-                    var data={};
-                    data.category=todoCatryVal;
-                    data.id=addTodoCategory(data);
-                    if (data.id!==false) {
-						var uns=$("#todoCatalog li[data-id=unsorted]").clone();
-						var arc=$("#todoCatalog li[data-id=arc]").clone();
-						var ret=content_set_data("#todoCatalog",data,true);
-						$("#todoCatalog").html($(ret.responseText).find("#todoCatalog").html());
-						$("#todoCatalog").prepend(uns).append(arc);
-						todoAddCatry.prop('value', '').focus();
-						todoAddCatry.hide();
+				$('.todo-list').off('keydown', '[contenteditable]');
+				$('.todo-list').on('keydown', '[contenteditable]', function(e){
+					var code = e.which;
+					if(code==13) {
+						$(this).parents('label').trigger('focusout');
+						return false;
 					}
+				});
 
-                }
-                return false;
-            });
+				$('.todo-list').off('focusout', '.item-title');
+				$('.todo-list').on('focusout', '.item-title', function(){
+						$(this).find("span[contenteditable=true]").removeAttr("contenteditable");
+						var data={};
+						data.id=$(this).parents("[data-id]").attr("data-id");
+						data.task=$(this).text(); if (data.task=="") {data.task="&nbsp;";}
+						updTodo(data);
+						return false;
+				});
 
 
-            /* Add a new todo to the list */
-            $('#add-todo-form').on('submit', function(){
-                todoInputVal = todoInput.prop('value');
-                if ( todoInputVal ) {
-                    var data={};
-                    data.task=todoInputVal;
-                    data.category=$('#todoCatalog li.active').attr("data-id");
-                    data.done="";
-                    data.status="default";
-                    var id=addTodo(data);
-                    if (id!==false) {
-						var data=getTodo(id);
-						var ret=template_set_data(".todo-list",data,true);
-						$('.todo-list').prepend($(ret.responseText).html());
-						todoInput.prop('value', '').focus();
-						countTodo();
+				/* Add a new todo to the list */
+				$('#add-todo-form').off('submit');
+				$('#add-todo-form').on('submit', function(){
+					todoInputVal = todoInput.prop('value');
+					if ( todoInputVal ) {
+						var data={};
+						data.task=todoInputVal;
+						data.category=$('#todoCatalog li.active').attr("data-id");
+						data.done="";
+						data.status="warn";
+						var id=addTodo(data);
+						if (id!==false) {
+							var data=getTodo(id);
+							var ret=template_set_data(".todo-list",data,true);
+							$('.todo-list [data-block=warn]').append($(ret.responseText).html());
+              $('.todo-list .list-item[data-id='+id+']').slideDown(200).removeClass("hide");
+							todoInput.prop('value', '').focus();
+							countTodo();
+							eventsTodo();
+							active_plugins();
+						}
+
 					}
+					return false;
+				});
+			}
 
-                }
-                return false;
-            });
-            
-            
+            function refreshTodo(id) {
+    					moment.locale("ru");
+    					var html=getTodo(id,true);
+    					var flag=false;
+    					var itime=0;
+    					var that=$('.todo-list [data-id='+id+']');
+    					var cur=that.index();
+              var curstat=that.attr("data-status");
+    					that.replaceWith(html);
+              var that=$('.todo-list [data-id='+id+']');
+              var status=that.attr("data-status");
+    					var time=moment(date("Y-m-d H:i:s",strtotime(that.find("input[name=time]").val()))).format("YYYY-MM-DD HH:mm:ss");
+              that.removeClass("hide");
+
+              if (curstat!==status) {cur="";}
+              if (!$('.todo-list [data-block='+status+']').find(".list-item").length) {
+                  $('.todo-list [data-id='+id+']').slideUp(200);
+                  setTimeout(function(){
+                    $('.todo-list [data-block='+status+']').append(that);
+                    $('.todo-list [data-id='+id+']').slideDown(200);
+                  },200);
+              } else {
+      					$('.todo-list [data-block='+status+']').find(".list-item").each(function(i){
+      						if (!flag) {
+      							itime=date("Y-m-d H:i:s",strtotime($(this).find("input[name=time]").val()));
+      							itime=moment(itime).format("YYYY-MM-DD HH:mm:ss");
+      							var item=$(this);
+      							if (itime>=time) {
+      								flag=true;
+      								if (cur!==i) {
+      									$('.todo-list [data-id='+id+']').slideUp(200);
+      									setTimeout(function(){
+      										item.before($('.todo-list [data-id='+id+']'));
+      										$('.todo-list [data-id='+id+']').slideDown(200);
+      									},200);
+      								}
+      							}
+                    if (itime<time) {
+      								if ($(this).is(":last-child") && cur!==i-1) {
+      									$('.todo-list [data-id='+id+']').slideUp(200);
+      									setTimeout(function(){
+      										item.after($('.todo-list [data-id='+id+']'));
+      										$('.todo-list [data-id='+id+']').slideDown(200);
+      									},200);
+      								}
+      							}
+
+      						}
+      					});
+              }
+    					active_plugins();
+    					eventsTodo();
+			}
+
+
 			function addTodo(data) {
 				var res=false;
 				$.ajax({
@@ -182,19 +216,7 @@ var CompTodo = function() {
 				return res;
 			}
 
-			function addTodoCategory(data) {
-				var res=false;
-				$.ajax({
-					url: "/engine/ajax.php?mode=ajax&form=todo&action=addcategory",
-					async:false, method: "post", data: data,
-					success: function(data){
-						data=JSON.parse(data);
-						if (data.id!==undefined) {res=data.id;}
-					}
-				});
-				return res;
-			}
-			
+
 			function delTodo(data) {
 				var err=false
 				if (data.category==undefined || data.category=="") {data.category="unsorted";}
@@ -204,52 +226,61 @@ var CompTodo = function() {
 					success: function(data){
 								data=JSON.parse(data);
 								err=data;
+                countTodo(true);
 					}
 				});
 				return err;
 			}
-			
-			function getTodo(id) {
+
+			function getTodo(id,html) {
+				if (html==undefined) {var action="getitem";} else {var action="getitemhtml";}
 				var res=false;
-				var ajax= "/engine/ajax.php?mode=ajax&form=todo&action=getitem";
+				var ajax= "/engine/ajax.php?mode=ajax&form=todo&action="+action;
 				$.ajax({
 					url:ajax,
 					async: false, method: "post", data: {id:id},
 					success: function(data){
-								data=JSON.parse(data);
+								if (action!=="getitemhtml") {data=JSON.parse(data);}
 								res=data;
 					}
 				});
 				return res;
 			}
-			
+
 			function updTodo(data) {
+				var id=data.id;
 				$.ajax({
 					url: "/engine/ajax.php?mode=ajax&form=todo&action=upd",
 					async: false, method: "post", data: data,
 					success: function(data){
 								data=JSON.parse(data);
 								err=data;
+								refreshTodo(id);
+                countTodo(true);
 					}
-				});		
+				});
 			}
-			
-			function countTodo() {
-				
-				$.ajax({
-					url: "/engine/ajax.php?mode=ajax&form=todo&action=counter",
-					async: false, method: "post", 
-					success: function(data){
-								data=JSON.parse(data);
-								$.each(data,function(c){
-									todoCatalog.find("li[data-id="+c+"] .badge").html(data[c]);
-								});
-					}
-				});	
-			}           
+
+			function countTodo(fast) {
+          if (fast==undefined && fast!==true) {
+    				$.ajax({
+    					url: "/engine/ajax.php?mode=ajax&form=todo&action=counter",
+    					async: false, method: "post",
+    					success: function(data){
+    								data=JSON.parse(data);
+    								$("#content").find(".nav-item .counter").html(data);
+    					}
+    				});
+    			}
+
+          setTimeout(function(){
+            var all=$(".todo-list .list-item").length;
+            var vis=$(".todo-list .list-item:visible").length;
+            $("#content").find(".nav-item .counter").html(all);
+            $("#content .bottom_counter strong:eq(1)").html(all);
+            $("#content .bottom_counter strong:eq(0)").html(vis);
+          },300);
+      }
         }
-    };   
+    };
 }();
-
-
-

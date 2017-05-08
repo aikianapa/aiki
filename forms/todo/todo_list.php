@@ -1,19 +1,15 @@
+<div id="content" class="app-content box-shadow-z2 pjax-container" role="main">
 <style>
     #add-todo-form {height: 3.5rem; vertical-align: middle; display: table-cell;}
 	#add-todo-form .form-control {height:1.8rem;}
-	
-	.todo-list li > a {position: absolute; opacity: 0; -webkit-transition: opacity .15s ease-out; transition: opacity .15s ease-out; }
-	.todo-list li:hover > a {opacity: 1;}
-	
-	.todo-list [contenteditable] {cursor:text;}
-	.todo-list .checkbox-inline {padding-right: 20px;}
-	
-	.todo-list .bg- {background:#fff;}
+
+	.todo-list .item-title {display:inline-block; width: 100%;}
+	.todo-list [type=datetimepicker] {border:0;background:transparent;}
+	.todo-list .todo-done .item-title {text-decoration:line-through;}
+	#content .nav .dropdown-menu {margin-left: -140px;}
+	#switcher {display:none;}
 </style>
 
-
-
-<div id="content" class="app-content box-shadow-z2 pjax-container" role="main">
 <div class="app-header hidden-lg-up black lt b-b">
 <div class="navbar" data-pjax>
 <a data-toggle="modal" data-target="#aside" class="navbar-item pull-left hidden-lg-up p-r m-a-0">
@@ -108,36 +104,29 @@
 <div class="row-col">
 <div class="col-xs-3 w-xl modal fade aside aside-lg" id="subnav">
 </div>
-<div class="col-xs-4 modal fade aside aside-sm" id="list">
+<div class="col-xs-4 modal fade aside aside-xs" id="list">
 <div class="row-col b-r light lt">
 <div class="b-b">
 <div class="navbar no-radius">
-<a data-toggle="modal" data-target="#subnav" data-ui-modal class="navbar-item pull-left hidden-xl-up hidden-sm-down">
-<span class="btn btn-sm btn-icon blue">
-<i class="fa fa-th">
-</i>
-</span>
-</a>
 <ul class="nav navbar-nav pull-right m-l">
 <li class="nav-item dropdown">
 <a class="nav-link text-muted" href="#" data-toggle="dropdown">
 <i class="fa fa-ellipsis-h">
 </i>
 </a>
-<div class="dropdown-menu pull-right text-color" role="menu">
-<a class="dropdown-item">
-<i class="fa fa-tag">
-</i> Tag item</a> <a class="dropdown-item">
-<i class="fa fa-pencil">
-</i> Edit item</a> <a class="dropdown-item">
-<i class="fa fa-trash">
-</i> Delete item</a>
-<div class="dropdown-divider">
-</div>
-<a class="dropdown-item">
-<i class="fa fa-ellipsis-h">
-</i> More action</a>
-</div>
+
+		<div class="dropdown-menu status">
+			<a class="dropdown-item" href="javascript:void(0);" data-status="success">
+			<i class="fa fa-dot-circle-o text-success"></i>Активные</a>
+
+			<a class="dropdown-item" href="javascript:void(0);" data-status="danger">
+			<i class="fa fa-dot-circle-o text-danger"></i>Важные</a>
+
+			<a class="dropdown-item" href="javascript:void(0);" data-status="muted">
+			<i class="fa fa-circle-o text-muted"></i>Архивные</a>
+
+		</div>
+
 </li>
 </ul>
 <ul class="nav navbar-nav">
@@ -155,7 +144,7 @@
 
 <li class="nav-item">
 <a class="nav-link">
-<span class="label rounded">55</span>
+<span class="label rounded counter">0</span>
 </a>
 </li>
 </ul>
@@ -164,101 +153,43 @@
 <div class="row-row">
 <div class="row-body scrollable hover">
 <div class="row-inner">
-<div class="list todo-list" data-ui-list="b-r b-2x b-theme" data-role="foreach" form="todo" data-sort="task time:d" data-loader="loaderTodo"
-							data-size="20" where='user = "{{_SESS[user_id]}}" AND category="unsorted"'>
-	<meta data-role="variable" var="class" value="task-done" where='done<>""' data-hide="*">
-	<div class="list-item row-col {{class}}"  item="{{id}}" data-id="{{id}}" >
+<div class="col-sm-offset-4 col-sm-8 list todo-list" data-ui-list="b-r b-2x b-theme"
+      data-role="foreach" form="todo" data-sort="time" data-loader="loaderTodo"
+			data-size="20" where='user = "{{_SESS[user_id]}}"'>
+	<meta data-role="variable" var="class" value="todo-done" where='done<>""' data-hide="*">
+	<div class="list-item row-col {{class}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
+		<a class="todo-close pull-right" href="javascript:void(0);"><i class="fa  fa-trash-o text-muted"></i></a>
 	<div class="col-xs">
 	<label class="md-check p-r-xs">
-	<input type="checkbox"> <i>
-	</i>
+	<input type="checkbox" name="done">
+	<i></i>
 	</label>
 	</div>
 	<div class="list-body col-xs">
-	<span class="item-title _500">{{task}}</span>
-	<div class="text-muted text-xs"><i class="fa fa-clock-o"></i> {{timeview}}</div>
-	<div class="dropdown m-t-xs">
-	<a href="#" data-toggle="dropdown">
-	<span class="label warn rounded dropdown-toggle">In progress</span>
-	</a>
-	<div class="dropdown-menu">
-	<a class="dropdown-item" href="#">
-	<i class="fa fa-circle-o text-accent">
-	</i>Active</a> <a class="dropdown-item" href="#">
-	<i class="fa fa-circle-o text-warn">
-	</i>In progress</a> <a class="dropdown-item" href="#">
-	<i class="fa fa-circle-o text-success">
-	</i>Completed</a> <a class="dropdown-item" href="#">
-	<i class="fa fa-circle-o text-muted">
-	</i>Archived</a>
-	</div>
-	</div>
+		<span class="item-title _500">{{task}}</span>
+		<div class="text-{{status}}">
+			<i class="fa fa-clock-o"></i>
+			<input type="datetimepicker" class="text-{{status}} text-xs" name="time">
+		</div>
 	</div>
 	</div>
 </div>
+    <div append=".todo-list">
+      <div data-block="danger"></div>
+      <div data-block="success"></div>
+      <div data-block="warn"></div>
+      <div data-block="muted" class="hide"></div>
+    </div>
 </div>
 </div>
 </div>
 <div class="p-a b-t clearfix">
-<div class="btn-group pull-right">
-<a href="#" class="btn btn-xs white circle">
-<i class="fa fa-fw fa-angle-left">
-</i>
-</a> <a href="#" class="btn btn-xs white circle">
-<i class="fa fa-fw fa-angle-right">
-</i>
-</a>
-</div>
-<span class="text-sm text-muted">Completed: <strong>10</strong>, In Progress: <strong>5</strong>
+<!--div class="btn-group pull-right">
+  <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-left"></i></a>
+  <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-right"></i></a>
+</div-->
+<span class="text-sm text-muted bottom_counter">Показано <strong></strong> записей из <strong></strong>
 </span>
-</div>
-</div>
-</div>
-<div class="col-xs w-80" id="sidenav">
-<div class="row-col bg">
-<div class="row-row">
-<div class="row-body scrollable hover">
-<div class="row-inner">
-<div class="p-y text-center">
-<div>
-<a href="#" class="inline">
-<span class="circle w-40 avatar success">M</span>
-</a>
-</div>
-<div>
-<a href="#" class="inline">
-<span class="circle w-40 avatar info">RD</span>
-</a>
-</div>
-<div>
-<a href="#" class="inline">
-<span class="circle w-40 avatar">
-<img src="images/a2.jpg" alt=".">
-</span>
-</a>
-</div>
-<div>
-<a href="#" class="inline">
-<span class="circle w-40 avatar">
-<img src="images/a3.jpg" alt=".">
-</span>
-</a>
-</div>
-<div>
-<a href="#" class="inline">
-<span class="circle w-40 avatar grey">S</span>
-</a>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="p-y text-center">
-<a href="#" class="md-btn md-mini md-fab primary">
-<i class="fa fa-plus">
-</i>
-</a>
-</div>
 </div>
 </div>
 </div>
@@ -266,26 +197,14 @@
 </div>
 </div>
 
-                    
+
 					<script src="/engine/forms/todo/js/todo.js?{{_SESS[_new]}}"></script>
 					<script>
 						$(document).ready(function(){
 							CompTodo.init();
-					
-							$(document).on("data-ajax-done", function( event, target , ajax, data ) {
-								CompTodo.init(); 
-							});	
+
 						});
-						function loaderTodo(type) {
-							if (type==true) {
-								$(".preloader").css("background-color","rgba(255, 255, 255, 0.40)");
-								$(".preloader").show();
-							} else {
-								$(".preloader").hide();
-								$(".preloader").css("background-color","rgba(255, 255, 255, 1)");
-							}
-						}
-
-
 					</script>
 
+
+</div>

@@ -14,10 +14,9 @@ function todo__ajax_add() {
 		"form"		=> "todo",
 		"user"		=> $_SESSION["user_id"],
 		"task"		=> $_POST["task"],
-		"category"	=> $_POST["category"],
 		"status"	=> $_POST["status"],
 		"done"		=> $_POST["done"],
-		"time"		=> date("Y-m-d H:i:s"),
+		"time"		=> "",
 		"created"	=> date("Y-m-d H:i:s")
 	);
 	$res=aikiSaveItem("todo",$Item);
@@ -50,17 +49,9 @@ function todo__ajax_upd() {
 
 function todo__ajax_counter() {
 	$where='user = "'.$_SESSION["user_id"].'"';
+	if (isset($_GET["status"])) {$where.=' AND status = "'+$_GET["status"]+'"';}
 	$list=aikiListItems("todo",$where);
-	$user=aikiReadItem("users",$_SESSION["user_id"]);
-	$res=array();
-	foreach($user["todo_categories"] as $key => $val) {
-		$res[$val["id"]]=0;
-	}
-	$res["unsorted"]=$res["arc"]=0;
-	$list=new arrayObject($list["result"]);
-	foreach($list as $item) {
-		if (isset($res[$item["category"]])) {$res[$item["category"]]+=1;} else {$res["unsorted"]+=1;}
-	}
+	$res=count($list["result"]);
 	unset($list,$item);
 	return $res;
 }
@@ -70,6 +61,23 @@ function todo__ajax_getitem() {
 	$res=false;
 	$Item=aikiReadItem("todo",$_POST["id"]);
 	if ($Item["user"]==$_SESSION["user_id"]) {$res=$Item;}
+	return $res;
+}
+
+function todo__ajax_getitemhtml() {
+	$res=false;
+	$Item=aikiReadItem("todo",$_POST["id"]);
+	if (is_callable("todoBeforeShowItem")) {$Item=todoBeforeShowItem($Item);}
+	if ($Item["user"]==$_SESSION["user_id"]) {
+		$tpl=aikiGetForm("todo","list");
+		$tpl=$tpl->find(".todo-list",0)->html();
+		$out=aikiFromString("<div></div>");
+		$out->find("div")->append($tpl);
+		$out->contentSetData($Item);
+		echo $out->find("div")->html();
+		unset($tpl,$out);
+		die;
+	}
 	return $res;
 }
 
@@ -92,26 +100,25 @@ function todo__ajax_getlist() {
 
 function todo__ajax_generate() {
 	$res=false;
-	
-	
-	
+
+
+
 	for ($i=1; $i<5000; $i++) {
-		
+
 	$Item=array(
 		"id"		=> newIdRnd(),
 		"form"		=> "todo",
 		"user"		=> $_SESSION["user_id"],
 		"task"		=> "Абра швабра кадабра ".$i,
-		"category"	=> "unsorted",
 		"status"	=> "default",
 		"done"		=> "",
 		"time"		=> date("Y-m-d H:i:s")
 	);
-	aikiSaveItem("todo",$Item);	
+	aikiSaveItem("todo",$Item);
 	}
-	
-	
-	
+
+
+
 	return $res;
 }
 
@@ -122,12 +129,25 @@ function todo__ajax_del() {
 }
 
 function todoBeforeShowItem($Item) {
-	$Item["timeview"]=date("d.m.y H:i",strtotime($Item["time"]));
+	if ($Item["time"]>"") {$Item["timeview"]=date("d.m.y H:i",strtotime($Item["time"]));}
 	return $Item;
 }
 
 function todoAfterReadItem($Item) {
-	if (!isset($Item["category"]) OR $Item["category"]=="") $Item["category"]="unsorted";
+	if ($Item["time"]=="") {$time=date("Y-m-d H:i",strtotime($Item["created"]));} else {$time=$Item["time"];}
+	$time=date("Y-m-d H:i:s",strtotime($time));
+	$now=date("Y-m-d H:i:s");
+	$now_mi_3=date("Y-m-d H:i:s",strtotime('-3 hour'));
+	$now_pl_3=date("Y-m-d H:i:s",strtotime('+3 hour'));
+	$status="warn";
+	if ($now<=$time) {$status="success";}
+	if ($time<=$now_pl_3 && $Item["time"]!=="") {$status="danger";}
+	if ($Item["done"]=="1") {$status="muted";}
+	$Item["status"]=$status;
+	if ($Item["time"]=="") {$Item["time"]=$time;}
+	$Item["time"]=$time=date("Y-m-d H:i:s",strtotime($time));
+	if (isset($_POST["data"]["status"])) $Item["status"]=$_POST["data"]["status"];
+
 	return $Item;
 }
 

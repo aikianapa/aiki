@@ -65,7 +65,17 @@ if ($_SERVER['SCRIPT_NAME']=="/index.php") {
 					$_ENV["DOM"]=ki::fromString("[Ошибка 404] Страница отсутствует");
 				}
 			} else {
-					if (!is_object($_ENV["DOM"])) {$_ENV["DOM"]=ki::fromString($_ENV["DOM"]); }
+				if ($_ENV["DOM"]->text()=="") {
+					$call="{$form}_{$mode}"; if ($res==false && is_callable($call)) {  $_ENV["DOM"]=$call(); $res=true;} // в проектах
+					$call="{$form}__{$mode}"; if ($res==false && is_callable($call)) {$_ENV["DOM"]=$call(); $res=true;} // в engine
+					$call="common__{$mode}"; if ($res==false && is_callable($call)) {$_ENV["DOM"]=$call(); $res=true;} // в общем случае
+					if ($res==false && is_callable($mode)) {$_ENV["DOM"]=$mode(); $res=true;}
+					if ($res==true && !is_object($_ENV["DOM"]) && $_ENV["DOM"]>"") {$_ENV["DOM"]=ki::fromString($_ENV["DOM"]);}
+				}
+					if (!is_object($_ENV["DOM"])) {
+				
+						$_ENV["DOM"]=ki::fromString($_ENV["DOM"]); 
+					}
 					$call="_{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=$call($Item);}
 					$call="{$Item["form"]}BeforeShowItem"; if (is_callable($call)) {$Item=$call($Item);}
 					$_ENV["DOM"]->contentSetData($Item);

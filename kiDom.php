@@ -9,6 +9,8 @@
  * @link http://simplehtmldom.sourceforge.net/
  *
  * @modifier Oleg Frolov <oleg_frolov at mail.ru>
+ * @link https://github.com/aikianapa/aiki/
+ * 
  * @license MIT
  */
 
@@ -507,7 +509,7 @@ class ki extends CLexer
 	}
 
 	public function fromFile($file="") {
-		if ($file=="") {
+		if ($file=="" OR !is_file($file)) {
 			return ki::fromString("");
 		} else {
 			return ki::fromString(file_get_contents($file));
@@ -1912,6 +1914,11 @@ abstract class kiNode
 				$n++;
 				$cacheVal=$val;
 				if ($limit=="" OR ($limit*1 > $ndx*1)) {
+					
+					if (isset($val["form"])) {
+						$call=$val["form"]."AfterReadItem";
+						if (is_callable($call)) $val=$call($val);
+					}
 					if (!is_array($val)) {$tmp=json_decode($val,true);	if ($tmp) {$val=$tmp;} else {$val=array($val);} } // именно так и никак иначе
 					if ($vars>"") {$val=attrAddData($vars,$val);}
 					if ($val!==NULL && ($where==NULL OR aikiWhereItem($val,$where))) { // если не обнулено в вызываемой ранее функцией (например, если стоит флаг скрытия в списке)

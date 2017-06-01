@@ -155,7 +155,7 @@
 <div class="row-inner">
 <div class="col-sm-offset-4 col-sm-8 list todo-list" data-ui-list="b-r b-2x b-theme"
       data-role="foreach" form="todo" data-sort="time" data-loader="loaderTodo"
-			data-size="20" where='user = "{{_SESS[user_id]}}"'>
+			data-size="false" where='user = "{{_SESS[user_id]}}"'>
 	<meta data-role="variable" var="class" value="todo-done" where='done<>""' data-hide="*">
 	<div class="list-item row-col {{class}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
 		<a class="todo-close pull-right" href="javascript:void(0);"><i class="fa  fa-trash-o text-muted"></i></a>

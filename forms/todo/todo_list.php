@@ -166,7 +166,7 @@
 	</div>
 	<div class="list-body col-xs">
 		<span class="item-title _500">{{task}}</span>
-		<div class="text-{{status}}">
+		<div>
 			<i class="fa fa-clock-o"></i>
 			<input type="datetimepicker" class="text-xs" name="time">
 		</div>

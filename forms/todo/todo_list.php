@@ -1,13 +1,12 @@
 <div id="content" class="app-content box-shadow-z2 pjax-container" role="main">
 <style>
     #add-todo-form {height: 2rem; vertical-align: middle; display: table-cell;}
-	#add-todo-form .form-control {height:1.8rem;}
 
 	.todo-list .item-title {display:inline-block; width: 100%;}
 	.todo-list [type=datetimepicker] {border:0;background:transparent;}
 	.todo-list .todo-done .item-title {text-decoration:line-through;}
 	.todo-list .md-check input:checked+i:before {border-width: 2px;}
-	.todo-list .list-item {border-left-width: 2px; border-left-style: solid;}
+	.todo-list .list-item {border-left-width:2px; border-left-style: solid;margin-top:2px;}
 	#content .nav .dropdown-menu {margin-left: -140px;}
 	#switcher {display:none;}
 	.bottom_counter {height: 2rem; line-height: 2rem; vertical-align: middle; display: table-cell; }
@@ -109,7 +108,7 @@
 </div>
 <div class="col-xs-4 col-lg-2 modal fade aside aside-xs" id="list">
 <div class="row-col b-r light lt">
-<div class="b-b">
+<div class="b-b white">
 <div class="navbar no-radius">
 	
 <ul class="nav navbar-nav pull-right m-l">
@@ -153,7 +152,7 @@
 <div class="row-row">
 <div class="row-body scrollable hover">
 <div class="row-inner">
-<div class="col-sm-offset-4 col-sm-12 list todo-list" data-ui-list="b-r b-2x b-theme"
+<div class="col-sm-offset-4 col-sm-12 list todo-list" data-ui-list="b-2x b-theme"
       data-role="foreach" form="todo" data-sort="time" data-loader="loaderTodo"
 			data-size="false" where='user = "{{_SESS[user_id]}}"'>
 	<meta data-role="variable" var="class" value="todo-done" where='done<>""' data-hide="*">
@@ -183,17 +182,25 @@
 </div>
 </div>
 </div>
-<div class="p-a b-t clearfix">
-		<form id="add-todo-form" class="pull-left">
-			<input type="text" id="add-todo" name="add-todo" class="form-control" placeholder="Добавить задачу..">
-		</form>
+<div class="p-a b-t clearfix white">
 	
+<form class="col-xs-9" id="add-todo-form">
+	<div class="input-group">
+		<input type="text" id="add-todo" name="add-todo" class="form-control" placeholder="Добавить задачу.."> 
+		<span class="input-group-btn">
+			<button class="btn white b-a no-shadow" type="button">Добавить</button>
+		</span>
+	</div>
+</form>
+	
+
 <!--div class="btn-group pull-right">
   <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-left"></i></a>
   <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-right"></i></a>
 </div-->
-<span class="text-sm text-muted pull-right bottom_counter"> <strong></strong> из <strong></strong>
-</span>
+		<span class="text-sm text-muted text-right bottom_counter col-xs-3">
+			 <strong></strong> из <strong></strong>
+		</span>
 </div>
 </div>
 </div>

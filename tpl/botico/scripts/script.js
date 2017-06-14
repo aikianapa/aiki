@@ -9,12 +9,5 @@ $(document).ready(function(){
 			$("#aside .nav a:eq("+menu+")").focus().trigger("click");
 		},100);
 	}
-	ajax_sess_kick();
 });
 
-
-function ajax_sess_kick() {
-	setInterval(function(){
-		$.get("/engine/ajax.php?mode=ajax_sess_kick");
-	},120000);
-}

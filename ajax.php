@@ -115,7 +115,9 @@ function ajax_set_data() {
 }
 
 function ajax_sess_kick() {
-	return true;
+	if (!isset($_SESSION["user"])) {return false;} else {
+		return true;
+	}
 }
 
 function ajax_getid() {

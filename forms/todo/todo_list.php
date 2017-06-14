@@ -1,13 +1,16 @@
 <div id="content" class="app-content box-shadow-z2 pjax-container" role="main">
 <style>
-    #add-todo-form {height: 3.5rem; vertical-align: middle; display: table-cell;}
+    #add-todo-form {height: 2rem; vertical-align: middle; display: table-cell;}
 	#add-todo-form .form-control {height:1.8rem;}
 
 	.todo-list .item-title {display:inline-block; width: 100%;}
 	.todo-list [type=datetimepicker] {border:0;background:transparent;}
 	.todo-list .todo-done .item-title {text-decoration:line-through;}
+	.todo-list .md-check input:checked+i:before {border-width: 2px;}
+	.todo-list .list-item {border-left-width: 2px; border-left-style: solid;}
 	#content .nav .dropdown-menu {margin-left: -140px;}
 	#switcher {display:none;}
+	.bottom_counter {height: 2rem; line-height: 2rem; vertical-align: middle; display: table-cell; }
 </style>
 
 <div class="app-header hidden-lg-up black lt b-b">
@@ -108,10 +111,16 @@
 <div class="row-col b-r light lt">
 <div class="b-b">
 <div class="navbar no-radius">
+	
 <ul class="nav navbar-nav pull-right m-l">
-<li class="nav-item dropdown">
+<li class="nav-item inline">
+	<a href="javascript:void(0);" data-ajax="form=todo&amp;mode=list" data-replace="#content" data-tpl="#tFormList" class="nav-link">
+		<i class="fa fa-fw fa-refresh"></i>
+	</a>
+</li>
+<li class="nav-item inline dropdown">
 <a class="nav-link text-muted" href="#" data-toggle="dropdown">
-<i class="fa fa-ellipsis-h">
+<i class="fa fa-ellipsis-v">
 </i>
 </a>
 
@@ -133,15 +142,6 @@
 <li class="nav-item">
 <span class="navbar-item m-r-0 text-md">Чек-лист</span>
 </li>
-
-<li class="nav-item">
-<span class="navbar-item m-r-0 text-md">
-		<form id="add-todo-form">
-			<input type="text" id="add-todo" name="add-todo" class="form-control rounded" placeholder="Добавить задачу..">
-		</form>
-</span>
-</li>
-
 <li class="nav-item">
 <a class="nav-link">
 <span class="label rounded counter">0</span>
@@ -157,7 +157,7 @@
       data-role="foreach" form="todo" data-sort="time" data-loader="loaderTodo"
 			data-size="false" where='user = "{{_SESS[user_id]}}"'>
 	<meta data-role="variable" var="class" value="todo-done" where='done<>""' data-hide="*">
-	<div class="list-item row-col {{class}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
+	<div class="list-item row-col {{class}} b-l-{{status}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
 		<a class="todo-close pull-right" href="javascript:void(0);"><i class="fa  fa-trash-o text-muted"></i></a>
 	<div class="col-xs">
 	<label class="md-check p-r-xs">
@@ -169,7 +169,7 @@
 		<span class="item-title _500">{{task}}</span>
 		<div class="text-{{status}}">
 			<i class="fa fa-clock-o"></i>
-			<input type="datetimepicker" class="text-{{status}} text-xs" name="time">
+			<input type="datetimepicker" class="text-xs" name="time">
 		</div>
 	</div>
 	</div>
@@ -184,11 +184,15 @@
 </div>
 </div>
 <div class="p-a b-t clearfix">
+		<form id="add-todo-form" class="pull-left">
+			<input type="text" id="add-todo" name="add-todo" class="form-control" placeholder="Добавить задачу..">
+		</form>
+	
 <!--div class="btn-group pull-right">
   <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-left"></i></a>
   <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-right"></i></a>
 </div-->
-<span class="text-sm text-muted pull-right bottom_counter">Показано <strong></strong> записей из <strong></strong>
+<span class="text-sm text-muted pull-right bottom_counter"> <strong></strong> из <strong></strong>
 </span>
 </div>
 </div>

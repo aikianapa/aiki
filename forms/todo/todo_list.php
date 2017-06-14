@@ -102,9 +102,9 @@
 <div class="app-body">
 <div class="app-body-inner">
 <div class="row-col">
-<div class="col-xs-3 w-xl modal fade aside aside-lg" id="subnav">
+<div class="col-xs-3 w-xl modal fade aside aside-sm" id="subnav">
 </div>
-<div class="col-xs-4 modal fade aside aside-xs" id="list">
+<div class="col-xs-4 col-lg-2 modal fade aside aside-xs" id="list">
 <div class="row-col b-r light lt">
 <div class="b-b">
 <div class="navbar no-radius">
@@ -153,7 +153,7 @@
 <div class="row-row">
 <div class="row-body scrollable hover">
 <div class="row-inner">
-<div class="col-sm-offset-4 col-sm-8 list todo-list" data-ui-list="b-r b-2x b-theme"
+<div class="col-sm-offset-4 col-sm-12 list todo-list" data-ui-list="b-r b-2x b-theme"
       data-role="foreach" form="todo" data-sort="time" data-loader="loaderTodo"
 			data-size="false" where='user = "{{_SESS[user_id]}}"'>
 	<meta data-role="variable" var="class" value="todo-done" where='done<>""' data-hide="*">
@@ -188,7 +188,7 @@
   <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-left"></i></a>
   <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-right"></i></a>
 </div-->
-<span class="text-sm text-muted bottom_counter">Показано <strong></strong> записей из <strong></strong>
+<span class="text-sm text-muted pull-right bottom_counter">Показано <strong></strong> записей из <strong></strong>
 </span>
 </div>
 </div>

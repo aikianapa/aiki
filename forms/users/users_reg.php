@@ -4,17 +4,10 @@
               <div class="panel-heading">
 				<form method="post">
                 <div class="row">
-                  <div class="col-sm-3">
-                    
-                    <select class="form-control" name="gender">
-                      <option value="m">Господин</option>
-                      <option value="f">Госпожа</option>
-                    </select>
-                    
-                  </div>
+
                   <div class="col-sm-9">
                     
-                    <input class="form-control" type="text" name="name" placeholder="Фамилия Имя Отчество...">
+                    <input class="form-control" type="text" name="name" placeholder="Ваше имя">
                     
                   </div>
                 </div>
@@ -28,27 +21,6 @@
                 <div class="row">
                   <div class="col-sm-6"><input type="password" name="password" placeholder="Придумайте пароль" class="password-enter form-control" required></div>
                   <div class="col-sm-6"><input type="password" placeholder="Повторите пароль" class="password-check form-control" required></div>
-                </div>
-                
-                <!-- / row -->
-                <div class="row">
-                  <div class="col-sm-5"><input type="text" name="zip" placeholder="Индекс" class="form-control"></div>
-                  <div class="col-sm-7"><input type="text" name="city" placeholder="Город" class="form-control"></div>
-                </div>
-
-                <div class="row">
-                  <div class="col-sm-12"><input type="text" name="address" placeholder="Улица, номер дома, корпус, квартира" class="form-control"></div>
-                </div>
-
-
-                <div class="row">
-                  <div class="col-md-12 pad-adjust">
-                    <div class="checkbox">
-                      <label><input type="checkbox" name="subscribe" checked class="text-muted">
-                        Подписаться на рассылку новых предложений
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
                 <div class="row">

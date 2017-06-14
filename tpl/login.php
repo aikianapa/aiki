@@ -88,6 +88,59 @@
                 </form>
                 <!-- END Login Form -->
             </div>
+            
+            <div class="block animation-fadeInQuickInv register hidden">
+                <!-- Register Title -->
+                <div class="block-title">
+                    <div class="block-options pull-right">
+                        <a href="page_ready_login.html" class="btn btn-effect-ripple btn-primary" data-toggle="tooltip" data-placement="left" title="Back to login"><i class="fa fa-user"></i></a>
+                    </div>
+                    <h2>Регистрация</h2>
+                </div>
+                <!-- END Register Title -->
+
+                <!-- Register Form -->
+                <form id="form-register" action="page_ready_register.html" method="post" class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input type="text" id="register-username" name="register-username" class="form-control" placeholder="Ваше имя">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input type="text" id="register-email" name="register-email" class="form-control" placeholder="Эл.почта">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input type="password" id="register-password" name="register-password" class="form-control" placeholder="Пароль">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12">
+                            <input type="password" id="register-password-verify" name="register-password-verify" class="form-control" placeholder="Повторите пароль">
+                        </div>
+                    </div>
+
+					<div class="form-group">
+					  <div class="col-md-12 pad-adjust">
+						<div class="checkbox">
+						  <label><input type="checkbox" name="fzcheck" checked class="text-muted">
+							На обработку персональных данных согласен (<a href="http://base.consultant.ru/cons/cgi/online.cgi?req=doc;base=law;n=178749" target="_blank">ФЗ No.152-ФЗ</a>)
+						  </label>
+						</div>
+					  </div>
+					</div>
+                
+                    <div class="form-group form-actions">
+                        <div class="col-xs-12 text-right">
+                            <button type="submit" class="btn btn-effect-ripple btn-success"><i class="fa fa-plus"></i> Создать пользователя</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- END Register Form -->
+            </div>
+ 
 
             <div class="block animation-fadeInQuick reminder hidden">
                 <!-- Reminder Title -->
@@ -167,6 +220,8 @@
 
         <!-- Load and execute javascript code used only in this page -->
         <script src="/engine/appUI/js/pages/readyLogin.js"></script>
+        <script src="js/pages/readyRegister.js"></script>
         <script>$(function(){ ReadyLogin.init(); });</script>
+        <script>$(function(){ ReadyRegister.init(); });</script>
     </body>
 </html>

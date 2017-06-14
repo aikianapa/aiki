@@ -16,16 +16,20 @@ function engine__controller__login() {
 }
 
 function engine__controller__admin() {
-	$role=dict_filter_value("user_role","code",$_SESSION["user-role"]);
-	$_ENV["DOM"]=getTemplate($role["tpl"]);
-	$_ENV["roletpl"]=$role["tpl"];
-	return $_ENV["DOM"];
+	if (!isset($_SESSION["user"]) OR $_SESSION["user"]=="") {
+		header("Refresh: 0; URL=http://{$_SERVER["HTTP_HOST"]}/login.htm");
+	} else {
+		$role=dict_filter_value("user_role","code",$_SESSION["user-role"]);
+		$_ENV["DOM"]=getTemplate($role["tpl"]);
+		$_ENV["roletpl"]=$role["tpl"];
+		return $_ENV["DOM"];
+	}
 }
 
 function engine__controller__logout() {
 		$_SESSION["User"]=$_SESSION["user"]=$_SESSION["user-role"]=$_SESSION["user_role"]=$_SESSION["user-id"]=$_SESSION["user_id"]="";
 		setcookie("user_id","",time()-3600,"/"); unset($_COOKIE["user_id"]);
-		header("Refresh: 0; URL=http://{$_SERVER["HTTP_HOST"]}");
+		header("Refresh: 0; URL=http://{$_SERVER["HTTP_HOST"]}/login.htm");
 		echo "Выход из системы, ждите...";
 		die;
 }

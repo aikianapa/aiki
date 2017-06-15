@@ -141,11 +141,11 @@
 <li class="nav-item">
 <span class="navbar-item m-r-0 text-md">Чек-лист</span>
 </li>
-<li class="nav-item">
+<!--li class="nav-item">
 <a class="nav-link">
 <span class="label rounded counter">0</span>
 </a>
-</li>
+</li-->
 </ul>
 </div>
 </div>
@@ -156,7 +156,12 @@
       data-role="foreach" form="todo" data-sort="time" data-loader="loaderTodo"
 			data-size="false" where='user = "{{_SESS[user_id]}}"'>
 	<meta data-role="variable" var="class" value="todo-done" where='done<>""' data-hide="*">
-	<div class="list-item row-col {{class}} b-l-{{status}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
+	<meta data-role="variable" var="color" value="grey-100" where=' status = "muted" ' data-hide="*">
+	<meta data-role="variable" var="color" value="green-100" where=' status = "success" ' data-hide="*">
+	<meta data-role="variable" var="color" value="red-100" where=' status = "danger" ' data-hide="*">
+	<meta data-role="variable" var="color" value="purple-100" where=' status = "warn" ' data-hide="*">
+	
+	<div class="list-item row-col {{class}} {{color}} b-l-{{status}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
 		<a class="todo-close pull-right" href="javascript:void(0);"><i class="fa  fa-trash-o text-muted"></i></a>
 	<div class="col-xs">
 	<label class="md-check p-r-xs">

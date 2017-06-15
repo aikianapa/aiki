@@ -6,7 +6,7 @@
 	.todo-list [type=datetimepicker] {border:0;background:transparent;}
 	.todo-list .todo-done .item-title {text-decoration:line-through;}
 	.todo-list .md-check input:checked+i:before {border-width: 2px;}
-	.todo-list .list-item {border-left-width:2px; border-left-style: solid;margin-top:2px;}
+	.todo-list .list-item {border-left-width:0px; border-left-style: solid;margin-top:2px;}
 	#content .nav .dropdown-menu {margin-left: -140px;}
 	#switcher {display:none;}
 	.bottom_counter {height: 2rem; line-height: 2rem; vertical-align: middle; display: table-cell; }
@@ -156,10 +156,10 @@
       data-role="foreach" form="todo" data-sort="time" data-loader="loaderTodo"
 			data-size="false" where='user = "{{_SESS[user_id]}}"'>
 	<meta data-role="variable" var="class" value="todo-done" where='done<>""' data-hide="*">
-	<meta data-role="variable" var="color" value="grey-100" where=' status = "muted" ' data-hide="*">
-	<meta data-role="variable" var="color" value="green-100" where=' status = "success" ' data-hide="*">
-	<meta data-role="variable" var="color" value="red-100" where=' status = "danger" ' data-hide="*">
-	<meta data-role="variable" var="color" value="purple-100" where=' status = "warn" ' data-hide="*">
+	<meta data-role="variable" var="color" value="grey-50" where=' status = "muted" ' data-hide="*">
+	<meta data-role="variable" var="color" value="green-50" where=' status = "success" ' data-hide="*">
+	<meta data-role="variable" var="color" value="red-50" where=' status = "danger" ' data-hide="*">
+	<meta data-role="variable" var="color" value="purple-50" where=' status = "warn" ' data-hide="*">
 	
 	<div class="list-item row-col {{class}} {{color}} b-l-{{status}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
 		<a class="todo-close pull-right" href="javascript:void(0);"><i class="fa  fa-trash-o text-muted"></i></a>

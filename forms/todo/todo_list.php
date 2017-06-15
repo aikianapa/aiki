@@ -193,7 +193,7 @@
 	<div class="input-group">
 		<input type="text" id="add-todo" name="add-todo" class="form-control" placeholder="Добавить задачу.."> 
 		<span class="input-group-btn">
-			<button class="btn white b-a no-shadow" type="button">Добавить</button>
+			<button id="add-todo-button" class="btn white b-a no-shadow" type="submit">Добавить</button>
 		</span>
 	</div>
 </form>

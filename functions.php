@@ -704,16 +704,19 @@ function aikiAddItemGal($Item=array(),$Field="text") {
 }
 
 function aikiListTpl() {
-$dir=$_SESSION["app_path"]."/tpl";
-$list=array();
+$dir=$_SERVER["DOCUMENT_ROOT"]."/tpl";
+$list=array(); $result=array();
 if (is_dir($dir)) {
-	exec("find {$dir} -name '*.php'",$list);
+	$list=aikiListFilesRecursive($dir);
 	foreach($list as $l => $val) {
-		$list[$l]=str_replace($dir,"",$val);
-		if (substr_count($list[$l],"/")==1) {$list[$l]=substr($list[$l],1);}
+		if (substr($val,-4)==".php") {
+			$list[$l]=str_replace($dir,"",$val);
+			if (substr_count($list[$l],"/")==1) {$list[$l]=substr($list[$l],1);}
+			$result[]=$list[$l];
+		}
 	}
 }
-$list=array_sort($list);
+$list=array_sort($result);
 return $list;
 }
 

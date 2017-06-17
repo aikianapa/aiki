@@ -842,6 +842,26 @@ function aikiListFilesRecursive($dir,$path=false) {
    return $list;
 }
 
+function aikiListFiles($dir,$path=false) {
+   $list = array();
+       if ($dircont = scandir($dir)) {
+           $i=0; $idx=0;
+           while (isset($dircont[$i])) {
+               if ($dircont[$i] !== '.' && $dircont[$i] !== '..') {
+                   $current_file = "{$dir}/{$dircont[$i]}";
+                   if (is_file($current_file)) {
+					   if ($path==true) {
+							$list[$idx]["file"] = "{$dircont[$i]}"; 
+							$list[$idx]["path"] = "{$thisdir}"; 
+						} else { $list[] = "{$dircont[$i]}"; }
+                       $idx++;
+                   } 
+               }
+               $i++;
+           }
+       }
+   return $list;
+}
 
 function aikiTableProcessor($out) {
 	$data=array(); $grps=array(); $total=array(); $grand=array();

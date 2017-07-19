@@ -110,7 +110,7 @@
 <div class="row-col b-r light lt">
 <div class="b-b white">
 <div class="navbar no-radius">
-	
+
 <ul class="nav navbar-nav pull-right m-l">
 <li class="nav-item inline">
 	<a href="javascript:void(0);" data-ajax="form=todo&amp;mode=list" data-replace="#content" data-tpl="#tFormList" class="nav-link">
@@ -160,7 +160,7 @@
 	<meta data-role="variable" var="color" value="green-50" where=' status = "success" ' data-hide="*">
 	<meta data-role="variable" var="color" value="red-50" where=' status = "danger" ' data-hide="*">
 	<meta data-role="variable" var="color" value="purple-50" where=' status = "warn" ' data-hide="*">
-	
+
 	<div class="list-item row-col {{class}} {{color}} b-l-{{status}} hide"  item="{{id}}" data-id="{{id}}" data-status="{{status}}">
 		<a class="todo-close pull-right" href="javascript:void(0);"><i class="fa  fa-trash-o text-muted"></i></a>
 	<div class="col-xs">
@@ -188,16 +188,16 @@
 </div>
 </div>
 <div class="p-a b-t clearfix white">
-	
+
 <form class="col-xs-9" id="add-todo-form">
 	<div class="input-group">
-		<input type="text" id="add-todo" name="add-todo" class="form-control" placeholder="Добавить задачу.."> 
+		<input type="text" id="add-todo" name="add-todo" class="form-control" placeholder="Добавить задачу..">
 		<span class="input-group-btn">
 			<button id="add-todo-button" class="btn white b-a no-shadow" type="submit">Добавить</button>
 		</span>
 	</div>
 </form>
-	
+
 
 <!--div class="btn-group pull-right">
   <a href="#" class="btn btn-xs white circle"><i class="fa fa-fw fa-angle-left"></i></a>

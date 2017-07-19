@@ -1788,8 +1788,9 @@ function aiki_formsave(formObj) {
 
 function ajax_sess_kick() {
 	setInterval(function(){
+
 		$.get("/engine/ajax.php?mode=ajax_sess_kick",function(ret){
-			if (ret==false) {document.location.href="/login.htm";}
+			if (ret==false && document.location.pathname=="/admin.htm") {document.location.href="/login.htm";}
 		});
 	},120000);
 }

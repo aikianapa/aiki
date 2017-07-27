@@ -1302,7 +1302,7 @@ abstract class kiNode
 	}
 
 	function excludeTextarea($Item=array()) {
-		$list=$this->find("textarea:not([data-not-exclude]),pre,.noaiki,[data-role=module],script[type=template]");
+		$list=$this->find("pre,.noaiki,[data-role=module],script[type=template],textarea:not([data-not-exclude])");
 		$_ENV["ta_save"]=array();
 		foreach ($list as $ta) {
 			$id=newIdRnd();

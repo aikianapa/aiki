@@ -1,4 +1,5 @@
 <?php
+
 function _ordersAfterReadItem($Item) {
 	if ($_GET["mode"]=="list" && isset($Item["person"])) {
 		foreach($Item["person"] as $key => $val) {
@@ -27,6 +28,7 @@ function _ordersAfterSaveItem($Item) {
 
 
 function _ordersMail($Item=null) {
+	
 	if ($Item==null) {$Item=aikiReadItem("orders",$_GET["item"]);}
 	$out=aikiGetForm("orders","mail",true);
 	$out->contentSetData($Item);
@@ -34,19 +36,21 @@ function _ordersMail($Item=null) {
 
 	$subject=$out->find("title")->text();
 
-	$to  = "<{$Item["person"]["email"]}>, ";
-	$to .= "<{$_SESSION["settings"]["email"]}> " ; 
-
 	$headers= "MIME-Version: 1.0\r\n";
 	$headers .= "Content-type: text/html; charset=windows-1251\r\n";
-	$headers .= "From: {$_SERVER["HTTP_HOST"]} <{$_SESSION["settings"]["email"]}>\r\n";
+//	$headers .= "From: {$_SERVER["HTTP_HOST"]} <{$_SESSION["settings"]["email"]}>\r\n";
 
 	$body=$out->outerHtml();
-	
+
 	if (is_callable("iconv")) $body=iconv("UTF-8", "WINDOWS-1251", $body);
 	if (is_callable("iconv")) $subject=iconv("UTF-8", "WINDOWS-1251", $subject);
 
+	$to  = $Item["person"]["email"];
 	mail($to, $subject, $body, $headers); 
+	
+	$to = $_SESSION["settings"]["email"] ; 
+	mail($to, $subject, $body, $headers); 
+
 	return $out;
 }
 

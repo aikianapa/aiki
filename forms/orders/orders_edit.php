@@ -78,7 +78,7 @@
 </div>
 
 <div id="commonText" class="tab-pane">
-<textarea name="text" id="text" class="editor" placeholder="Контент" required >{{text}}</textarea>
+<textarea name="text" id="text" class="editor" placeholder="Контент" required ></textarea>
 </div>
 
 

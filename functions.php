@@ -1230,7 +1230,6 @@ function aikiTreeSaveObj($obj) {
 		}
 		unset($meta,$img);
 	}
-	$Item["id"]="test111";
 	aikiSaveItem("tree",$Item);
 }
 
@@ -1912,8 +1911,8 @@ function fileSaveItem($form,$Item,$path=false,$func=true) {
 		formPathCheck($form);
 		if ($Item["id"]=="_new" ) {$Item["id"]=newIdRnd();}
 	}
-	$before="_{$form}BeforeSaveItem"; 	if (is_callable($before) && $func==true) {$Item=$before($Item);}
-	$before="{$form}BeforeSaveItem";	if (is_callable($before) && $func==true) {$Item=$before($Item);}
+	$before="_{$form}BeforeSaveItem"; 	if (is_callable($before) && $func==true) {$Item=@$before($Item);}
+	$before="{$form}BeforeSaveItem";	if (is_callable($before) && $func==true) {$Item=@$before($Item); }
 	if ($path==true) {
 		$file=$_SESSION["app_path"]."/".$form;
 	} else {
@@ -1922,8 +1921,8 @@ function fileSaveItem($form,$Item,$path=false,$func=true) {
 	$file=str_replace("//","/",$file);
 	$jsonItem=json_encode($Item, JSON_HEX_QUOT | JSON_HEX_APOS);
 	$res=file_put_contents($file,$jsonItem, LOCK_EX);
-	$after="_{$form}AfterSaveItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
-	$after="{$form}AfterSaveItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
+	$after="_{$form}AfterSaveItem"; if (is_callable ($after) && $func==true) { $Item =@$after($Item) ; }
+	$after="{$form}AfterSaveItem"; if (is_callable ($after) && $func==true) { $Item =@$after($Item) ; }
 	unset($Item,$jsonItem,$file,$before,$after,$form,$path);
 	return $res;
 }

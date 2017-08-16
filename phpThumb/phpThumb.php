@@ -33,11 +33,11 @@ if (strpos($_GET['src'],"@2x.")) {
 	if (isset($_GET['w'])) {$_GET['w']=$_GET['w']*2;}
 }
 
-
-
 if (substr($_GET['src'],0,5)!=="http:") $_GET['src']="/".$_GET['src'];
 
-
+if (substr($_GET['src'],0,5)!=="http:" AND !is_file($_SERVER["DOCUMENT_ROOT"]."/".$_GET['src'])) {
+	$_GET['src']="/engine/uploads/__system/image.jpg";
+}
 
 function SendSaveAsFileHeaderIfNeeded() {
 	if (headers_sent()) {

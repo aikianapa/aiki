@@ -38,7 +38,7 @@ function aikiRouterRead($file=null) {
 				$r=explode("=>",$r);
 				if (count($r)==2) $route[trim($r[0])]=trim($r[1]);
 			}
-		}		
+		}
 	}
 	return $route;
 }
@@ -95,7 +95,7 @@ function aikiReadList($name) {
 	$savePath=formPathGet();
 	$file=$savePath["base"].$savePath["lists"].$name;
 	if (is_file($file)) {
-		$file=file_get_contents($file); 
+		$file=file_get_contents($file);
 		$Item=json_decode($file,TRUE);
 	} else {$_SESSION["error"]="noitem"; $Item=array();}
 	return $Item;
@@ -145,7 +145,7 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 	switch($type) {
 		case "call":
 			$call=explode(";",$param); $call=trim($call[0]);
-			if (is_callable($call)) {$res=$call($type,$label,$param,$value);}		
+			if (is_callable($call)) {$res=$call($type,$label,$param,$value);}
 			break;
 		case "checkbox":
 			$out=aikiFromString('<div class="col-sm-2">
@@ -182,7 +182,7 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 				<option value='{{".$key."}}'>{{".$val."}}</option>
 			</select>");
 			$html->find("option[value={$value}]")->attr("selected",true);
-			
+
 			$html->contentSetData();
 			$res=$html->outerHtml();
 			break;
@@ -239,7 +239,7 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 				$count=substr_count($match,"%");
 				$_item=$item; $item=str_replace("%","",$match);
 				if (in_array($item,$aval)) {
-					$treedata=aikiReadTree($tree); 
+					$treedata=aikiReadTree($tree);
 					$parent=$id;
 					for ($i=0; $i<=$count; $i++) {
 						$tmp=aikiFindTreeData($treedata["tree"],"id",$parent);
@@ -252,7 +252,7 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 				<option value='{{".$key."}}'>{{".$val."}}</option>
 			</select>");
 			$html->find("option[value={$value}]")->attr("selected",true);
-			
+
 			$html->contentSetData();
 			$res=$html->outerHtml();
 			break;
@@ -271,7 +271,7 @@ function aikiFieldBuild($type,$name,$label,$param,$value,$id="") {
 					if (isset($item[1])) {$html->find("option:last")->html($item[1]);} else {$html->find("option:last")->html($item[0]);}
 				}
 			}
-			
+
 			$res=$html->outerHtml();
 			break;
 		default:
@@ -536,7 +536,7 @@ function setQuotes($In) {
 // заменяем &quot на "
 function changeQuot($Tag) {
 	$mask = '`&quot[^;]`u';
-	
+
 	if (is_string($Tag)) {
 		$nQuot = preg_match_all($mask, $Tag, $res, PREG_OFFSET_CAPTURE);				// найти &quot без последеующего ;
 		if ($nQuot !== false) {
@@ -679,7 +679,7 @@ function aikiInString($string,$find) {
 	$res = false;
 	$find = preg_replace('/([^\pL\pN\pP\pS\pZ])|([\xC2\xA0])/u', '', $find);
 	$find=explode(" ",trim(mb_strtolower($find))); $count=count($find);
-	$pattern = '/('.implode("|",$find).')/i'; 
+	$pattern = '/('.implode("|",$find).')/i';
 	preg_match_all($pattern, mb_strtolower($string), $matches);
 	if (in_array($find,$matches)) {$res=true;}
 	return $res;
@@ -742,12 +742,12 @@ function aikiLoadController() {
 	$path="/controllers/".$_ENV["route"]["controller"].".php";
 	if (is_file($_SESSION["app_path"] . $path)) {
 		include_once($_SESSION["app_path"] . $path);
-		$call=$_ENV["route"]["controller"]."_controller"; 
+		$call=$_ENV["route"]["controller"]."_controller";
 		return @$call(array($__page,$Item));
 	} else {
 		if (is_file(__DIR__ . $path)) {
 			include_once(__DIR__ . $path);
-			$call=$_ENV["route"]["controller"]."__controller"; 
+			$call=$_ENV["route"]["controller"]."__controller";
 			return @$call();
 		} else {
 			echo "Ошибка загрузки контроллера: {$_ENV["route"]["controller"]}";
@@ -762,7 +762,7 @@ function aikiListForms() {
 	$eList=aikiListFilesRecursive($_SESSION["engine_path"] ."/forms");
 	$aList=aikiListFilesRecursive($_SESSION["app_path"] ."/forms");
 	$rList=aikiListFilesRecursive($_SESSION["root_path"] ."/forms");
-	$arr=$eList; 
+	$arr=$eList;
 	foreach($aList as $a) {$arr[]=$a;}
 	foreach($rList as $a) {$arr[]=$a;}
 	unset($eList,$aList);
@@ -785,7 +785,7 @@ function aikiListForms() {
 }
 
 function aikiListFormsFull() {
-	$list=array(); 
+	$list=array();
 	$types=array("engine","app","root");
 	foreach($types as $type) {
 		$list[$type]=array();
@@ -794,7 +794,7 @@ function aikiListFormsFull() {
 			$inc=strpos($fname,".inc");
 			$ext=explode(".",$fname); $ext=$ext[count($ext)-1];
 			$name=substr($fname,0,-(strlen($ext)+1));
-			$tmp=explode("_",$name); 
+			$tmp=explode("_",$name);
 			$form=$tmp[0]; unset($tmp[0]);
 			$mode=implode("_",$tmp);
 			$uri_path=str_replace($_SESSION["root_path"],"",$_SESSION[$type."_path"]);
@@ -827,8 +827,8 @@ function aikiListFilesRecursive($dir,$path=false) {
                    $current_file = "{$thisdir}/{$dircont[$i]}";
                    if (is_file($current_file)) {
 					   if ($path==true) {
-							$list[$idx]["file"] = "{$dircont[$i]}"; 
-							$list[$idx]["path"] = "{$thisdir}"; 
+							$list[$idx]["file"] = "{$dircont[$i]}";
+							$list[$idx]["path"] = "{$thisdir}";
 						} else { $list[] = "{$dircont[$i]}"; }
                        $idx++;
                    } elseif (is_dir($current_file)) {
@@ -851,11 +851,11 @@ function aikiListFiles($dir,$path=false) {
                    $current_file = "{$dir}/{$dircont[$i]}";
                    if (is_file($current_file)) {
 					   if ($path==true) {
-							$list[$idx]["file"] = "{$dircont[$i]}"; 
-							$list[$idx]["path"] = "{$thisdir}"; 
+							$list[$idx]["file"] = "{$dircont[$i]}";
+							$list[$idx]["path"] = "{$thisdir}";
 						} else { $list[] = "{$dircont[$i]}"; }
                        $idx++;
-                   } 
+                   }
                }
                $i++;
            }
@@ -875,7 +875,7 @@ function aikiTableProcessor($out) {
 		$fields=$tr->find("td[data-fld]:not([data-eval])"); $Item=array();
 		foreach($fields as $field) {$Item[$field->attr("data-fld")]=$field->text();}
 		$fields=$tr->find("[data-eval]");
-		foreach($fields as $field) { 
+		foreach($fields as $field) {
 			$evalStr=contentSetValuesStr($field,$Item);
 			eval ("\$tmp = ".$field->text().";"); 	$field->text($tmp);
 		}
@@ -929,7 +929,7 @@ function aikiTableProcessor($out) {
 					if (in_array($data_fld,$totchk)) {$tdfld->addClass("data-total");}
 				}
 				$inner.=$trtot->outerHtml();
-				
+
 			}
 			$ready[]=$idx;
 		}
@@ -1010,11 +1010,17 @@ function aikiWhere($list,$where=NULL) {
 }
 
 function aikiWhereItem($item,$where=NULL) {
-	$where=htmlspecialchars_decode($where);
-	$where=strtr($where,array("'"=>'"',"&#039;"=>'"',"&quot;"=>'"'));
 	$res=true;
-	if (!$where==NULL) {
-		if (substr($where,0,1)=="%") {$phpif=substr($where,1);} else {$phpif=aikiWherePhp($where,$item);}
+	if ($where!==NULL) {
+		$cache_id=md5($where.$item["form"]);
+		if (isset($_ENV["cache"][__FUNCTION__][$cache_id])) {
+			$phpif=$_ENV["cache"][__FUNCTION__][$cache_id];
+		} else {
+			$where=htmlspecialchars_decode($where);
+			$where=strtr($where,array("'"=>'"',"&#039;"=>'"',"&quot;"=>'"'));
+			if (substr($where,0,1)=="%") {$phpif=substr($where,1);} else {$phpif=aikiWherePhp($where,$item);}
+			$_ENV["cache"][__FUNCTION__][$cache_id]=$phpif;
+		}
 		@eval('if ( '.$phpif.' ) { $res=1; } else { $res=0; } ;');
 	};
 	return $res;
@@ -1032,7 +1038,7 @@ function aikiWherePhp($str="",$item=array()) {
 					"<="=>" <= ",
 					"<>"=>" !== "
 	)))." ";
-	$exclude=array("AND","OR","LIKE");
+	$exclude=array("AND","OR","LIKE","IN_ARRAY");
 	preg_match_all('/\w+(?!\")\b/iu',$str,$arr);
 	foreach($arr[0] as $a => $fld) {
 		if (!in_array(strtoupper($fld),$exclude)) {
@@ -1040,10 +1046,15 @@ function aikiWherePhp($str="",$item=array()) {
 		}
 	}
 
+	preg_match_all('/in_array\s\(\s(.*),array \(/',$str,$arr);
+	foreach($arr[1] as $a => $fld) {
+		$str=str_replace("in_array ( {$fld},array (", 'in_array ($item["'.$fld.'"],array(',$str);
+	}
+
 	if (strpos(strtolower($str)," like ")) {
 		preg_match_all('/\S*\slike\s\S*/iu',$str,$arr);
 		foreach($arr[0] as $a => $cls) {
-			$tmp=explode(" like ",$cls); 
+			$tmp=explode(" like ",$cls);
 			if (count($tmp)==2) {
 				$str=str_replace($cls,'aikiWhereLike('.$tmp[0].','.$tmp[1].')',$str);
 			}
@@ -1212,7 +1223,7 @@ function aikiTreeSaveObj($obj) {
 			$tree=aikiTreeSaveObjBranch($obj,$branch);
 			$Item["tree"][]=$tree;
 	}
-	
+
 	$Item["tree"]=json_encode($Item["tree"],JSON_UNESCAPED_UNICODE);
 	if ($obj->find("tree > images")->length) {
 		$Item["images"]=array();
@@ -1267,7 +1278,7 @@ function aikiTreeSaveObjBranch($obj,$li) {
 function aikiTreeReadObj($name,$engine=false) {
 	$obj=aikiFromString("<tree></tree>");
 	if ($engine==false) {
-		$tree=aikiReadItem("tree",$name);	
+		$tree=aikiReadItem("tree",$name);
 	} else {
 		$tree=fileReadItem("/engine/contents/tree/",$name,true);
 	}
@@ -1288,7 +1299,7 @@ function aikiTreeReadObj($name,$engine=false) {
 	$fields=$tree["fields"];
 	foreach($fields as $i => $line) {
 		$obj->find("tree fields")->append("<meta/>");
-		foreach($line as $name => $value) {$obj->find("tree fields meta:last")->attr($name,$value); }	
+		foreach($line as $name => $value) {$obj->find("tree fields meta:last")->attr($name,$value); }
 	}
 
 	$treedata=json_decode($tree["tree"],true);
@@ -1320,7 +1331,7 @@ function aikiTreeReadObjBranch($obj,$li){
 		$node->append($dt);
 		unset($d,$dt);
 	}
-	
+
 	if (isset($li["children"]) && isset($li["children"][0])) {
 		foreach($li["children"][0] as $l) {
 			$brh=aikiTreeReadObjBranch($obj,$l);
@@ -1365,15 +1376,28 @@ function aikiTreeGetIdListFrom($tree,$id,$inc=true) {
 }
 
 function aikiWhereFromTree($tree,$id,$field,$inc=true) {
-	if (!is_array($tree)) {$tree=aikiReadTree($tree); $tree=$tree["tree"];}
-	$list=aikiTreeGetIdListFrom($tree,$id,$inc);
-	$where=array();
-	foreach($list as $key => $val) {$where[]=$field.' = "'.$val.'"';}
-	if (count($where)) {
-		$where=implode(" OR ",$where);
-		$where="( {$where} )";
-		return $where;
-	} else {return "";}
+	if (!is_array($tree)) {$tree=aikiReadTree($tree); $tree_id=$tree["id"]; $tree=$tree["tree"];} else {$tree_id=$tree["id"];}
+	$cache_id=md5($tree_id.$id.$field.$inc);
+	if (isset($_ENV["cache"][__FUNCTION__][$cache_id])) {
+		return $_ENV["cache"][__FUNCTION__][$cache_id];
+	} else {
+		$list=aikiTreeGetIdListFrom($tree,$id,$inc);
+//		$where=array();
+//		foreach($list as $key => $val) {$where[]=$field.' = "'.$val.'"';}
+		$where="";
+		foreach($list as $key => $val) {
+			if ($key==0) {$where.='"'.$val.'"';} else {$where.=',"'.$val.'"';}
+		}
+		$where="in_array({$field},array({$where}))";
+//		if (count($where)) {
+//			$where=implode(" OR ",$where);
+//			$where="( {$where} )";
+			$_ENV["cache"][__FUNCTION__][$cache_id]=$where;
+//		} else {
+//			$_ENV["cache"][__FUNCTION__][$cache_id]="";
+//		}
+		return $_ENV["cache"][__FUNCTION__][$cache_id];
+	}
 }
 
 
@@ -1554,8 +1578,8 @@ function aikiLogin() {
 			$redirect=$role["redirect"];
 			$scheme="http";
 			if (isset($_SERVER["HTTP_X_FORWARDED_PROTOCOL"])) {$scheme=$_SERVER["HTTP_X_FORWARDED_PROTOCOL"];}
-			if (isset($_SERVER["REQUEST_SCHEME"])) {$scheme=$_SERVER["REQUEST_SCHEME"];}			
-			
+			if (isset($_SERVER["REQUEST_SCHEME"])) {$scheme=$_SERVER["REQUEST_SCHEME"];}
+
 			header("Refresh: 0; URL={$scheme}://{$_SERVER["HTTP_HOST"]}{$redirect}");
 			echo "Вход успешно выполнен, ждите...";
 			die;
@@ -1722,7 +1746,7 @@ function aikiGetCacheName($form=null,$item=null) {
 	if (!isset($_SESSION["lang"])) {$lang="ru";} else {$lang=$_SESSION["lang"];}
 	$name=md5("{$form}_{$item}_{$lang}");
 	$dir=$_SERVER["DOCUMENT_ROOT"].$_SESSION["prj_path"]."/contents/_cache/";
-	if (!is_dir($dir)) { mkdir($dir);}	
+	if (!is_dir($dir)) { mkdir($dir);}
 	return $dir.$name;
 }
 
@@ -1802,7 +1826,7 @@ function fileListItems($form,$where=NULL,$engine=FALSE) {
 	// prj (не обязательно) - по-умолчанию данные проекта
 	if (isset($_SESSION[$form]["data-type-tmp"])) {
 		$type=$_SESSION[$form]["data-type-tmp"];
-		if ($type=="engine") {$вшп=$_SESSION["engine_path"]."/contents/".$form."/";}
+		if ($type=="engine") {$dir=$_SESSION["engine_path"]."/contents/".$form."/";}
 		if ($type=="app") {
 			$dir=$_SESSION["app_path"]."/contents/".$form."/";
 			$dir=str_replace($_SESSION["prj_path"],"/",$dir);
@@ -1880,7 +1904,7 @@ function fileReadItem($form,$id,$path=false,$func=true) {
 		}
 	}
 	if (is_file($file)) {
-		$file=file_get_contents($file); 
+		$file=file_get_contents($file);
 		/*if (strpos($file,'\\\"')) {
 			$Item=data_json_decode($file);
 			aikiSaveItem($form,$Item); // сохраняем, чтобы при следующем чтении был короткий вариант
@@ -1896,13 +1920,13 @@ function fileReadItem($form,$id,$path=false,$func=true) {
 		$_SESSION["error"]="noitem"; //Depricated
 		$_ENV["error"][__FUNCTION__]="noitem";
 	}
-	
+
 	//if (is_file($file)) {$Item=json_decode(file($file)[0],TRUE);} else {$_SESSION["error"]="noitem";}
 	$after="_".$form."AfterReadItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
 	$after=$form."AfterReadItem"; if (is_callable ($after) && $func==true) { $Item =$after($Item) ; }
 	if (isset($form) && !isset($Item["form"])) {$Item["form"]=$form;}
 	unset($file,$before,$after,$type);
-	
+
 	return $Item;
 }
 
@@ -1952,7 +1976,7 @@ function aikiFormSave($form,$datatype=NULL) {
 					$Item=mysqlReadItem($form,$_POST["id"]);
 					if ($Item==FALSE) {$Item=""; $_POST["id"]=mysqlInsertItem($form,$_POST["id"]); }
 					//foreach ($fields as $key => $val) {if (isset($_POST[$val])) {$Item[$val]=$_POST[$val];}}
-				} 
+				}
 				$Item=$_POST;
 				$Item["form"]=$form;
 				unset($Item["firstImg"]);
@@ -2256,7 +2280,7 @@ function comSession() {
 		$cache->addServer('127.0.0.1', 11211);
 		$session = new MemcachedSessionHandler($cache);
 	}
-	
+
 	if (!isset($_SESSION["SESSID"])) {session_start(); $_SESSION["SESSID"]=session_id();} else {session_id($_SESSION["SESSID"]);}
 	comBasePath();
 	if (!isset($_SESSION["User"])) {$_SESSION["User"]="User";}
@@ -2294,7 +2318,7 @@ function comBasePath() {
 	} else {
 		$_SESSION["project"]="";
 	}
-	$_SESSION["prj_path"]=str_replace($_SESSION["root_path"],"",$_SESSION["app_path"]);	
+	$_SESSION["prj_path"]=str_replace($_SESSION["root_path"],"",$_SESSION["app_path"]);
 }
 
 function comAdminMenu($__page) {
@@ -2416,7 +2440,7 @@ function aikiCheckoutForms($engine=false) {
 
 function formCurrentInclude($form) {
 	$current="";
-	
+
 	$inc=array(
 		"{$_SESSION["engine_path"]}/forms/{$form}.php", "{$_SESSION["engine_path"]}/forms/{$form}/{$form}.php",
 		"{$_SESSION["root_path"]}/forms/{$form}.php", "{$_SESSION["root_path"]}/forms/{$form}/{$form}.php",
@@ -2644,8 +2668,8 @@ function recurse_copy($src,$dst) {
 				if ( is_dir($src . '/' . $file) ) {
 					recurse_copy($src . '/' . $file,$dst . '/' . $file);
 				}
-				else { 
-					copy($src . '/' . $file,$dst . '/' . $file); 
+				else {
+					copy($src . '/' . $file,$dst . '/' . $file);
 					chmod($dst.'/'.$file,0766);
 				}
 			}
@@ -2662,8 +2686,8 @@ function recurse_delete($src) {
 				if ( is_dir($src . '/' . $file) ) {
 					recurse_delete($src . '/' . $file);
 				}
-				else { 
-					unlink($src . '/' . $file); 
+				else {
+					unlink($src . '/' . $file);
 				}
 			}
 		}

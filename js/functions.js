@@ -1060,6 +1060,7 @@ function active_pagination(pid) {
 					eval ( funcCall );
 				}
 				$("body").addClass("cursor-wait");
+				event.preventDefault();
 				$.ajax({
 					async: 		true,
 					type:		'POST',
@@ -1109,7 +1110,6 @@ function active_pagination(pid) {
 				
 				//$(document).trigger("after_pagination_click",[id,page,arr[2]]);
 		}
-		event.preventDefault();
 		return false;
 		});
 	});

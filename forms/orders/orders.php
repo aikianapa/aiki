@@ -12,7 +12,6 @@ function _ordersAfterReadItem($Item) {
 
 function _ordersBeforeSaveItem($Item) {
 	if ($_POST["order"]=="on" && $_GET["mode"]=="save" && $_GET["form"]=="orders") {
-		$_SESSION["order_id"]=newIdRnd();
 		$Item["date"]=date("Y-m-d H:i:s");
 	}
 	return $Item;
@@ -21,7 +20,9 @@ function _ordersBeforeSaveItem($Item) {
 function _ordersAfterSaveItem($Item) {
 	if ($_POST["order"]=="on") {
 		_ordersMail($Item);
-		$_SESSION["order_id"]=newIdRnd();
+		cartAction("clear");
+		$order_id=get_order_id();
+		setcookie("order_id",$order_id,time()+3600*72,"/");
 	}
 	return $Item;
 }
